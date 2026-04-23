@@ -1,0 +1,43 @@
+const mongoose = require("mongoose")
+
+
+const swapSchema = new mongoose.Schema({
+  // requester offers a listing
+  requester: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  requesterListing: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+
+  // owner has a listing for which requester requests
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  ownerListing: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+
+  message: String,
+  status: {
+    type: String,
+    enum: [
+      "pending",
+      "accepted",
+      "completed",
+      "rejected",
+      "cancelled"
+    ]
+  },
+  shipmesnts: [{
+    from: {
+      type: mongoose.Schema.Types.ObjectId, ref: "User"
+    },
+    courier: String,
+    trackingId: String,
+  }],
+  shippingType: {
+    type: String,
+    enum: ["local_swap", "shipping"]
+  },
+
+  completedBy: {
+    requester: { type: Boolean, default: false },
+    owner: { type: Boolean, default: false }
+  },
+
+}, { timestamps: true });
+
+module.exports = mongoose.model("Swap", swapSchema);
