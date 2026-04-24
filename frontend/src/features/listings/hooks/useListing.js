@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { ListingContext } from "../listing.context";
 import service from "../service/api.service";
 import showToast from "../../../utils/Toastify.util";
+import { createSwapRequest } from "../../swap/service/swap.api";
 
 export const useListing = () => {
     // Access listing context values and functions
@@ -24,7 +25,7 @@ export const useListing = () => {
         setLoading(true);
         try {
             const data = await service.getListings(filters);
-        
+
             setAllListings(data.listings);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -37,9 +38,7 @@ export const useListing = () => {
         setLoading(true);
         try {
             const data = await service.createListing(listingData);
-  
             showToast("Listing created successfully!", "success");
-            // Optionally, you can fetch the updated listings after creating a new one
             await fetchListings(filters);
         } catch (error) {
             console.error('Error creating listing:', error);
@@ -77,6 +76,19 @@ export const useListing = () => {
             showToast("Listing deleted successfully!", "success");
         } catch (error) {
             console.error('Error deleting listing:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const createSwap = async ({offeredListingId, requestedListingId}) => {
+        setLoading(true);
+        try {
+            const data = await createSwapRequest({offeredListingId, requestedListingId});
+            console.log(data)
+            showToast("Swap created successfully!", "success");
+
+        } catch (error) {
+            console.error('Error creating swap:', error);
         } finally {
             setLoading(false);
         }
