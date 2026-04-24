@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useListing } from "../hooks/useListing";
 import { useParams } from "react-router-dom";
-import LocationSelector from "../../dashboard/components/LocationSelector";
 
 // Constants
 const CLOTHING_TYPES = {

@@ -26,7 +26,7 @@ const Footbar = ({user}) => {
         <MessageCircle />
         <span className="text-[10px] ">Chat</span>
       </Link>
-      <Link to="/profile" className="flex flex-col items-center justify-center">
+      <Link to={`/profile/${user._id}`} className="flex flex-col items-center justify-center">
         <img src={user.profilePicture} className="w-8 h-8 rounded-full" alt="" />
         <span className="text-[10px] ">Account</span>
       </Link>

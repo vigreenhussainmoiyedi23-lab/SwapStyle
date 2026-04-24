@@ -6,9 +6,9 @@ import LandingPage from "./features/LandingPage/pages/LandingPage";
 import Listings from "./features/listings/Pages/Listings";
 import VerifyOtp from "./features/auth/pages/VerifyOtp";
 import CreateListing from "./features/listings/Pages/CreateListing";
-import Dashboard from "./features/dashboard/Pages/Dashboard";
 import UpdateListing from "./features/listings/Pages/UpdateListing";
 import ListingMore from "./features/listings/Pages/ListingMore";
+import Profile from "./features/Profile/Pages/Profile";
 
 const Approutes = () => {
   return (
@@ -55,10 +55,10 @@ const Approutes = () => {
           }
         />
         <Route
-          path="/account"
+          path="/profile/:id"
           element={
             <NormalLayout>
-              <Dashboard />
+              <Profile />
             </NormalLayout>
           }
         />

@@ -54,10 +54,11 @@
 
 .item {
   padding: 0 5vw;
-  font-size: 4rem;
+  /* font-size: 4rem; */
+  color: #ffffff2c;
 }
 
 .item:hover {
-  color:#FFFDD0;
+  color:#ffffff;
 }
 

@@ -6,14 +6,17 @@ import { AuthProvider } from "./features/auth/auth.context.jsx";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ListingContextProvider } from "./features/listings/listing.context.jsx";
+import { ProfileContextProvider } from "./features/Profile/profile.context.jsx";
 
 createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <AuthProvider>
       <ListingContextProvider>
-        <StrictMode>
-          <App />
-        </StrictMode>
+        <ProfileContextProvider>
+          <StrictMode>
+            <App />
+          </StrictMode>
+        </ProfileContextProvider>
       </ListingContextProvider>
     </AuthProvider>
   </GoogleOAuthProvider>,

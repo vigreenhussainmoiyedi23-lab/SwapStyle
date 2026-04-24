@@ -1,32 +1,3 @@
-//   <div className="relative w-full overflow-hidden">
-//         {/* Scrolling container */}
-//         <div className="flex  animate-marquee whitespace-nowrap text-5xl source-code-pro font-medium">
-//           <div className=" w-1/2 h-full flex gap-12 pl-12">
-//             {CATEGORIES.map((category, index) => (
-//               <Link
-//                 key={index}
-//                 to="/listings"
-//                 className="hover:text-blue-600 transition-colors duration-200 px-4"
-//               >
-//                 {category}
-//               </Link>
-//             ))}
-//           </div>
-//           <div className="w-1/2 h-full flex gap-12 ">
-//             {/* Duplicate for seamless loop */}
-//             {CATEGORIES.map((category, index) => (
-//               <Link
-//                 key={`dup-${index}`}
-//                 to="/listings"
-//                 className="hover:text-blue-600 transition-colors duration-200 px-4"
-//               >
-//                 {category}
-//               </Link>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-// export default CategoriesSlider;
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Styles/Categorie.css";
@@ -44,32 +15,20 @@ const CategoriesSlider = () => {
 
   return (
     <div className="w-full relative py-10 overflow-hidden flex flex-col items-center justify-center ">
-      <h1 className="text-6xl playfair text-bg-main mb-8">
+      <h1 className="xl:text-6xl lg:text-5xl md:text-4xl sm:text-3xl text-2xl playfair text-bg-main mb-8">
         Browse By Categories
       </h1>
       <div class="scroll-container">
         <div class="scroll-content">
           {/* <!-- Group 1 --> */}
           {CATEGORIES.map((category, index) => (
-            <div class="item">
-              {/* <Link
-                key={`dup-${index}`}
-                to="/listings"
-                className="hover:text-blue-600 transition-colors duration-200 px-4"
-              > */}
+            <div class="item lg:text-4xl xl:text-5xl md:text-3xl sm:text-2xl text-xl">
               {category}
-              {/* </Link> */}
             </div>
           ))}
           {CATEGORIES.map((category, index) => (
-            <div class="item">
-              {/* <Link
-                key={`dup-${index}`}
-                to="/listings"
-                className="hover:text-blue-600 transition-colors duration-200 px-4"
-              > */}
+            <div class="item lg:text-4xl xl:text-5xl md:text-3xl sm:text-2xl text-xl">
               {category}
-              {/* </Link> */}
             </div>
           ))}
           

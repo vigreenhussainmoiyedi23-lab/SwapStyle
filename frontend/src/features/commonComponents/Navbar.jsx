@@ -19,11 +19,11 @@ const Navbar = ({ user }) => {
           >
             Listings
           </Link>
-          <Link to="#" className="hover:text-emerald-400 transition-colors">
+          <Link to="/swaps" className="hover:text-emerald-400 transition-colors">
             Swaps
           </Link>
-          <Link to="#" className="hover:text-emerald-400 transition-colors">
-            Dashboard
+          <Link to="/chats" className="hover:text-emerald-400 transition-colors">
+            Chats
           </Link>
         </div>
 
@@ -60,7 +60,7 @@ const Navbar = ({ user }) => {
               <Bell className="w-6 h-6 " />
             </Link>
             <Link
-              to="/account"
+              to={`/profile/${user._id}`}
               className="h-12 w-12 md:flex hidden rounded-full border border-brand-300 text-sm font-semibold  overflow-hidden transition-all"
             >
               <img
