@@ -44,15 +44,7 @@ async function GetListingByIdHandler(req, res) {
     }
 }
 
-async function GetListingsByUserIdHandler(req, res) {
-    const { userId } = req.params;
-    try {
-        const listings = await getUserAllListingsService(userId);
-        res.status(200).json({ listings, message: "Listings fetched successfully", success: true });
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching listings", success: false });
-    }
-}
+
 
 async function UpdateListingByIdHandler(req, res) {
     const { id } = req.params;
@@ -128,7 +120,6 @@ module.exports = {
     CreateListingHandler,
     GetAllListingsHandler,
     GetListingByIdHandler,
-    GetListingsByUserIdHandler,
     UpdateListingByIdHandler,
     AddImagesToListingHandler,
     RemoveImageFromListingHandler,

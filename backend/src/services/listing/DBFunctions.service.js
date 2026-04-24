@@ -89,20 +89,6 @@ async function deleteListingService(listingId, userId) {
     }
 }
 
-/*
- * @param {string} userId - the id of the user whose listings are being fetched
- * @returns {object[]} - an array of listings owned by the user
- * @description Fetches all listings owned by a specific user from the database
- */
-async function getUserAllListingsService(userId) {
-    try {
-        const listings = await listingModel.find({ owner: userId });
-        return listings;
-    } catch (error) {
-        console.log("Error fetching user listings:", error);
-        throw error;
-    }
-}
 
 /*
  * @param {string} listingId - the id of the listing to be fetched
@@ -173,7 +159,6 @@ module.exports = {
     createListingService,
     updateListingService,
     deleteListingService,
-    getUserAllListingsService,
     getListingByIdService,
     getAllListingsService,
     enumValuesGetter

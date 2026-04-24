@@ -36,7 +36,7 @@ verify otp comments
 //Google 
 const googleLoginHandler = async (req, res) => {
     const { credential } = req.body; // ID token from frontend
-    
+
     if (!credential) return res.status(400).json({ error: 'No credential provided' });
 
     try {
@@ -63,8 +63,11 @@ const googleLoginHandler = async (req, res) => {
             user = existingUser;
         } else {
             user = await userModel.create(user);
+            user.isEmailVerified = true
+            user.isRegistered = true
+            await user.save();
         }
-    
+
         // Issue your own JWT
         const token = signToken(user._id);
         setCookie(res, "token", token);
@@ -98,7 +101,7 @@ const logoutHandler = async (req, res) => {
 
 // 🔍 Check Auth
 const getMeHandler = async (req, res) => {
-        const { token } = req.cookies;
+    const { token } = req.cookies;
     if (!token) {
         return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
     }

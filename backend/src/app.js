@@ -6,6 +6,7 @@ const cors = require("cors")
 const authRouter = require("./routes/auth.routes")
 const listingRouter = require("./routes/listing.routes")
 const swapRouter = require("./routes/swap.routes")
+const userRouter = require("./routes/user.routes")
 app.use(express.json())
 app.use(express.static("./public"))
 app.use(cookieParser())
@@ -17,5 +18,6 @@ app.use(cors({
 app.use("/api/auth", authRouter)
 app.use("/api/listings", listingRouter)
 app.use("/api/swaps", swapRouter)
+app.use("/api/user", userRouter)
 
 module.exports = app

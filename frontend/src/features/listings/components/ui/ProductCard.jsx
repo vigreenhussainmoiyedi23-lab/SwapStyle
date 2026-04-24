@@ -8,7 +8,10 @@ const ProductCard = ({ item }) => {
   const { user } = useAuth();
   const { deleteListing } = useListing();
   return (
-    <Link to={`/listings/more/${item._id}`} className="group bg-white/5 backdrop-blur-3xl text-accent-300 rounded-3xl overflow-hidden border border-transparent hover:border-accent-400/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+    <Link
+      to={`/listings/more/${item._id}`}
+      className="group bg-white/5 backdrop-blur-3xl text-accent-300 rounded-3xl overflow-hidden border border-transparent hover:border-accent-400/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+    >
       <div className="relative aspect-[4/5] overflow-hidden">
         <img
           src={item?.images[0]?.url}
@@ -20,20 +23,21 @@ const ProductCard = ({ item }) => {
         </div>
         {user && user?._id.toString() === item?.owner.toString() && (
           <div className=" text-black z-10 absolute bottom-0 right-0 justify-between flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
-            <Link
+            <button
               className="flex items-center bg-brand-300 rounded-2xl px-2 py-1  gap-2 justify-center"
-              to={`/listings/update/${item._id}`}
+              onClick={() =>
+                (window.location.href = `/listings/update/${item._id}`)
+              }
             >
               Update <Edit className="w-4" />
-            </Link>
+            </button>
             <button
               onClick={(e) => {
                 let isDeleted = window.confirm(
-                  "Are you sure you want to delete this listing?"
-                )
-                if(isDeleted){
-                  deleteListing(item._id)
-                  
+                  "Are you sure you want to delete this listing?",
+                );
+                if (isDeleted) {
+                  deleteListing(item._id);
                 }
               }}
               className="flex items-center bg-red-600 rounded-2xl px-2 py-1  gap-2 justify-center text-white "

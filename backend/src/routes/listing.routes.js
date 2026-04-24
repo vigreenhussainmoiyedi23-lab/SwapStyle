@@ -26,7 +26,7 @@ const { CreateListingLimiter } = require("../middlewares/rateLimiter")
 
 router.post("/get-all", GetAllListingsHandler)
 router.get("/:id", GetListingByIdHandler)
-router.get("/:userId/user", isAuthenticated, GetListingsByUserIdHandler)
+// router.get("/:userId/user", isAuthenticated, GetListingsByUserIdHandler)
 
 
 router.post("/",CreateListingLimiter, upload.array("images", 4), createListingValidator, validate, isAuthenticated, CreateListingHandler)

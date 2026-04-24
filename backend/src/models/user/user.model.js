@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-        Location: {
+    Location: {
         lat: Number,//latitude
         log: Number,//longitude
         city: String,
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
     },
-    googleId: String,
+    googleId: { type: String, select: false },
     profilePicture: {
         type: String,
         default: "https://ik.imagekit.io/h110m786/pfp.jpg"
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     ContactDetails: {
         phoneNumber: Number,
     },
-   
+
     rating: {
         type: Number,
         default: 0
