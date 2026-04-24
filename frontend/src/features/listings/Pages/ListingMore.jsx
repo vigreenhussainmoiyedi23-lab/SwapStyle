@@ -9,7 +9,7 @@ const ListingMore = () => {
   useEffect(() => {
     async function fetchListing() {
       const data = await getListingById(id);
-      console.log(data);
+      
       setlisting(data.listing);
     }
     fetchListing();

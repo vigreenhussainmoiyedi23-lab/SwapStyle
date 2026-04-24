@@ -9,7 +9,6 @@ const useAuth = () => {
     useEffect(() => {
         const fetchCurrentUser = async () => {
             try {
-                console.log("fetching current user...");
                 const response = await getCurrentUser();
                 if (response.loggedIn) {
                     setUser(response.user);
@@ -54,7 +53,7 @@ const useAuth = () => {
         setLoading(true);
         try {
             const { data } = await logout();
-            console.log(data)
+     
             setUser(null);
             showToast("Logged out successfully!", "success");
             return data;

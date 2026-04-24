@@ -12,7 +12,6 @@ const apiClient = axios.create({
 
 const getUserAllListings = async (userId) => {
     try {
-        console.log("getting user")
         const response = await apiClient.get(`/listings/${userId}`);
         return response.data;
     } catch (error) {

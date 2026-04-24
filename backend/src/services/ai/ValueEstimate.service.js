@@ -3,7 +3,9 @@ const { generateTextContent } = require("../../utils/geminiAi.util");
 
 const EstimateValue = async ({ brandName, size, clothingType, condition }) => {
     try {
-
+        if (process.env.NODE_ENV === "development") {
+            return { success: true, value: 1000 };
+        }
 
         // prompt from chatgpt to estimate the value of a clothing item based on brand, size, type and condition
         const prompt = `
@@ -62,9 +64,7 @@ No explanation.
 No text.
 `;
         const response = await generateTextContent(prompt);
-        const value = Number(response) || Number(response?.text);
-
-        return { success: true, value };
+        const value = Number(response) || Number(response?.text); return { success: true, value };
     } catch (err) {
         console.error("Error in EstimateValue:", err);
         throw err

@@ -17,7 +17,7 @@ export const useProfile = () => {
         setLoading(true)
         try {
             const response = await getUserAllListings(userId);
-            return response;
+            setUserAllListings(response?.listings)
         } catch (error) {
             console.error('Error fetching user listings:', error);
             throw error;
@@ -28,8 +28,8 @@ export const useProfile = () => {
     const fetchUserData = async (userId) => {
         setLoading(true)
         try {
-            const response = await getUserAllListings(userId);
-            return response;
+            const response = await getUserData(userId);
+            setProfileUser(response?.userData)
         } catch (error) {
             console.error('Error fetching user listings:', error);
             throw error;

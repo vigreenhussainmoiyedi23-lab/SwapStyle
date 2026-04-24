@@ -24,7 +24,7 @@ export const useListing = () => {
         setLoading(true);
         try {
             const data = await service.getListings(filters);
-            console.log('Fetched listings:', data);
+        
             setAllListings(data.listings);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -37,7 +37,7 @@ export const useListing = () => {
         setLoading(true);
         try {
             const data = await service.createListing(listingData);
-            console.log('Created listing:', data);
+  
             showToast("Listing created successfully!", "success");
             // Optionally, you can fetch the updated listings after creating a new one
             await fetchListings(filters);

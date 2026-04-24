@@ -10,7 +10,6 @@ function LoginPage() {
     try {
       const data = await GoogleLoginHandler({ credential });
       navigate("/listings");
-      console.log("Login successful", data);
     } catch (err) {
       console.error("Login failed", err?.message);
     }

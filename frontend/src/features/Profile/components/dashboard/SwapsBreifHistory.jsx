@@ -4,6 +4,7 @@ const SwapsBreifHistory = ({ user }) => {
   if (!user) {
     return null;
   }
+  console.log(user)
   const succesRate =
     ((user.totalSwaps - user.totalCanceled) / user.totalSwaps) * 100 || 100;
     if(!succesRate)console.log(succesRate,user.totalSwaps,user.totalCanceled)
