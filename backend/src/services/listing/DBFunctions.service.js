@@ -144,8 +144,7 @@ async function getAllListingsService(filters) {
         } else if (sortBy === "oldest") {
             sortOption.createdAt = 1;
         }
-        console.log("Query:", query, "Sort Option:", sortOption, "Skip:", skip);
-        const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).lean();
+    const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({path:"owner",select:"username profilePicture rating"}).lean();
         // const listings = await listingModel.find()
         return listings;
     } catch (error) {

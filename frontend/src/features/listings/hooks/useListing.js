@@ -80,15 +80,15 @@ export const useListing = () => {
             setLoading(false);
         }
     };
-    const createSwap = async ({offeredListingId, requestedListingId}) => {
+    const createSwap = async ({ offeredListingId, requestedListingId }) => {
         setLoading(true);
         try {
-            const data = await createSwapRequest({offeredListingId, requestedListingId});
-            console.log(data)
+            console.log(offeredListingId, requestedListingId)
+            const data = await createSwapRequest({ offeredListingId:offeredListingId, requestedListingId:requestedListingId });
             showToast("Swap created successfully!", "success");
-
         } catch (error) {
-            console.error('Error creating swap:', error);
+            showToast(error?.data?.message || error.message, "error");
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -100,6 +100,7 @@ export const useListing = () => {
         updateListing,
         getListingById,
         deleteListing,
+        createSwap,
 
         //States
         allListings,

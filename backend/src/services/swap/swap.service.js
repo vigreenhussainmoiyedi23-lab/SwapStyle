@@ -6,25 +6,25 @@ async function createSwapService(ownerListing, requesterListing, message, user) 
       if (!ownerListing || !requesterListing) {
          return { message: "Listing not found", success: false, swap: null }
       }
-      // the 
-      if (ownerListing.owner.toString() === user) {
+
+      if (ownerListing.owner._id.toString() === user) {
          return { message: "Cannot swap your own listing", success: false, swap: null }
       }
       // swaprequester should not be the owner 
-      if (requesterListing.owner.toString() !== user) {
+      if (requesterListing.owner._id.toString() !== user) {
          return { message: "Unauthorized", success: false, swap: null }
       }
       const swapRequestAlreadyExists = await swapModel.findOne({
          $or: [
             {
-               requester: user,
-               owner: ownerListing.owner,
+               requester: user?._id,
+               owner: ownerListing.owner || ownerListing.owner._id,
                ownerListing: ownerListing._id,
                requesterListing: requesterListing._id
             },
             {
-               requester: requesterListing.owner,
-               owner: ownerListing.owner,
+               requester: requesterListing.owner?._id,
+               owner: ownerListing.owner || ownerListing.owner._id,
                ownerListing: ownerListing._id,
                requesterListing: requesterListing._id
             }

@@ -1,0 +1,34 @@
+import React, { useContext } from "react";
+import Navbar from "../features/commonComponents/Navbar";
+import Footer from "../features/commonComponents/Footer";
+import Footbar from "../features/commonComponents/Footbar";
+import { AuthContext } from "../features/auth/auth.context";
+import useAuth from "../features/auth/hooks/useAuth";
+
+const ProtectedLayout = ({ children }) => {
+  const { user } = useAuth();
+  if (!user)
+    return (
+      <div className="fixed top-0 bottom-0 left-0 right-0 bg-brand-900 flex flex-col items-center justify-center">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl text-white playfair">
+          You need to be logged in
+        </h1>
+        <button className="mt-10 bg-brand-500 px-4 py-2 rounded-lg text-white source-code-pro">
+          Login Now
+        </button>
+        <button className="mt-10 bg-brand-500 px-4 py-2 rounded-lg text-white source-code-pro">
+          Join For Free
+        </button>
+      </div>
+    );
+  return (
+    <section className="w-full relative">
+      <Navbar user={user} />
+      {children}
+      <Footer />
+      {user && <Footbar user={user} />}
+    </section>
+  );
+};
+
+export default ProtectedLayout;

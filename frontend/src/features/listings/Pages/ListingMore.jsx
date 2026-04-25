@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useListing } from "../hooks/useListing";
 import MyListingsOverlay from "../components/ListingMore/MyListingsOverlay";
 import { AuthContext } from "../../auth/auth.context";
 import { useContext } from "react";
 import { useProfile } from "../../Profile/Hooks/useProfile";
+import { Edit2, Trash } from "lucide-react";
+import showToast from "../../../utils/Toastify.util";
 
 const ListingMore = () => {
   const { id } = useParams();
-  const { getListingById } = useListing();
+  const navigate = useNavigate();
+  const { getListingById, updateListing, deleteListing, createSwap } =
+    useListing();
   const [listing, setlisting] = useState({});
   useEffect(() => {
     async function fetchListing() {
@@ -20,31 +24,42 @@ const ListingMore = () => {
 
   if (!listing) return <div>Loading...</div>;
   const [isActive, setIsActive] = useState(false);
-
-  const { fetchUserAllListings,userAllListings } = useProfile();
+  const [myListings, setMyListings] = useState(null);
+  const { fetchUserAllListings } = useProfile();
   const { user } = useContext(AuthContext);
   useEffect(() => {
     if (!user) return;
     const fetch = async () => {
-      console.log("fetching user all listingsa");
-       await fetchUserAllListings(user?._id);
-       console.log(userAllListings)
+      const response = await fetchUserAllListings(user?._id);
+      setMyListings(response?.listings);
     };
     fetch();
   }, [user]);
+  if (!listing) return <div>Loading...</div>;
+  async function createSwapHandler(offerefListingId) {
+    console.log(offerefListingId, id);
+    try {
+      await createSwap( {offeredListingId:offerefListingId, requestedListingId:id });
+      navigate("/swaps");
+    } catch (error) {
+      showToast(error?.response?.data?.message || error.message, "error");
+      console.log(error);
+    }
+  }
+
   return (
     <div className="min-h-screen relative mt-[10vh] bg-[var(--color-brand-900)] text-white p-6">
       <div className="max-w-6xl relative mx-auto grid md:grid-cols-2 gap-8">
         {/* LEFT: IMAGES */}
         <div>
           <img
-            src={ listing.images?.[0]?.url}
+            src={listing.images?.[0]?.url}
             alt={listing.title}
             className="w-fit h-100 object-contain rounded-2xl border border-[var(--color-brand-700)]"
           />
 
           <div className="flex gap-3 mt-4 overflow-x-auto">
-            { listing.images?.map((img, i) => (
+            {listing.images?.map((img, i) => (
               <img
                 key={i}
                 src={img.url}
@@ -54,11 +69,14 @@ const ListingMore = () => {
             ))}
           </div>
         </div>
-        <MyListingsOverlay
-          listing={listing}
-          isActive={isActive}
-          setIsActive={setIsActive}
-        />
+        {myListings && (
+          <MyListingsOverlay
+            listing={myListings}
+            isActive={isActive}
+            setIsActive={setIsActive}
+            createSwapHandler={createSwapHandler}
+          />
+        )}
         {/* RIGHT: DETAILS */}
         <div className="bg-[var(--color-brand-700)] p-6 rounded-2xl shadow-lg">
           <h1 className="text-3xl font-bold mb-3">{listing.title}</h1>
@@ -67,7 +85,12 @@ const ListingMore = () => {
 
           {/* TAGS */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {[ listing.category,  listing.clothingType,  listing.size,  listing.condition].map((item, i) => (
+            {[
+              listing.category,
+              listing.clothingType,
+              listing.size,
+              listing.condition,
+            ].map((item, i) => (
               <span
                 key={i}
                 className="px-3 py-1 bg-[var(--color-brand-500)] rounded-full text-sm"
@@ -80,38 +103,74 @@ const ListingMore = () => {
           {/* DETAILS */}
           <div className="space-y-2 text-sm">
             <p>
-              <strong>Brand:</strong> { listing.brandName}
+              <strong>Brand:</strong> {listing.brandName}
             </p>
             <p>
-              <strong>Estimated Value:</strong> ₹{ listing.estimatedValue}
+              <strong>Estimated Value:</strong> ₹{listing.estimatedValue}
             </p>
             <p>
-              <strong>Location:</strong> { listing.Location?.city}, { listing.Location?.State}
+              <strong>Location:</strong> {listing.Location?.city},{" "}
+              {listing.Location?.State}
             </p>
           </div>
 
           {/* OWNER INFO */}
           <div className="mt-6 flex items-center gap-4 border-t border-[var(--color-brand-500)] pt-4">
             <img
-              src={ listing.owner?.profilePicture}
+              src={listing.owner?.profilePicture}
               alt="owner"
               className="w-12 h-12 rounded-full"
             />
             <div>
-              <p className="font-semibold">{ listing.owner?.username}</p>
+              <p className="font-semibold">{listing.owner?.username}</p>
               <p className="text-xs text-gray-300">
-                ⭐ { listing.owner?.rating} | Swaps: { listing.owner?.totalSwaps}
+                ⭐ {listing.owner?.rating} | Swaps: {listing.owner?.totalSwaps}
               </p>
             </div>
           </div>
 
           {/* ACTION BUTTON */}
-          <button
-            onClick={() => setIsActive(true)}
-            className="mt-6 w-full bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
-          >
-            Request Swap
-          </button>
+          {user && user?._id.toString() !== listing?.owner?._id.toString() && (
+            <button
+              onClick={() => setIsActive(true)}
+              className="mt-6 w-full bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
+            >
+              Request Swap
+            </button>
+          )}
+          {user && user?._id.toString() === listing?.owner?._id.toString() && (
+            <div className=" text-black z-10 flex-col gap-3 justify-between flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
+              <button
+                className="flex items-center bg-accent-500 rounded-2xl px-2 py-1  gap-2 justify-center"
+                onClick={() =>
+                  (window.location.href = `/listings/update/${id}`)
+                }
+              >
+                Update <Edit2 className="w-4" />
+              </button>
+              <button
+                onClick={(e) => {
+                  let isDeleted = window.confirm(
+                    "Are you sure you want to delete this listing?",
+                  );
+                  if (isDeleted) {
+                    deleteListing(id);
+                  }
+                }}
+                className="flex items-center bg-red-600 rounded-2xl px-2 py-1  gap-2 justify-center text-white "
+              >
+                Delete <Trash className="w-4" />
+              </button>
+            </div>
+          )}
+          {!user && (
+            <button
+              onClick={() => navigate("/login")}
+              className="mt-6 w-full bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
+            >
+              Login to Swap
+            </button>
+          )}
         </div>
       </div>
     </div>

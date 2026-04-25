@@ -18,6 +18,7 @@ export const useProfile = () => {
         try {
             const response = await getUserAllListings(userId);
             setUserAllListings(response?.listings)
+            return response
         } catch (error) {
             console.error('Error fetching user listings:', error);
             throw error;

@@ -9,6 +9,9 @@ async function createSwapHandler(req, res) {
     try {
         const { ownerListingId } = req.params
         const { requesterListingId, message } = req.body
+        if (!ownerListingId || !requesterListingId) {
+            return res.status(400).json({ message: "Both ownerListingId and requesterListingId are required", success: false })
+        }
         const user = req.userId
         const ownerListing = await getListingByIdService(ownerListingId)
         const requestedListing = await getListingByIdService(requesterListingId)

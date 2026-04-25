@@ -9,6 +9,8 @@ import CreateListing from "./features/listings/Pages/CreateListing";
 import UpdateListing from "./features/listings/Pages/UpdateListing";
 import ListingMore from "./features/listings/Pages/ListingMore";
 import Profile from "./features/Profile/Pages/Profile";
+import ProtectedLayout from "./Layouts/ProtectedLayout";
+import Swaps from "./features/swap/Pages/Swaps";
 
 const Approutes = () => {
   return (
@@ -33,9 +35,9 @@ const Approutes = () => {
         <Route
           path="/listings/update/:id"
           element={
-            <NormalLayout>
+            <ProtectedLayout>
               <UpdateListing />
-            </NormalLayout>
+            </ProtectedLayout>
           }
         />
         <Route
@@ -49,9 +51,9 @@ const Approutes = () => {
         <Route
           path="/createListing"
           element={
-            <NormalLayout>
+            <ProtectedLayout>
               <CreateListing />
-            </NormalLayout>
+            </ProtectedLayout>
           }
         />
         <Route
@@ -60,6 +62,14 @@ const Approutes = () => {
             <NormalLayout>
               <Profile />
             </NormalLayout>
+          }
+        />
+        <Route
+          path="/swaps"
+          element={
+            <ProtectedLayout>
+              <Swaps />
+            </ProtectedLayout>
           }
         />
         <Route path="/login" element={<LoginPage />} />

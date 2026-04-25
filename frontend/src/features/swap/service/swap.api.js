@@ -9,15 +9,19 @@ const apiClient = axios.create({
     withCredentials: true, // Include cookies for authentication
 });
 const createSwapRequest = async ({ offeredListingId, requestedListingId, message }) => {
+    if (!offeredListingId || !requestedListingId) {
+        throw new Error("Both offeredListingId and requestedListingId are required");
+    }
     try {
-        const response = await apiClient.post(`/${requestedListingId}`, { requesterListingId: offeredListingId, message });
+        console.log(offeredListingId, requestedListingId, message)
+        const response = await apiClient.post(`/${requestedListingId}`, { requesterListingId: offeredListingId, message: message || "" });
         return response.data;
     } catch (error) {
         console.error('Error creating swap request:', error);
-        throw error;
+        throw error.response;
     }
 };
 
-export  {
+export {
     createSwapRequest,
 };

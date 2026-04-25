@@ -43,9 +43,7 @@
   animation: scroll 20s linear infinite; /* Adjust time for speed */
 }
 
-.scroll-content:hover {
-  animation-play-state: paused; /* Optional: pause on hover */
-}
+
 
 @keyframes scroll {
   0% { transform: translateX(0); }
@@ -56,9 +54,7 @@
   padding: 0 5vw;
   /* font-size: 4rem; */
   color: #ffffff2c;
+  pointer-events: none;
 }
 
-.item:hover {
-  color:#ffffff;
-}
 
