@@ -5,6 +5,7 @@ import FiltersSidebar from "../components/ui/FilterSidebar.jsx";
 import ListingHeader from "../components/ui/ListingHeader.jsx";
 import ListingGrid from "../components/ui/ListingGrid.jsx";
 import { useListing } from "../hooks/useListing.js";
+import { Loader2 } from "lucide-react";
 
 const Listings = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -12,7 +13,8 @@ const Listings = () => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [sortBy, setSortBy] = useState("newest");
-  const { fetchListings, allListings } = useListing();
+  const { fetchListings, allListings, loading } = useListing();
+  const [search, setSearch] = useState("");
   useEffect(() => {
     let filter = {
       category: selectedCategory,
@@ -20,6 +22,7 @@ const Listings = () => {
       sizes: selectedSizes,
       conditions: selectedConditions,
       sortBy: sortBy,
+      search: search,
     };
     fetchListings(filter);
   }, [
@@ -28,6 +31,7 @@ const Listings = () => {
     selectedTypes,
     selectedSizes,
     selectedConditions,
+    search,
   ]);
 
   // Sample data (later replace with API or context)
@@ -102,10 +106,15 @@ const Listings = () => {
         <ListingHeader
           sortBy={sortBy}
           setSortBy={setSortBy}
+          search={search}
+          setSearch={setSearch}
           itemCount={allListings.length}
         />
 
-        <ListingGrid listings={allListings} />
+        {!loading && <ListingGrid listings={allListings} />}
+        {loading && <div className="flex items-center justify-center text-6xl h-screen w-full">
+          Loading Lisitings...
+          </div>}
       </div>
     </section>
   );

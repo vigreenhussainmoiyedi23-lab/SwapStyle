@@ -34,31 +34,60 @@ async function createSwapHandler(req, res) {
 
 async function getUserSwapsHandler(req, res) {
     try {
-
         const user = req.userId
-        const { type } = req.query
-        if (type && type !== "sent" && type !== "received") {
-            return res.status(400).json({
-                message: "Invalid type",
-                success: false
-            })
-        }
-        let query = {
-            $or: [{ requester: user }, { owner: user }]
-        }
-
+        const { filters } = req.body
+        const { status, shipment_type, type, page, limit } = filters || {}
+        let query = {}
         if (type === "sent") {
-            query = { requester: user }
+            query.requester = user
+        } else if (type === "received") {
+            query.owner = user
+        } else {
+            query = {
+                $or: [
+                    { requester: user },
+                    { owner: user }
+                ]
+            }
         }
-
-        if (type === "received") {
-            query = { owner: user }
+        if (status !== "all") {
+            query.status = status
         }
-
-        const swaps = await swapModel.find(query).lean()
-
+        if (shipment_type !== "all") {
+            query.shipment_type = shipment_type
+        }
+        const swaps = await swapModel.find(query).populate([
+            {
+                path: "requester",
+                select: "rating profilePicture _id username email"
+            },
+            {
+                path: "owner",
+                select: "rating profilePicture _id username email"
+            },
+            {
+                path: "requesterListing"
+            },
+            {
+                path: "ownerListing"
+            }
+        ]).skip((page - 1) * limit).limit(limit).lean()
+        let totalSwaps = await swapModel.countDocuments(query)
+        let totalPages = Math.ceil(totalSwaps / limit)
+        let swapWithRoles = swaps.map(swap => {
+            let role = null
+            if (swap.requester._id.toString() === user) {
+                role = "requester"
+            }
+            if (swap.owner._id.toString() === user) {
+                role = "owner"
+            }
+            return { ...swap, role }
+        })
         res.status(200).json({
-            swaps,
+            swaps: swapWithRoles,
+            totalSwaps,
+            totalPages,
             message: "Swaps fetched",
             success: true
         })

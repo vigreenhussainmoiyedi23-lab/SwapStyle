@@ -7,11 +7,10 @@ import { useListing } from "../../hooks/useListing";
 const ProductCard = ({ item }) => {
   const { user } = useAuth();
   const { deleteListing } = useListing();
-  console.log(item);
   return (
     <Link
       to={`/listings/more/${item._id}`}
-      className="group bg-white/5 backdrop-blur-3xl text-accent-300 rounded-3xl overflow-hidden border border-transparent hover:border-accent-400/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      className="group bg-white/5 h-full w-full backdrop-blur-3xl text-accent-300 rounded-3xl overflow-hidden border border-transparent hover:border-accent-400/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
     >
       <div className="flex items-center gap-2 px-1 mb-2">
         <img

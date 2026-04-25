@@ -4,6 +4,7 @@ import Footer from "../features/commonComponents/Footer";
 import Footbar from "../features/commonComponents/Footbar";
 import { AuthContext } from "../features/auth/auth.context";
 import useAuth from "../features/auth/hooks/useAuth";
+import { Link } from "react-router-dom";
 
 const ProtectedLayout = ({ children }) => {
   const { user } = useAuth();
@@ -13,12 +14,12 @@ const ProtectedLayout = ({ children }) => {
         <h1 className="text-3xl md:text-4xl lg:text-5xl text-white playfair">
           You need to be logged in
         </h1>
-        <button className="mt-10 bg-brand-500 px-4 py-2 rounded-lg text-white source-code-pro">
+        <Link to='/login' className="mt-10 bg-brand-500 px-4 py-2 rounded-lg text-white source-code-pro">
           Login Now
-        </button>
-        <button className="mt-10 bg-brand-500 px-4 py-2 rounded-lg text-white source-code-pro">
+        </Link>
+        <Link to='/register' className="mt-10 bg-brand-500 px-4 py-2 rounded-lg text-white source-code-pro">
           Join For Free
-        </button>
+        </Link>
       </div>
     );
   return (

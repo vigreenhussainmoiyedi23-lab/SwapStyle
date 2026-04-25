@@ -3,12 +3,12 @@ const mongoose = require("mongoose")
 
 const swapSchema = new mongoose.Schema({
   // requester offers a listing
-  requester: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  requesterListing: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+  requester: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  requesterListing: { type: mongoose.Schema.Types.ObjectId, ref: "listing" },
 
   // owner has a listing for which requester requests
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  ownerListing: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  ownerListing: { type: mongoose.Schema.Types.ObjectId, ref: "listing" },
 
   message: String,
   status: {

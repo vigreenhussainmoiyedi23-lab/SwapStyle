@@ -112,7 +112,7 @@ async function getListingByIdService(listingId) {
  */
 async function getAllListingsService(filters) {
     try {
-        const { category, types, sizes, conditions, sortBy, page } = filters
+        const { category, types, sizes, conditions, sortBy, page, search } = filters
         let query = {};
         let skip = 0;
         // Category filter
@@ -144,7 +144,15 @@ async function getAllListingsService(filters) {
         } else if (sortBy === "oldest") {
             sortOption.createdAt = 1;
         }
-    const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({path:"owner",select:"username profilePicture rating"}).lean();
+        if (search && search != "") {
+            query.title = {
+                $regex: search,
+                $options: "i"
+            }
+        }
+
+        console.log("Query:", query, "Sort:", sortOption, "Skip:", skip)
+        const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
         // const listings = await listingModel.find()
         return listings;
     } catch (error) {

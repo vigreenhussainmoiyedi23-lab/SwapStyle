@@ -21,7 +21,16 @@ const createSwapRequest = async ({ offeredListingId, requestedListingId, message
         throw error.response;
     }
 };
-
+const fetchSwapRequests = async ({  filters }) => {
+    try {
+        const response = await apiClient.post(`/`, { filters });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching swap requests:', error);
+        throw error.response;
+    }
+}
 export {
     createSwapRequest,
+    fetchSwapRequests,
 };

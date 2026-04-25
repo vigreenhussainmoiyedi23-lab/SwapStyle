@@ -2,18 +2,17 @@ const express = require("express")
 const swapRouter = express.Router()
 
 // Middlewares & Controllers ⚙️
-const { validate } = require("../middlewares/Validators/validate")
 const { isAuthenticated } = require("../middlewares/protectedRoutes.middleware")
 
 const {
-    createSwapHandler,
-    getUserSwapsHandler,
-    getSingleSwapHandler,
-    acceptSwapHandler,
-    rejectSwapHandler,
-    cancelSwapHandler,
-    completeSwapHandler,
-    shipmentDetailsHandler
+  createSwapHandler,
+  getUserSwapsHandler,
+  getSingleSwapHandler,
+  acceptSwapHandler,
+  rejectSwapHandler,
+  cancelSwapHandler,
+  completeSwapHandler,
+  shipmentDetailsHandler
 } = require("../controllers/swap.controller")
 // @req.userId contains the current user ID
 
@@ -30,9 +29,9 @@ swapRouter.post("/:ownerListingId", isAuthenticated, createSwapHandler)
 
 /*@route- GET - /api/swaps
   @description - Get all swaps of logged-in user - Includes both sent & received swaps
-  @query  type?: "sent" | "received"
+  @body filter:{status,shippmentType} 
   @return  swaps: []*/
-swapRouter.get("/", isAuthenticated, getUserSwapsHandler)
+swapRouter.post("/", isAuthenticated, getUserSwapsHandler)
 
 
 /* @route GET - /api/swaps/:swapId
