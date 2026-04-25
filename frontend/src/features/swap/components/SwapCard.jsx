@@ -1,7 +1,10 @@
 import React from "react";
 import { ArrowRightLeft } from "lucide-react";
 import ProductCard from "../../listings/components/ui/ProductCard";
-const SwapCard = ({ swap, type = "incoming" }) => {
+const SwapCard = ({ swap }) => {
+  let role = swap.role;
+  let status = swap.status;
+
   const diffrence = Math.abs(
     swap.ownerListing.estimatedValue - swap.requesterListing.estimatedValue,
   );
@@ -9,11 +12,11 @@ const SwapCard = ({ swap, type = "incoming" }) => {
     <div className="bg-brand-700 rounded-2xl p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
       {/* Profit / Loss */}
       <div className="mb-2">
-        {diffrence == 0 ? (
+        {diffrence < 100 ? (
           <span className="text-sm px-3 py-1 rounded-full bg-green-600">
             Fair Swap
           </span>
-        ) : swap.role == "owner" ? (
+        ) : role === "owner" ? (
           <span className="text-sm px-3 py-1 rounded-full bg-red-600">
             Loss : {diffrence}
           </span>
@@ -26,10 +29,13 @@ const SwapCard = ({ swap, type = "incoming" }) => {
 
       {/* Listings */}
       <div className=" items-center flex justify-between gap-2">
-        <ListingCard item={swap.ownerListing} />
+        <ListingCard item={swap.ownerListing} isOwner={role === "owner"} />
         {/* Swap Icon */}
         <ArrowRightLeft className="text-accent-400 w-1/5 h-12" />
-        <ListingCard item={swap.requesterListing} />
+        <ListingCard
+          item={swap.requesterListing}
+          isOwner={role === "requester"}
+        />
       </div>
 
       {/* User + Message */}
@@ -39,8 +45,8 @@ const SwapCard = ({ swap, type = "incoming" }) => {
       </div>
 
       {/* CTA Buttons */}
-      <div className="mt-4 flex gap-2">
-        {type === "incoming" && (
+      <div className="mt-4 flex gap-2 items-center justify-center">
+        {role === "owner" && status === "pending" && (
           <>
             <button className="bg-accent-500 px-3 py-2 rounded-lg w-full">
               Accept
@@ -51,13 +57,13 @@ const SwapCard = ({ swap, type = "incoming" }) => {
           </>
         )}
 
-        {type === "sent" && (
-          <button className="bg-yellow-500 px-3 py-2 rounded-lg w-full">
+        {role === "requester" && status === "pending" && (
+          <button className="bg-red-500 px-3 py-2 rounded-lg w-1/2 ">
             Cancel Request
           </button>
         )}
 
-        {type === "active" && (
+        {status === "active" && (
           <>
             <button className="bg-accent-500 px-3 py-2 rounded-lg w-full">
               Chat
@@ -68,20 +74,20 @@ const SwapCard = ({ swap, type = "incoming" }) => {
           </>
         )}
 
-        {type === "completed" && (
+        {status === "completed" && (
           <span className="text-green-400 text-sm">Completed</span>
         )}
 
-        {type === "declined" && (
+        {(status === "rejected" || status === "cancelled") && (
           <span className="text-red-400 text-sm">Declined</span>
         )}
       </div>
     </div>
   );
 };
-function ListingCard({ item }) {
+function ListingCard({ item, isOwner }) {
   return (
-    <div className="w-full lg:h-75 lg:w-[48%] bg-accent-500 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 flex flex-col lg:flex-row">
+    <div className="w-full relative lg:h-75 lg:w-[48%] bg-accent-500 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 flex flex-col lg:flex-row">
       {/* Image */}
       <div className="lg:w-1/2 h-52 lg:h-auto overflow-hidden">
         <img
@@ -90,7 +96,11 @@ function ListingCard({ item }) {
           className="w-full h-full object-cover hover:scale-105 transition duration-300"
         />
       </div>
-
+      {isOwner && (
+        <p className="top-1 left-1 rounded-2xl px-3 py-1 absolute bg-brand-900 text-accent-500">
+          Your Listing
+        </p>
+      )}
       {/* Content */}
       <div className="flex flex-col justify-between p-4 lg:w-1/2">
         {/* Top Section */}

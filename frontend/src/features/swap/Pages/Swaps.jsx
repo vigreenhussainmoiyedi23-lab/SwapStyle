@@ -43,9 +43,7 @@ const Swaps = () => {
       <div className="flex flex-col  gap-4 px-3 py-2  md:ml-80">
         {userAllSwaps &&
           userAllSwaps.swaps.map((swap) => {
-            let role = swap.role;
-            let status = swap.status;
-
+      
             return <SwapCard swap={swap} />;
           })}
       </div>
