@@ -21,7 +21,7 @@ const createSwapRequest = async ({ offeredListingId, requestedListingId, message
         throw error.response;
     }
 };
-const fetchSwapRequests = async ({  filters }) => {
+const fetchSwapRequests = async ({ filters }) => {
     try {
         const response = await apiClient.post(`/`, { filters });
         return response.data;
@@ -30,7 +30,67 @@ const fetchSwapRequests = async ({  filters }) => {
         throw error.response;
     }
 }
+const acceptSwapRequest = async (swapId) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/accept`);
+        return response.data;
+    } catch (error) {
+        console.error('Error accepting swap request:', error);
+        throw error.response;
+    }
+};
+const rejectSwapRequest = async (swapId) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/reject`);
+        return response.data;
+    } catch (error) {
+        console.error('Error rejecting swap request:', error);
+        throw error.response;
+    }
+};
+const cancelSwapRequest = async (swapId) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/cancel`);
+        return response.data;
+    } catch (error) {
+        console.error('Error canceling swap request:', error);
+        throw error.response;
+    }
+};
+const completeSwapRequest = async (swapId) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/complete`);
+        return response.data;
+    } catch (error) {
+        console.error('Error completeing swap request:', error);
+        throw error.response;
+    }
+};
+const shipmentUpdateSwapRequest = async (swapId, shipmentDetails) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/shipment`, { ...shipmentDetails });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating shipment details for swap request:', error);
+        throw error.response;
+    }
+};
+const changeShipmentTypeSwapRequest = async (swapId, changeTo) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/shipmentType`, { changeTo });
+        return response.data;
+    } catch (error) {
+        console.error('Error changing shipment type for swap request:', error);
+        throw error.response;
+    }
+};
 export {
     createSwapRequest,
     fetchSwapRequests,
+    acceptSwapRequest,
+    rejectSwapRequest,
+    cancelSwapRequest,
+    completeSwapRequest,
+    shipmentUpdateSwapRequest,
+    changeShipmentTypeSwapRequest
 };

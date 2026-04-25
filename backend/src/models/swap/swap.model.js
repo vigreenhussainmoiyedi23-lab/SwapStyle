@@ -21,23 +21,30 @@ const swapSchema = new mongoose.Schema({
       "cancelled"
     ]
   },
-  shipmesnts: [{
+  shipments: [{
     from: {
       type: mongoose.Schema.Types.ObjectId, ref: "User"
     },
     courier: String,
     trackingId: String,
   }],
-  shippingType: {
+  shipment_type: {
     type: String,
-    enum: ["local_swap", "shipping"]
+    enum: ["local_swap", "shipping"],
+    default: "shipping"
   },
-
   completedBy: {
     requester: { type: Boolean, default: false },
     owner: { type: Boolean, default: false }
   },
-
+  shippedBy: {
+    requester: { type: Boolean, default: false },
+    owner: { type: Boolean, default: false }
+  },
+  changeHistory: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ChangeHistory"
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model("Swap", swapSchema);

@@ -1,7 +1,12 @@
 import { X } from "lucide-react";
 import ListingHorizontalCard from "./ListingHorizontalCard";
 
-const MyListingsOverlay = ({ isActive, setIsActive, listing,createSwapHandler }) => {
+const MyListingsOverlay = ({
+  isActive,
+  setIsActive,
+  listing,
+  createSwapHandler,
+}) => {
   return (
     <div
       style={{ display: isActive ? "flex" : "none" }}
@@ -13,17 +18,24 @@ const MyListingsOverlay = ({ isActive, setIsActive, listing,createSwapHandler })
       >
         <X className="w-10 h-10 bg-accent-500 rounded-full " />
       </button>
-      <div className="flex w-full h-full md:flex-row flex-col items-center justify-center gap-4">
-        
+      <div className="flex w-full min-h-screen md:flex-row flex-col items-center justify-center gap-4">
         <div className=" overflow-auto h-full w-full ">
           <h1 className="text-3xl md:text-4xl lg:text-5xl text-center font-bold text-white playfair mb-10">
             Select Your Listing to Swap
           </h1>
-          {listing &&
-            listing.length > 0 &&
-            listing.map((l) => {
-              return <ListingHorizontalCard listing={l} createSwapHandler={createSwapHandler} key={l._id}/>;
-            })}
+          <div className="min-h-screen flex flex-col gap-4">
+            {listing &&
+              listing.length > 0 &&
+              listing.map((l) => {
+                return (
+                  <ListingHorizontalCard
+                    listing={l}
+                    createSwapHandler={createSwapHandler}
+                    key={l._id}
+                  />
+                );
+              })}
+          </div>
         </div>
       </div>
     </div>

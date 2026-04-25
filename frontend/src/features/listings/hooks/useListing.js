@@ -83,7 +83,6 @@ export const useListing = () => {
     const createSwap = async ({ offeredListingId, requestedListingId }) => {
         setLoading(true);
         try {
-            console.log(offeredListingId, requestedListingId)
             const data = await createSwapRequest({ offeredListingId:offeredListingId, requestedListingId:requestedListingId });
             showToast("Swap created successfully!", "success");
         } catch (error) {

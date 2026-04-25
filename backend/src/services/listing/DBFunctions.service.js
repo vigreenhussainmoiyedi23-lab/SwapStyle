@@ -113,7 +113,10 @@ async function getListingByIdService(listingId) {
 async function getAllListingsService(filters) {
     try {
         const { category, types, sizes, conditions, sortBy, page, search } = filters
-        let query = {};
+        let query = {
+            isAvailable: true,
+            isLocked: false
+        };
         let skip = 0;
         // Category filter
         if (category && category !== "All") {

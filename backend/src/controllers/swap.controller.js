@@ -1,4 +1,5 @@
 const listingModel = require("../models/listing.model");
+const changeHistoryModel = require("../models/swap/changeHistory.model");
 const swapModel = require("../models/swap/swap.model");
 const { getListingByIdService } = require("../services/listing/DBFunctions.service");
 const { createSwapService } = require("../services/swap/swap.service");
@@ -56,6 +57,7 @@ async function getUserSwapsHandler(req, res) {
         if (shipment_type !== "all") {
             query.shipment_type = shipment_type
         }
+        console.log(filters, query)
         const swaps = await swapModel.find(query).populate([
             {
                 path: "requester",
@@ -102,7 +104,6 @@ async function getUserSwapsHandler(req, res) {
 }
 
 
-
 async function getSingleSwapHandler(req, res) {
     try {
         const { swapId } = req.params
@@ -130,6 +131,10 @@ async function getSingleSwapHandler(req, res) {
     }
 }
 
+//Swap status transition flow:
+// pending -> accepted -> completed
+// pending -> rejected
+// pending -> cancelled
 
 async function acceptSwapHandler(req, res) {
     try {
@@ -138,9 +143,8 @@ async function acceptSwapHandler(req, res) {
         const swap = await getSwapByIdService(swapId)
 
         ValidateSwap(swap, user)
-
-        await validateSwapState(swap, "pending")
-        await validateUserRole(swap, user, "owner")
+        validateSwapState(swap, "pending")
+        validateUserRole(swap, user, "owner")
 
         swap.status = "accepted"
         await swap.save()
@@ -152,7 +156,7 @@ async function acceptSwapHandler(req, res) {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({
+        res.status(error.status || 500).json({
             message: error.message || "Error accepting swap",
             success: false
         })
@@ -220,14 +224,17 @@ async function completeSwapHandler(req, res) {
         validateSwapState(swap, "accepted")
 
         let hasShipped = swap.shipments.find(s => s.from.toString() === user)
-        if (!hasShipped) {
+        if (!hasShipped && swap.shipment_type === "shipping") {
             return res.status(400).json({ message: "First you should ship", success: false })
         }
         const role = swap.owner.toString() === user ? "owner" : "requester"
 
         swap.completedBy[role] = true
         await swap.save()
-
+        if (swap.completedBy.owner && swap.completedBy.requester) {
+            swap.status = "completed"
+            await swap.save()
+        }
         res.status(200).json({
             message: "Swap completed",
             success: true
@@ -241,15 +248,14 @@ async function completeSwapHandler(req, res) {
         })
     }
 }
-
-
-
 async function shipmentDetailsHandler(req, res) {
     try {
         const { swapId } = req.params
         const user = req.userId
         const { courier, trackingId } = req.body
-
+        if (swap.shipment_type === "local_swap") {
+            return res.status(400).json({ message: "No shipment details needed for local swap", success: false })
+        }
         const swap = await getSwapByIdService(swapId)
         ValidateSwap(swap, user)
         validateSwapState(swap, "accepted")
@@ -260,9 +266,13 @@ async function shipmentDetailsHandler(req, res) {
             swap.shipments = []
         }
         if (isShipmentExist) {
-            return res.status(400).json({
-                message: "Shipment already added",
-                success: false
+            isShipmentExist.courier = courier
+            isShipmentExist.trackingId = trackingId
+            swap.shipments = swap.shipments.map(s => s.from.toString() === user ? isShipmentExist : s)
+            await swap.save()
+            return res.status(200).json({
+                message: "Shipment details updated",
+                success: true
             })
         }
         swap.shipments.push({
@@ -277,11 +287,45 @@ async function shipmentDetailsHandler(req, res) {
             message: "Shipment details updated",
             success: true
         })
-
     } catch (error) {
         if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
         res.status(500).json({
             message: "Error updating shipment details for swap",
+            success: false
+        })
+    }
+}
+async function changeShipmentTypeHandler(req, res) {
+    try {
+        const { swapId } = req.params
+        const user = req.userId
+        const { changeTo } = req.body
+        if (!["local_swap", "shipping"].includes(changeTo)) {
+            return res.status(400).json({ message: "Invalid shipment type", success: false })
+        }
+
+        const swap = await getSwapByIdService(swapId)
+        ValidateSwap(swap, user)
+        validateSwapState(swap, "accepted")
+        swap.shipment_type = changeTo
+        const changeHistory = await changeHistoryModel.create({
+            changedBy: user,
+            changeType: "shipment_type_update",
+            previousValue: swap.shipment_type,
+            newValue: changeTo
+        })
+        swap.changeHistory.push(changeHistory._id)
+
+        await swap.save()
+
+        res.status(200).json({
+            message: "Shipment Type updated",
+            success: true
+        })
+    } catch (error) {
+        if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
+        res.status(500).json({
+            message: "Error updating shipment Type for swap",
             success: false
         })
     }
@@ -296,7 +340,8 @@ module.exports = {
     rejectSwapHandler,
     cancelSwapHandler,
     completeSwapHandler,
-    shipmentDetailsHandler
+    shipmentDetailsHandler,
+    changeShipmentTypeHandler
 }
 
 /*  Read the comments for better understanding of my 

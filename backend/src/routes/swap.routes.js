@@ -12,7 +12,8 @@ const {
   rejectSwapHandler,
   cancelSwapHandler,
   completeSwapHandler,
-  shipmentDetailsHandler
+  shipmentDetailsHandler,
+  changeShipmentTypeHandler
 } = require("../controllers/swap.controller")
 // @req.userId contains the current user ID
 
@@ -68,8 +69,19 @@ swapRouter.patch("/:swapId/complete", isAuthenticated, completeSwapHandler)
 /*@route PATCH /api/swaps/:swapId/shipment
 @description - Update shipment details (only requester)
 @params swapId: ObjectId
+@body { courier, trackingId } 
 @return message: "Shipment details updated"
 */
 swapRouter.patch("/:swapId/shipment", isAuthenticated, shipmentDetailsHandler)
+
+/*
+@route PATCH /api/swaps/:swapId/shipment
+@description - Update shipment details (only requester)
+@params swapId: ObjectId
+@body { changeTo } 
+@return message: "Shipment details updated"
+*/
+swapRouter.patch("/:swapId/shipmentType", isAuthenticated, changeShipmentTypeHandler)
+
 
 module.exports = swapRouter

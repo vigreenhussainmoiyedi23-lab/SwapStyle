@@ -4,10 +4,8 @@ const SwapsBreifHistory = ({ user }) => {
   if (!user) {
     return null;
   }
-  console.log(user)
   const succesRate =
     ((user.totalSwaps - user.totalCanceled) / user.totalSwaps) * 100 || 100;
-    if(!succesRate)console.log(succesRate,user.totalSwaps,user.totalCanceled)
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Stats */}

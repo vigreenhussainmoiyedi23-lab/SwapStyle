@@ -78,7 +78,10 @@ const listingSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-
+    isLocked: {
+        type: Boolean,
+        default: false
+    }
 
 }, { timestamps: true });
 

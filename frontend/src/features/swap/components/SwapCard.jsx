@@ -1,10 +1,19 @@
 import React from "react";
 import { ArrowRightLeft } from "lucide-react";
 import ProductCard from "../../listings/components/ui/ProductCard";
+import useSwap from "../hooks/useSwap";
 const SwapCard = ({ swap }) => {
   let role = swap.role;
   let status = swap.status;
-
+  const {
+    acceptSwapHandler,
+    rejectSwapHandler,
+    cancelSwapHandler,
+    completeSwapHandler,
+    shipmentDetailsHandler,
+    changeShipmentTypeSwapRequestHandler,
+    loading,
+  } = useSwap();
   const diffrence = Math.abs(
     swap.ownerListing.estimatedValue - swap.requesterListing.estimatedValue,
   );
@@ -45,32 +54,67 @@ const SwapCard = ({ swap }) => {
       </div>
 
       {/* CTA Buttons */}
-      <div className="mt-4 flex gap-2 items-center justify-center">
+      <div className="mt-4 flex gap-2 items-center justify-center lg:flex-row flex-col">
         {role === "owner" && status === "pending" && (
           <>
-            <button className="bg-accent-500 px-3 py-2 rounded-lg w-full">
+            <button
+              onClick={() => acceptSwapHandler(swap._id)}
+              className="bg-accent-500 px-3 py-2 rounded-lg w-full"
+            >
               Accept
             </button>
-            <button className="bg-red-600 px-3 py-2 rounded-lg w-full">
+            <button
+              onClick={() => rejectSwapHandler(swap._id)}
+              className="bg-red-600 px-3 py-2 rounded-lg w-full"
+            >
               Reject
             </button>
           </>
         )}
 
         {role === "requester" && status === "pending" && (
-          <button className="bg-red-500 px-3 py-2 rounded-lg w-1/2 ">
+          <button
+            onClick={() => cancelSwapHandler(swap._id)}
+            className="bg-red-500 px-3 py-2 rounded-lg w-1/2 "
+          >
             Cancel Request
           </button>
         )}
 
-        {status === "active" && (
+        {status === "accepted" && (
           <>
             <button className="bg-accent-500 px-3 py-2 rounded-lg w-full">
               Chat
             </button>
-            <button className="bg-brand-500 px-3 py-2 rounded-lg w-full">
-              Add Shipping
-            </button>
+            {swap.shipment_type == "shipping" && (
+              <button className="bg-brand-500 px-3 py-2 rounded-lg w-full">
+                Add Shipping
+              </button>
+            )}
+            <div className="px-3 py-2 mt-5 lg:mt-0 rounded-lg w-full flex items-center  relative  flex-col">
+              <label
+                className=" text-gray-500 px-3 py-2 rounded-lg absolute -top-6 overflow-hidden h-fit whitespace-nowrap"
+                htmlFor="shipmentType"
+              >
+                Change Shipping Type
+              </label>
+              <select
+                onChange={(e) => {
+                  if (loading) return alert("Please wait");
+                  changeShipmentTypeSwapRequestHandler(
+                    swap._id,
+                    e.target.value,
+                  );
+                }}
+                value={swap.shipment_type}
+                name="shipmentType"
+                id="shipmentType"
+                className="outline-none w-full text-center h-full bg-brand-900 rounded-lg px-2 py-1 flex items-center justify-center"
+              >
+                <option value="local_swap">Local Swap</option>
+                <option value="shipping">Shipping</option>
+              </select>
+            </div>
           </>
         )}
 

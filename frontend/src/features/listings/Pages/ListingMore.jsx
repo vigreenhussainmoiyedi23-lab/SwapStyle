@@ -37,7 +37,6 @@ const ListingMore = () => {
   }, [user]);
   if (!listing) return <div>Loading...</div>;
   async function createSwapHandler(offerefListingId) {
-    console.log(offerefListingId, id);
     try {
       await createSwap( {offeredListingId:offerefListingId, requestedListingId:id });
       navigate("/swaps");
