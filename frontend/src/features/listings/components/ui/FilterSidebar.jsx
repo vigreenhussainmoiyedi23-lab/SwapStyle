@@ -16,11 +16,38 @@ const FiltersSidebar = ({
   SIZES,
   CONDITIONS,
   toggleArray,
+  coordinates, // {lat,lng}
+  setCoordinates,
 }) => {
+  const handleUseLocation = () => {
+    console.log("yeh chal gaya")
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        setCoordinates({ lat, lng }); // ✅ THIS is what you need
+      },
+      (error) => {
+        console.error(error);
+        alert("Location permission denied");
+      },
+    );
+  };
   return (
     <div className="hidden md:flex fixed left-0 top-[10vh] w-80 h-[90dvh] bg-brand-900 overflow-y-auto border-r border-brand-700 p-6 flex-col">
       <h2 className="text-2xl font-semibold mb-8 text-brand-100">Filters</h2>
-
+      <button
+        className="bg-accent-500 mb-3 active:scale-96 text-brand-900 px-3 py-2 rounded-lg"
+        onClick={handleUseLocation}
+      >
+        Find Nearby Listings
+      </button>
       {/* Category */}
       <div className="mb-8">
         <h3 className="font-medium mb-3">Category</h3>
@@ -57,11 +84,16 @@ const FiltersSidebar = ({
           <h3 className="font-medium mb-3">Type</h3>
           <div className="space-y-2">
             {CLOTHING_TYPES[selectedCategory].map((type) => (
-              <label key={type} className="flex items-center gap-2 cursor-pointer text-sm">
+              <label
+                key={type}
+                className="flex items-center gap-2 cursor-pointer text-sm"
+              >
                 <input
                   type="checkbox"
                   checked={selectedTypes.includes(type)}
-                  onChange={() => toggleArray(selectedTypes, setSelectedTypes, type)}
+                  onChange={() =>
+                    toggleArray(selectedTypes, setSelectedTypes, type)
+                  }
                   className="accent-accent-400"
                 />
                 {type}
@@ -96,11 +128,16 @@ const FiltersSidebar = ({
         <h3 className="font-medium mb-3">Condition</h3>
         <div className="space-y-2">
           {CONDITIONS.map((cond) => (
-            <label key={cond} className="flex items-center gap-2 cursor-pointer capitalize text-sm">
+            <label
+              key={cond}
+              className="flex items-center gap-2 cursor-pointer capitalize text-sm"
+            >
               <input
                 type="checkbox"
                 checked={selectedConditions.includes(cond)}
-                onChange={() => toggleArray(selectedConditions, setSelectedConditions, cond)}
+                onChange={() =>
+                  toggleArray(selectedConditions, setSelectedConditions, cond)
+                }
                 className="accent-accent-400"
               />
               {cond.replace("_", " ")}

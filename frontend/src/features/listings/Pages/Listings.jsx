@@ -11,8 +11,8 @@ const Listings = () => {
   const { fetchListings, allListings, loading } = useListing();
 
   const [coordinates, setCoordinates] = useState({
-    lat: 0,
-    lng: 0,
+    lat: null,
+    lng: null,
   });
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -28,6 +28,8 @@ const Listings = () => {
       conditions: selectedConditions,
       sortBy: sortBy,
       search: search,
+      lat: coordinates.lat,
+      lng: coordinates.lng
     };
     fetchListings(filter);
   }, [
@@ -37,6 +39,7 @@ const Listings = () => {
     selectedSizes,
     selectedConditions,
     search,
+    coordinates
   ]);
 
   const clearAllFilters = () => {
@@ -44,6 +47,8 @@ const Listings = () => {
     setSelectedTypes([]);
     setSelectedSizes([]);
     setSelectedConditions([]);
+    setSearch("");
+    setCoordinates({ lat: null, lng: null });
   };
 
   const toggleArray = (arr, setArr, value) => {
@@ -72,6 +77,8 @@ const Listings = () => {
         SIZES={SIZES}
         CONDITIONS={CONDITIONS}
         toggleArray={toggleArray}
+        coordinates={coordinates}
+        setCoordinates={setCoordinates}
       />
 
       {/* Main Content Area */}

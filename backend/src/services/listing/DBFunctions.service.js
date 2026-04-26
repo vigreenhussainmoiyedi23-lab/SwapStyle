@@ -123,14 +123,17 @@ async function getAllListingsService(filters) {
             query.category = category;
         }
         if (lat && lng) {
-            query.location.geo = {
-                $near: {
-                    $geometry: {
-                        type: "Point",
-                        coordinates: [parseFloat(lng), parseFloat(lat)], // ⚠️ [lng, lat]
+            query = {
+                "location.geo": {
+
+                    $near: {
+                        $geometry: {
+                            type: "Point",
+                            coordinates: [parseFloat(lng), parseFloat(lat)], // ⚠️ [lng, lat]
+                        },
+                        $maxDistance: 10 * 1000, // meters (10km = 10000)
                     },
-                    $maxDistance: radius * 1000, // meters (10km = 10000)
-                },
+                }
             }
         }
         // Types filter (match any)
@@ -163,7 +166,6 @@ async function getAllListingsService(filters) {
                 $options: "i"
             }
         }
-
         const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
         // const listings = await listingModel.find()
         return listings;

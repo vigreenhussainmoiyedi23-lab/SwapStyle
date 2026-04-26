@@ -69,7 +69,7 @@ const googleLoginHandler = async (req, res) => {
 
         // Issue your own JWT
         const token = signToken(user._id);
-        setCookie(res, "token", token);
+        setCookie(res, "token", token );
         const userWithoutConfidentialData = user.toObject();
         delete userWithoutConfidentialData.googleId
         res.json({
