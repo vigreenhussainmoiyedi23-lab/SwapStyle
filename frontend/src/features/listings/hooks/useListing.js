@@ -42,6 +42,8 @@ export const useListing = () => {
             await fetchListings(filters);
         } catch (error) {
             console.error('Error creating listing:', error);
+            showToast(error?.response?.data?.message || "Error creating listing", "error");
+
         } finally {
             setLoading(false);
         }

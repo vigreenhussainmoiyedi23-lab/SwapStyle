@@ -7,10 +7,9 @@ function signToken(id, expiresIn = "1h") {
 function getDataFromToken(token) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        if (!decoded) return null
         return decoded
     } catch (error) {
-        return null
+        throw new Error(error.message);
     }
 }
 function setCookie(res, name, value, options) {

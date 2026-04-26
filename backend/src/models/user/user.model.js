@@ -5,12 +5,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Location: {
-        lat: Number,//latitude
-        log: Number,//longitude
-        city: String,
-        State: String
-    },
+
     email: {
         type: String,
         unique: [true, "User already exists in db"],

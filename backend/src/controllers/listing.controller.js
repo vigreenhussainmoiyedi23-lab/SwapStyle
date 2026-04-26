@@ -15,6 +15,7 @@ APIs to build for listing.routes.js:
     */
 
 const imagekit = require("../config/imagekit");
+const { validateLocation } = require("../middlewares/Validators/locationValidator");
 const { EstimateValue } = require("../services/ai/ValueEstimate.service");
 const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService } = require("../services/listing/DBFunctions.service");
 const { deleteAllImageFromListing } = require("../services/listing/DeleteImage.service");
@@ -66,6 +67,17 @@ async function CreateListingHandler(req, res) {
         }
         const { category, clothingType, brandName, size, condition, title, description } = req.body;
         const estimatedValue = await EstimateValue({ brandName, size, clothingType, condition });
+        let { city, state, country, lat, lng } = await validateLocation(JSON.parse(req.body.location))
+
+        const location = {
+            geo: {
+                coordinates: [lng, lat]
+            },
+            city,
+            state,
+            country
+        }
+        if (!location) return res.status(500).json({ message: "Incorrect  location", success: false })
 
         if (!estimatedValue.success) {
             return res.status(500).json({ message: "Error estimating value", success: false })
@@ -79,8 +91,8 @@ async function CreateListingHandler(req, res) {
         );
         const responses = await Promise.all(promises)
         const images = responses.map(response => { return { url: response.url, fileId: response.fileId } })
-
-        const listing = await createListingService({ clothingType, brandName, size, condition, estimatedValue: value, images, owner, title, description, category })
+        console.log(location)
+        const listing = await createListingService({ location: location, clothingType, brandName, size, condition, estimatedValue: value, images, owner, title, description, category })
         res.status(201).json({ listing, message: "Listing created successfully", success: true })
 
     } catch (error) {

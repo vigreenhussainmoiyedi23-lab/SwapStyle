@@ -11,7 +11,7 @@ const toastConfig = {
   },
   info: {
     method: toast.info,
-    style: { backgroundColor: "lightblue", color: "#fff" }
+    style: { backgroundColor: "lightblue", color: "var(--color-brand-900)" }
   },
   warning: {
     method: toast.warning,

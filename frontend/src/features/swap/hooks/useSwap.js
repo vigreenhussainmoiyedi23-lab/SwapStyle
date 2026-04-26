@@ -39,6 +39,7 @@ const useSwap = () => {
             setLoading(true);
             const response = await acceptSwapRequest(swapId);
             showToast(response.message, "success");
+            showToast("Make Sure You Negotiate Before Shipping or Completing", "info");
             getSwapRequests({ filters });
         } catch (error) {
             console.error("Error accepting swap request:", error);
@@ -78,6 +79,7 @@ const useSwap = () => {
             setLoading(true);
             const response = await completeSwapRequest(swapId);
             showToast(response.message, "success");
+            showToast("The Swap Will Be Completed As Soon As The Other User completes it", "info");
             getSwapRequests({ filters });
         } catch (error) {
             console.error("Error completing swap request:", error);
@@ -91,6 +93,7 @@ const useSwap = () => {
             setLoading(true);
             const response = await shipmentUpdateSwapRequest(swapId, shipmentDetails);
             showToast(response.message, "success");
+            showToast("Before Completing Make Sure You receive the item", "info");
             getSwapRequests({ filters });
         } catch (error) {
             console.error("Error updating shipment details for swap request:", error);
@@ -104,6 +107,9 @@ const useSwap = () => {
             setLoading(true);
             const response = await changeShipmentTypeSwapRequest(swapId, changeTo);
             showToast(response.message, "success");
+            if (changeTo === "local_swap") {
+                showToast("Before Completing Make Sure You receive the item", "info");
+            }
             getSwapRequests({ filters });
         } catch (error) {
             console.error("Error changing shipment type for swap request:", error);

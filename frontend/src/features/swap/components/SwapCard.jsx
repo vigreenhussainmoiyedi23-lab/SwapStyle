@@ -4,6 +4,7 @@ import ProductCard from "../../listings/components/ui/ProductCard";
 import useSwap from "../hooks/useSwap";
 const SwapCard = ({ swap }) => {
   let role = swap.role;
+  let otherUserRole = role == "owner" ? "requester" : "owner";
   let status = swap.status;
   const {
     acceptSwapHandler,
@@ -54,7 +55,7 @@ const SwapCard = ({ swap }) => {
       </div>
 
       {/* CTA Buttons */}
-      <div className="mt-4 flex gap-2 items-center justify-center lg:flex-row flex-col">
+      <div className="mt-4 flex gap-2 relative items-center justify-center lg:flex-row flex-col">
         {role === "owner" && status === "pending" && (
           <>
             <button
@@ -80,46 +81,63 @@ const SwapCard = ({ swap }) => {
             Cancel Request
           </button>
         )}
-
+        {swap.hasShipped && !swap.hasCompleted && status === "accepted" && (
+          <>
+            <button
+              onClick={() => completeSwapHandler(swap._id)}
+              className="bg-yellow-500 whitespace-nowrap source-code-pro px-3 py-2 rounded-lg w-1/2 "
+            >
+              Complete Request
+            </button>
+          </>
+        )}
+        {swap.hasShipped && swap.hasCompleted && status === "accepted" && (
+          <>
+            {swap.shipment_type == "shipping" && <button>View Shipment</button>}
+          </>
+        )}
         {status === "accepted" && (
           <>
-            <button className="bg-accent-500 px-3 py-2 rounded-lg w-full">
-              Chat
+            <button className="bg-accent-500 text-brand-900 font-bold source-code-pro whitespace-nowrap px-3 py-2 rounded-lg w-full">
+              Negotiate With{" "}
+              {role == "owner" ? swap.requester.username : swap.owner.username}
             </button>
             {swap.shipment_type == "shipping" && (
               <button className="bg-brand-500 px-3 py-2 rounded-lg w-full">
                 Add Shipping
               </button>
             )}
-            <div className="px-3 py-2 mt-5 lg:mt-0 rounded-lg w-full flex items-center  relative  flex-col">
-              <label
-                className=" text-gray-500 px-3 py-2 rounded-lg absolute -top-6 overflow-hidden h-fit whitespace-nowrap"
-                htmlFor="shipmentType"
-              >
-                Change Shipping Type
-              </label>
-              <select
-                onChange={(e) => {
-                  if (loading) return alert("Please wait");
-                  changeShipmentTypeSwapRequestHandler(
-                    swap._id,
-                    e.target.value,
-                  );
-                }}
-                value={swap.shipment_type}
-                name="shipmentType"
-                id="shipmentType"
-                className="outline-none w-full text-center h-full bg-brand-900 rounded-lg px-2 py-1 flex items-center justify-center"
-              >
-                <option value="local_swap">Local Swap</option>
-                <option value="shipping">Shipping</option>
-              </select>
-            </div>
+            {!swap.hasCompleted && !swap.completedBy[otherUserRole] && (
+              <div className="px-3 py-2 mt-5 lg:mt-0 rounded-lg w-full flex items-center  relative  flex-col">
+                <label
+                  className=" text-gray-500 px-3 py-2 rounded-lg absolute -top-6 overflow-hidden h-fit whitespace-nowrap"
+                  htmlFor="shipmentType"
+                >
+                  Change Shipping Type
+                </label>
+                <select
+                  onChange={(e) => {
+                    if (loading) return alert("Please wait");
+                    changeShipmentTypeSwapRequestHandler(
+                      swap._id,
+                      e.target.value,
+                    );
+                  }}
+                  value={swap.shipment_type}
+                  name="shipmentType"
+                  id="shipmentType"
+                  className="outline-none w-full text-center h-full bg-brand-900 rounded-lg px-2 py-1 flex items-center justify-center"
+                >
+                  <option value="local_swap">Local Swap</option>
+                  <option value="shipping">Shipping</option>
+                </select>
+              </div>
+            )}
           </>
         )}
 
         {status === "completed" && (
-          <span className="text-green-400 text-sm">Completed</span>
+          <span className="text-green-400 text-sm ">Completed</span>
         )}
 
         {(status === "rejected" || status === "cancelled") && (

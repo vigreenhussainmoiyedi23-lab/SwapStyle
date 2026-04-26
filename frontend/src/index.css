@@ -14,9 +14,14 @@
 @theme {
   /* 🌿 Brand Colors (Primary Identity) */
   --color-brand-900: #0f1a14;
+  --color-brand-800: #1b2e25;
   --color-brand-700: #274135;
+  --color-brand-600: #2d5443;
   --color-brand-500: #32674e;
+  --color-brand-400: #3f7560;
   --color-brand-300: #4d846a;
+  --color-brand-200: #79a891;
+  --color-brand-100: #a6cbbc;
 
   /* 💚 Accent (CTA / Highlights) */
   --color-accent-500: #00d492;

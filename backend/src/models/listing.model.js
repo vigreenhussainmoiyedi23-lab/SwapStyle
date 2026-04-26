@@ -22,12 +22,7 @@ const listingSchema = new mongoose.Schema({
             message: "Invalid clothing type for selected category"
         }
     },
-    Location: {
-        lat: Number,//latitude
-        log: Number,//longitude
-        city: String,
-        State: String
-    },
+
     brandName: {
         type: String,
         required: true
@@ -81,7 +76,32 @@ const listingSchema = new mongoose.Schema({
     isLocked: {
         type: Boolean,
         default: false
-    }
+    },
+    location: {
+        geo: {
+            type: {
+                type: String,
+                enum: ["Point"],
+                default: "Point",
+            },
+            coordinates: {
+                type: [Number], // [lng, lat]
+            },
+        },
+
+        city: {
+            type: String,
+            required: true,
+        },
+        state: {
+            type: String,
+            required: true,
+        },
+        country: {
+            type: String,
+            required: true,
+        },
+    },
 
 }, { timestamps: true });
 

@@ -112,7 +112,7 @@ async function getListingByIdService(listingId) {
  */
 async function getAllListingsService(filters) {
     try {
-        const { category, types, sizes, conditions, sortBy, page, search } = filters
+        const { category, types, sizes, conditions, sortBy, page, search, lat, lng } = filters
         let query = {
             isAvailable: true,
             isLocked: false
@@ -122,7 +122,17 @@ async function getAllListingsService(filters) {
         if (category && category !== "All") {
             query.category = category;
         }
-
+        if (lat && lng) {
+            query.location.geo = {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [parseFloat(lng), parseFloat(lat)], // ⚠️ [lng, lat]
+                    },
+                    $maxDistance: radius * 1000, // meters (10km = 10000)
+                },
+            }
+        }
         // Types filter (match any)
         if (types && types.length > 0) {
             query.clothingType = { $in: types };
@@ -154,7 +164,6 @@ async function getAllListingsService(filters) {
             }
         }
 
-        console.log("Query:", query, "Sort:", sortOption, "Skip:", skip)
         const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
         // const listings = await listingModel.find()
         return listings;
@@ -164,6 +173,7 @@ async function getAllListingsService(filters) {
 
     }
 }
+
 
 module.exports = {
     createListingService,

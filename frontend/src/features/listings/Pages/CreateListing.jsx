@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useListing } from "../hooks/useListing";
 import { useNavigate } from "react-router-dom";
+import LocationSelector from "../../commonComponents/LocationSelector";
 
 // Constants
 const CLOTHING_TYPES = {
@@ -16,6 +17,13 @@ const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXL+"];
 const CONDITIONS = ["new", "like_new", "good", "fair", "poor"];
 
 const CreateListing = () => {
+  const [location, setLocation] = useState({
+    city: "",
+    state: "",
+    country: "",
+    lat: 0,
+    log: 0,
+  });
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -42,6 +50,7 @@ const CreateListing = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -67,9 +76,10 @@ const CreateListing = () => {
     ListingData.append("brandName", formData.brandName);
     ListingData.append("size", formData.size);
     ListingData.append("condition", formData.condition);
+    ListingData.append("location", JSON.stringify(location));
     selectedImages.map((img) => ListingData.append("images", img.file));
     createListing(ListingData);
-    navigate("/listings")
+    navigate("/listings");
     setFormData({
       title: "",
       description: "",
@@ -170,6 +180,7 @@ const CreateListing = () => {
           {/* Inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="md:col-span-2">
+              <LocationSelector location={location} setLocation={setLocation} />
               <label className="block text-xs sm:text-sm font-semibold mb-2">
                 Title
               </label>

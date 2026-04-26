@@ -36,7 +36,6 @@ verify otp comments
 //Google 
 const googleLoginHandler = async (req, res) => {
     const { credential } = req.body; // ID token from frontend
-
     if (!credential) return res.status(400).json({ error: 'No credential provided' });
 
     try {
@@ -101,24 +100,28 @@ const logoutHandler = async (req, res) => {
 
 // 🔍 Check Auth
 const getMeHandler = async (req, res) => {
-    const { token } = req.cookies;
-    if (!token) {
-        return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
-    }
-    const { id } = getDataFromToken(token);
+    try {
 
-    if (!id) {
-        return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
-    }
-    const user = await userModel.findById(id);
-    if (!user) {
-        return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
-    }
-    const deletePasswordAndOtp = user.toObject();
-    delete deletePasswordAndOtp.password;
-    delete deletePasswordAndOtp.otp;
+        const { token } = req.cookies;
+        if (!token) {
+            return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
+        }
+        const { id } = getDataFromToken(token);
+        if (!id) {
+            return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
+        }
+        const user = await userModel.findById(id);
+        if (!user) {
+            return res.status(200).json({ message: "User is not Logged In", user: null, loggedIn: false });
+        }
+        const deletePasswordAndOtp = user.toObject();
+        delete deletePasswordAndOtp.password;
+        delete deletePasswordAndOtp.otp;
 
-    return res.status(200).json({ message: "User is Logged In", loggedIn: true, user: deletePasswordAndOtp });
+        return res.status(200).json({ message: "User is Logged In", loggedIn: true, user: deletePasswordAndOtp });
+    } catch (error) {
+        return res.status(error?.status || 500).json({ message: error.message || "Error checking authentication", success: false });
+    }
 };
 
 // 🔑 Login

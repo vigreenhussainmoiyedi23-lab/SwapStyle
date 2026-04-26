@@ -10,8 +10,10 @@ import { Loader2 } from "lucide-react";
 const Listings = () => {
   const { fetchListings, allListings, loading } = useListing();
 
-
-  
+  const [coordinates, setCoordinates] = useState({
+    lat: 0,
+    lng: 0,
+  });
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
@@ -36,10 +38,6 @@ const Listings = () => {
     selectedConditions,
     search,
   ]);
-
-
-
-
 
   const clearAllFilters = () => {
     setSelectedCategory("All");

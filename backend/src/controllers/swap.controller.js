@@ -51,13 +51,14 @@ async function getUserSwapsHandler(req, res) {
                 ]
             }
         }
-        if (status !== "all") {
+        if (status !== "all" && Array.isArray(status)) {
+            query.status = { $in: status }
+        } else if (status !== "all") {
             query.status = status
         }
         if (shipment_type !== "all") {
             query.shipment_type = shipment_type
         }
-        console.log(filters, query)
         const swaps = await swapModel.find(query).populate([
             {
                 path: "requester",
@@ -76,18 +77,21 @@ async function getUserSwapsHandler(req, res) {
         ]).skip((page - 1) * limit).limit(limit).lean()
         let totalSwaps = await swapModel.countDocuments(query)
         let totalPages = Math.ceil(totalSwaps / limit)
-        let swapWithRoles = swaps.map(swap => {
+        let swapWithRolesAndShipped = swaps.map(swap => {
             let role = null
+            let hasShipped = swap.shipment_type == "local_swap" || !!swap.shipments.find(s => s.from.toString() === user.toString())
+            
             if (swap.requester._id.toString() === user) {
                 role = "requester"
             }
             if (swap.owner._id.toString() === user) {
                 role = "owner"
             }
-            return { ...swap, role }
+            let hasCompleted = swap.completedBy[role]
+            return { ...swap, role, hasShipped,hasCompleted }
         })
         res.status(200).json({
-            swaps: swapWithRoles,
+            swaps: swapWithRolesAndShipped,
             totalSwaps,
             totalPages,
             message: "Swaps fetched",
@@ -307,6 +311,10 @@ async function changeShipmentTypeHandler(req, res) {
         const swap = await getSwapByIdService(swapId)
         ValidateSwap(swap, user)
         validateSwapState(swap, "accepted")
+        let { owner, requester } = swap.completedBy
+        if (owner || requester) {
+            return res.status(400).json({ message: "Swap already completed By one of the users", success: false })
+        }
         swap.shipment_type = changeTo
         const changeHistory = await changeHistoryModel.create({
             changedBy: user,

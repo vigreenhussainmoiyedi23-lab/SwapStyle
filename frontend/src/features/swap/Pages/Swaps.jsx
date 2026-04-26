@@ -16,11 +16,11 @@ const Swaps = () => {
     },
     active: {
       type: "all",
-      status: "active",
+      status: "accepted",
     },
     declined: {
       type: "all",
-      status: "rejected" || "cancelled",
+      status: ["rejected", "cancelled"],
     },
     completed: {
       type: "all",
@@ -35,7 +35,7 @@ const Swaps = () => {
   const { userAllSwaps, loading, getSwapRequests } = useSwap();
   const [shipment_type, setShipment_type] = useState("all");
   const [page, setPage] = useState(1);
-  (shipment_type);
+  shipment_type;
   useEffect(() => {
     const second = async () => {
       const filters = {
@@ -46,6 +46,7 @@ const Swaps = () => {
         page: page,
       };
       await getSwapRequests({ filters });
+      console.log(userAllSwaps);
     };
     second();
   }, [activeFilter, shipment_type]);
@@ -65,15 +66,25 @@ const Swaps = () => {
           userAllSwaps.swaps.map((swap) => {
             return <SwapCard swap={swap} />;
           })}
+        {userAllSwaps && userAllSwaps.swaps.length === 0 && (
+          <div className="bg-brand-900 min-h-screen w-full  flex-col flex items-center justify-center text-white">
+            <h3 className="text-accent-500 text-5xl lg:text-6xl xl:text-7xl mb-2 playfair font-bold underline  decoration-brand-300">
+              No Swaps Found
+            </h3>
+            <p className="text-sm montserrat text-gray-200 md:text-base lg:text-lg mb-7 ">
+              Try clearing some filters
+              <br />
+              Or create a new swap
+            </p>
+            <button className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg">Go Back To Listings</button>
+          </div>
+        )}
       </div>
       {(loading || !userAllSwaps) && (
         <div className="bg-brand-900 min-h-screen w-full text-5xl flex items-center justify-center text-white">
           loading
         </div>
       )}
-      <div className="flex items-center justify-center">
-        {userAllSwaps?.totalPages}
-      </div>
     </div>
   );
 };
