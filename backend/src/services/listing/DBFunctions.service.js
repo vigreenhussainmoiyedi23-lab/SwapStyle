@@ -160,6 +160,11 @@ async function getAllListingsService(filters) {
         } else if (sortBy === "oldest") {
             sortOption.createdAt = 1;
         }
+        else if (sortBy === "price-high") {
+            sortOption.estimatedValue = -1;
+        } else if (sortBy === "price-low") {
+            sortOption.estimatedValue = 1;
+        }
         if (search && search != "") {
             query.title = {
                 $regex: search,

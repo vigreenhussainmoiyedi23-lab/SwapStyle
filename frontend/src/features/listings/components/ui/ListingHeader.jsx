@@ -34,9 +34,6 @@ const ListingHeader = ({ sortBy, setSortBy, itemCount, search, setSearch }) => {
           <option value="price-high" className=" bg-brand-900 text-accent-300">
             Price: High to Low
           </option>
-          <option value="condition" className=" bg-brand-900 text-accent-300">
-            Best Condition
-          </option>
         </select>
 
         <div className="text-sm text-brand-400 whitespace-nowrap">

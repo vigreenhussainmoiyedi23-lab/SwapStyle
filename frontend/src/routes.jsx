@@ -11,6 +11,7 @@ import ListingMore from "./features/listings/Pages/ListingMore";
 import Profile from "./features/Profile/Pages/Profile";
 import ProtectedLayout from "./Layouts/ProtectedLayout";
 import Swaps from "./features/swap/Pages/Swaps";
+import Chats from "./features/chats/Pages/Chats";
 
 const Approutes = () => {
   return (
@@ -69,6 +70,14 @@ const Approutes = () => {
           element={
             <ProtectedLayout>
               <Swaps />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/chats"
+          element={
+            <ProtectedLayout>
+              <Chats />
             </ProtectedLayout>
           }
         />

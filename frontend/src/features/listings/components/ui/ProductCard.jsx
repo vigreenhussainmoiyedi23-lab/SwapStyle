@@ -61,8 +61,11 @@ const ProductCard = ({ item }) => {
             </p>
           </div>
           {/* You can add price here later */}
-          <p className="font-semibold text-accent-500">
+          <p className="font-semibold text-lg montserrat text-accent-500 flex flex-col items-center">
             ₹ {item.estimatedValue}
+            <span className="text-xs font-light  text-brand-300 ">
+              estimated Value
+            </span>
           </p>
         </div>
       </div>

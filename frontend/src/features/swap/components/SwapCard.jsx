@@ -78,7 +78,7 @@ const SwapCard = ({ swap }) => {
             onClick={() => cancelSwapHandler(swap._id)}
             className="bg-red-500 px-3 py-2 rounded-lg w-1/2 "
           >
-            Cancel Request
+            Withdraw Request (cancel)
           </button>
         )}
         {swap.hasShipped && !swap.hasCompleted && status === "accepted" && (
@@ -168,8 +168,9 @@ function ListingCard({ item, isOwner }) {
         {/* Top Section */}
         <div className="space-y-2">
           {/* 💰 Price FIRST */}
-          <p className="text-white font-bold text-lg">
+          <p className="text-brand-900 font-bold text-xl flex flex-col">
             ₹ {item.estimatedValue}
+            <span className="text-xs text-brand-300 ">Estimated Value</span>
           </p>
 
           {/* 🏷 Title */}

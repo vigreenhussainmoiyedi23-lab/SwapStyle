@@ -1,4 +1,5 @@
 // FiltersSidebar.jsx
+import { MapPin } from "lucide-react";
 import React from "react";
 
 const FiltersSidebar = ({
@@ -20,7 +21,7 @@ const FiltersSidebar = ({
   setCoordinates,
 }) => {
   const handleUseLocation = () => {
-    console.log("yeh chal gaya")
+    console.log("yeh chal gaya");
     if (!navigator.geolocation) {
       alert("Geolocation not supported");
       return;
@@ -43,9 +44,10 @@ const FiltersSidebar = ({
     <div className="hidden md:flex fixed left-0 top-[10vh] w-80 h-[90dvh] bg-brand-900 overflow-y-auto border-r border-brand-700 p-6 flex-col">
       <h2 className="text-2xl font-semibold mb-8 text-brand-100">Filters</h2>
       <button
-        className="bg-accent-500 mb-3 active:scale-96 text-brand-900 px-3 py-2 rounded-lg"
+        className="bg-accent-500 mb-3 active:scale-96 text-brand-900 px-3 py-2 rounded-lg source-code-pro font-bold text-lg flex items-center justify-center gap-1 whitespace-nowrap"
         onClick={handleUseLocation}
       >
+        <MapPin size={20} />
         Find Nearby Listings
       </button>
       {/* Category */}
