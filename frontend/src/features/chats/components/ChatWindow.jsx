@@ -1,27 +1,40 @@
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
-
-export default function ChatWindow({chatId}) {
+import { useChatHttp } from "../hooks/useChatHttp";
+import  useAuth  from "../../auth/hooks/useAuth";
+export default function ChatWindow({ chat }) {
+  const { user } = useAuth();
+  const { chatsAllMessages } = useChatHttp();
   return (
     <div className="flex flex-col h-full">
-
       {/* Header */}
-      <div className="
+      <div
+        className="
         p-4 border-b border-brand-800
         playfair text-brand-100
-      ">
-        Sarah Chen
+      "
+      >
+        {chat?.otherUser?.username || "Username"}
       </div>
 
       {/* Messages */}
       <div className="flex-1 p-4 overflow-y-auto space-y-3">
-        <MessageBubble type="other" text="Hi! I love your jacket." />
-        <MessageBubble type="me" text="Thanks! It's still available." />
+        {chatsAllMessages &&
+          chatsAllMessages.map((message) => (
+            <MessageBubble
+              key={message._id}
+              type={
+                user?._id.toString() === message.sender.toString()
+                  ? "me"
+                  : "other"
+              }
+              text={message.text}
+            />
+          ))}
       </div>
 
       {/* Input */}
-      <ChatInput />
-
+      <ChatInput chatId={chat?._id} />
     </div>
   );
 }

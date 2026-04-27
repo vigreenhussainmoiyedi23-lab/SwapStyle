@@ -1,7 +1,8 @@
 import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
 
-export default function ChatLayout({ chatId ,chats}) {
+export default function ChatLayout({ chatId, chats ,chatAllMessages}) {
+  const chat = chats.find((chat) => chat._id.toString() === chatId);
   return (
     <div className="flex h-[90vh] bg-brand-900 text-white mt-[10vh]">
       {/* Inbox */}
@@ -12,7 +13,7 @@ export default function ChatLayout({ chatId ,chats}) {
         bg-brand-900
       "
       >
-        <ChatList chatId={chatId} chats={chats}/>
+        <ChatList chatId={chatId} chats={chats} />
       </div>
 
       {/* Chat Window */}
@@ -22,10 +23,12 @@ export default function ChatLayout({ chatId ,chats}) {
         flex-col
       "
       >
-       {!chatId &&  <div className="hidden md:flex flex-1 items-center justify-center text-brand-400">
-          Select a chat to start messaging
-        </div>}
-        {chatId && <ChatWindow chatId={chatId} />}
+        {!chatId && (
+          <div className="hidden md:flex flex-1 items-center justify-center text-brand-400">
+            Select a chat to start messaging
+          </div>
+        )}
+        {chatId && <ChatWindow chat={chat} chatAllMessages={chatAllMessages}/>}
       </div>
     </div>
   );

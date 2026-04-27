@@ -9,7 +9,7 @@ function CTA() {
     <div className="flex flex-col items-center source-code-pro justify-center xl:justify-start sm:flex-row gap-3 sm:gap-4 mt-6 ">
       <Link
         to={"/listings"}
-        className="w-full  sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center gap-2 font-semibold"
+        className="w-full text-brand-900 source-code-pro font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center gap-2 "
       >
         Start Swapping <ArrowRight size={18} />
       </Link>

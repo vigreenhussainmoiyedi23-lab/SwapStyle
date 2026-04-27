@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import ChatLayout from "../components/ChatLayout";
 import { useChatHttp } from "../hooks/useChatHttp";
 import { useEffect } from "react";
+import { useChatSocket } from "../hooks/useChatSocket";
 
 export default function Chats() {
   const {
@@ -10,6 +11,7 @@ export default function Chats() {
     userAllChats,
     chatsAllMessages,
   } = useChatHttp();
+  const { joinRoom, leaveRoom } = useChatSocket();
   const { id } = useParams();
 
   useEffect(() => {
@@ -24,7 +26,14 @@ export default function Chats() {
       await getChatAllMessagesHandler({ chatId: id });
     }
     fetchData();
+    joinRoom(id);
   }, [id]);
-  
-  return <ChatLayout chatId={id} chats={userAllChats} />;
+
+  return (
+    <ChatLayout
+      chatId={id}
+      chats={userAllChats}
+      chatsAllMessages={chatsAllMessages}
+    />
+  );
 }

@@ -36,12 +36,10 @@ class SocketManager {
         socket.off("connect");
         socket.off("connect_error");
 
-        console.log(`🔌 Attempt ${this.retryCount + 1}`);
 
         socket.connect();
 
         socket.on("connect", () => {
-            console.log("✅ Connected");
             this.retryCount = 0; // reset on success
             clearTimeout(this.retryTimeout);
         });
@@ -53,16 +51,17 @@ class SocketManager {
                 this.retryTimeout = setTimeout(() => {
                     this.connect();
                 }, this.retryDelay);
-            } else {
-                console.log("⛔ Max retries reached. Waiting for user action...");
             }
         });
     }
-
+    emitMessage(messageName, messageData) {
+        this.socket.emit(messageName, messageData);
+    }
+    listenMessage(messageName, callbackFunction) {
+        this.socket.on(messageName, callbackFunction);
+    }
     // 🔥 This is the key part
     retryAfterUserAction() {
-        console.log("👤 User action → retrying connection");
-
         this.retryCount = 0; // reset retry cycle
         this.connect();
     }

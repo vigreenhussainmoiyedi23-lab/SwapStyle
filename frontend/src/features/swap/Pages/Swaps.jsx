@@ -46,7 +46,6 @@ const Swaps = () => {
         page: page,
       };
       await getSwapRequests({ filters });
-      console.log(userAllSwaps);
     };
     second();
   }, [activeFilter, shipment_type]);

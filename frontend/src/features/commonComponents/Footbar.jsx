@@ -20,7 +20,7 @@ const Footbar = ({user}) => {
         to="/createListing"
         className="h-full relative flex items-center justify-center flex-col"
       >
-        <Plus className=" bg-brand-500 sm:w-14 sm:h-14 rounded-full w-12 h-12 n text-bg-main   absolute -top-1" />
+        <Plus className=" bg-accent-500 sm:w-14 sm:h-14 rounded-full w-12 h-12 n text-brand-800   absolute -top-1" />
       </Link>
       <Link to="/notifications" className="flex flex-col items-center">
         <MessageCircle />

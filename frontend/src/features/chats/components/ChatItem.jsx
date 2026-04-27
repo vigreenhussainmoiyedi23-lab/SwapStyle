@@ -3,7 +3,10 @@ export default function ChatItem({ chat, current }) {
     <div
       style={
         chat._id.toString() === current
-          ? { backgroundColor: "var(--color-accent-500)" }
+          ? {
+              backgroundColor: "var(--color-accent-500)",
+              color: "var(--color-brand-900)",
+            }
           : {}
       }
       className="
@@ -23,7 +26,7 @@ export default function ChatItem({ chat, current }) {
       />
 
       <div className="flex-1">
-        <p className="montserrat font-medium text-brand-100">
+        <p className="montserrat font-medium ">
           {chat.otherUser.username}
         </p>
         <p className="text-sm text-brand-300 truncate">{chat.lastMessage}</p>

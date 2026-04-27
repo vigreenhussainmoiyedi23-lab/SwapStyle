@@ -1,7 +1,8 @@
 const { Server } = require("socket.io");
 const { getDataFromToken } = require("../utils/jsonwebtoken");
 const redis = require("../config/cache");
-const cookie = require("cookie")
+const cookie = require("cookie");
+const { chatSockets } = require("./chat.socket");
 const initSocket = (server) => {
     const frontendUrl = process.env.FRONTEND_URL
     const io = new Server(server, {
@@ -35,18 +36,11 @@ const initSocket = (server) => {
 
         socketUserMap.set(socket.userId, [...(socketUserMap.get(socket.userId) || []), socket.id])
         console.log(socketUserMap.get(socket.userId))
-        // join chat room
-        socket.on("join_room", (chatId) => {
-            socket.join(chatId.toString());
-            console.log(`User joined room: ${chatId}`);
-        });
 
-        // send message
-        socket.on("send_message", (data) => {
-            // data = { chatId, message, senderId }
 
-            io.to(data.chatId).emit("receive_message", data);
-        });
+        chatSockets(io, socket, socketUserMap);
+
+
 
         socket.on("disconnect", () => {
             console.log("❌ User disconnected:", socket.id);

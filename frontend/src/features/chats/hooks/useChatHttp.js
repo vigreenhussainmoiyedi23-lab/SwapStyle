@@ -11,9 +11,10 @@ export const useChatHttp = () => {
     const getChatAllMessagesHandler = async ({ chatId, limit, skip }) => {
         setLoading(true)
         try {
-            const response = await getChatAllMessages({ chatId, limit, skip });
-            setChatsAllMessages(response?.messages);
-            return response;
+            const { messages } = await getChatAllMessages({ chatId, limit, skip });
+            setChatsAllMessages(messages);
+
+            return messages
         } catch (error) {
             console.error('Error fetching user listings:', error);
             throw error;
@@ -46,12 +47,16 @@ export const useChatHttp = () => {
             setLoading(false)
         }
     }
+    const addNewMessage = async (message) => {
+        setChatsAllMessages([...chatsAllMessages, message])
+    }
     return {
         loading,
         userAllChats,
         chatsAllMessages,
         getChatAllMessagesHandler,
         getUserAllChatsHandler,
-        chatAccessHandler
+        chatAccessHandler,
+        addNewMessage
     }
 }

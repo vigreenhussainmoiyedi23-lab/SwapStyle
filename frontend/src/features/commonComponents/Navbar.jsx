@@ -12,7 +12,7 @@ const Navbar = ({ user }) => {
           <Logo />
         </div>
 
-        <div className="hidden md:flex items-center gap-8 text-sm">
+        {user &&<div className="hidden md:flex items-center gap-8 text-sm">
           <Link
             to="/listings"
             className="hover:text-emerald-400 transition-colors"
@@ -25,7 +25,7 @@ const Navbar = ({ user }) => {
           <Link to="/chats" className="hover:text-emerald-400 transition-colors">
             Chats
           </Link>
-        </div>
+        </div>}
 
         {!user && (
           <div className="flex items-center sm:gap-4 sm:scale-100 scale-70 gap-2">
@@ -48,16 +48,17 @@ const Navbar = ({ user }) => {
           <div className="flex items-center sm:gap-6 sm:scale-100 scale-70 gap-2">
             <Link
               to="/createListing"
-              className=" text-sm py-1 gap-3 font-medium flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all"
+              className=" text-sm py-1 gap-3 font-medium hidden  md:flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all "
             >
               <Plus className="w-8 h-8 " /> 
               <span className="font-bold text-base">List Item</span>
             </Link>
             <Link
               to="/notifications"
-              className=" text-sm font-medium hover:bg-white/10 rounded-xl transition-all"
+              className=" text-sm font-medium hover:bg-white/10 rounded-xl transition-all flex flex-col items-center justify-end gap-1"
             >
               <Bell className="w-6 h-6 " />
+              <p className="text-xs text-gray-300">notifications</p>
             </Link>
             <Link
               to={`/profile/${user._id}`}

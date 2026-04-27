@@ -13,7 +13,6 @@ const createSwapRequest = async ({ offeredListingId, requestedListingId, message
         throw new Error("Both offeredListingId and requestedListingId are required");
     }
     try {
-        console.log(offeredListingId, requestedListingId, message)
         const response = await apiClient.post(`/${requestedListingId}`, { requesterListingId: offeredListingId, message: message || "" });
         return response.data;
     } catch (error) {

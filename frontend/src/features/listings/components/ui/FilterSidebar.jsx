@@ -21,7 +21,6 @@ const FiltersSidebar = ({
   setCoordinates,
 }) => {
   const handleUseLocation = () => {
-    console.log("yeh chal gaya");
     if (!navigator.geolocation) {
       alert("Geolocation not supported");
       return;

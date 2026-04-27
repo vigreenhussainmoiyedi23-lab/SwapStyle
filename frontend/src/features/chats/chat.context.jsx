@@ -10,10 +10,10 @@ export default function ChatContextProvider({ children }) {
     <ChatContext.Provider
       value={{
         loading,
-        setLoading,
         userAllChats,
-        setUserAllChats,
         chatsAllMessages,
+        setLoading,
+        setUserAllChats,
         setChatsAllMessages,
       }}
     >
