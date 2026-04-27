@@ -1,22 +1,23 @@
 const { Server } = require("socket.io");
 const { getDataFromToken } = require("../utils/jsonwebtoken");
 const redis = require("../config/cache");
-
+const cookie = require("cookie")
 const initSocket = (server) => {
+    const frontendUrl = process.env.FRONTEND_URL
     const io = new Server(server, {
         cors: {
-            origin: "*", // later restrict to your frontend URL
+            origin: frontendUrl || "http://localhost:5173", // later restrict to your frontend URL
             methods: ["GET", "POST"],
+            credentials: true,
         },
     });
     const socketUserMap = new Map()
     io.use((socket, next) => {
         try {
-            const token = (socket.handshake.headers.cookie)
+            const parsedCookie = cookie.parse(socket.handshake.headers.cookie)
+            const token = (parsedCookie.token)
             if (!token) {
-                console.log("disconnecting socket...")
-                socket.disconnect()
-                
+                return next(new Error("Unauthorized"));
             }
             const { id } = getDataFromToken(token)
             const istokenBlackListed = redis.get(token)
@@ -26,15 +27,14 @@ const initSocket = (server) => {
             socket.userId = id
             next();
         } catch (error) {
-            console.log(error, "aa gaya")
             socket.emit("error", error.message)
             next()
         }
     });
     io.on("connection", (socket) => {
-        console.log("🔌 User connected:", socket.id, socket.userId);
 
-
+        socketUserMap.set(socket.userId, [...(socketUserMap.get(socket.userId) || []),socket.id])
+        console.log(socketUserMap.get(socket.userId))
         // join chat room
         socket.on("join_room", (chatId) => {
             socket.join(chatId.toString());
