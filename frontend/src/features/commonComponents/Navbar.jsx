@@ -12,7 +12,7 @@ const Navbar = ({ user }) => {
           <Logo />
         </div>
 
-        {user &&<div className="hidden md:flex items-center gap-8 text-sm">
+        {user &&<div className="hidden lg:flex items-center gap-8 text-sm">
           <Link
             to="/listings"
             className="hover:text-emerald-400 transition-colors"
@@ -48,7 +48,7 @@ const Navbar = ({ user }) => {
           <div className="flex items-center sm:gap-6 sm:scale-100 scale-70 gap-2">
             <Link
               to="/createListing"
-              className=" text-sm py-1 gap-3 font-medium hidden  md:flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all "
+              className=" text-sm py-1 gap-3 font-medium hidden  lg:flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all "
             >
               <Plus className="w-8 h-8 " /> 
               <span className="font-bold text-base">List Item</span>
@@ -62,7 +62,7 @@ const Navbar = ({ user }) => {
             </Link>
             <Link
               to={`/profile/${user._id}`}
-              className="h-12 w-12 md:flex hidden rounded-full border border-brand-300 text-sm font-semibold  overflow-hidden transition-all"
+              className="h-12 w-12 lg:flex hidden rounded-full border border-brand-300 text-sm font-semibold  overflow-hidden transition-all"
             >
               <img
                 src={

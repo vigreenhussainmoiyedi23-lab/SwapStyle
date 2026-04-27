@@ -1,3 +1,4 @@
+import { MenuSquare } from "lucide-react";
 import React from "react";
 
 const SwapFilters = ({
@@ -16,7 +17,7 @@ const SwapFilters = ({
   ];
 
   return (
-    <div className="w-full hidden md:block min-h-screen bg-brand-900 border-r border-brand-700 p-5 text-white">
+    <div className="w-full   min-h-screen bg-brand-900 border-r border-brand-700 p-5 text-white">
       {/* Title */}
       <h2 className="text-xl font-semibold mb-6">Filters</h2>
 
@@ -47,7 +48,7 @@ const SwapFilters = ({
       {/* Optional Extra Filters */}
       <div>
         <p className="text-sm text-gray-400 mb-3">Shipping Type</p>
-
+       
         <div className="flex flex-col gap-2">
           <button
             onClick={() => setShipment_type("all")}

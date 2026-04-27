@@ -1,11 +1,11 @@
-export default function MessageBubble({ type, text }) {
+export default function MessageBubble({ from, text }) {
   return (
     <div className={`
-      flex ${type === "me" ? "justify-end" : "justify-start"}
+      flex ${from === "me" ? "justify-end" : "justify-start"}
     `}>
       <div className={`
         p-3 rounded-2xl max-w-[70%]
-        ${type === "me"
+        ${from === "me"
           ? "bg-accent-500 text-brand-900"
           : "bg-brand-800 text-brand-100"
         }

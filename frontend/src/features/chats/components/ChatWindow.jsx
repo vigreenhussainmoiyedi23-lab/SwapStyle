@@ -23,7 +23,7 @@ export default function ChatWindow({ chat }) {
           chatsAllMessages.map((message) => (
             <MessageBubble
               key={message._id}
-              type={
+              from={
                 user?._id.toString() === message.sender.toString()
                   ? "me"
                   : "other"

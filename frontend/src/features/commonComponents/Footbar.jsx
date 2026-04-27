@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Footbar = ({user}) => {
   return (
-    <div className="w-full fixed md:hidden text-white px-6  flex items-center justify-between   bottom-0  sm:h-20 h-15 bg-brand-900 border-t border-white/20 ">
+    <div className="w-full fixed lg:hidden text-white px-6  flex items-center justify-between   bottom-0  sm:h-20 h-15 bg-brand-900 border-t border-white/20 ">
       <Link
         to="/listings"
         className="flex flex-col items-center justify-center"
@@ -22,7 +22,7 @@ const Footbar = ({user}) => {
       >
         <Plus className=" bg-accent-500 sm:w-14 sm:h-14 rounded-full w-12 h-12 n text-brand-800   absolute -top-1" />
       </Link>
-      <Link to="/notifications" className="flex flex-col items-center">
+      <Link to="/chats" className="flex flex-col items-center">
         <MessageCircle />
         <span className="text-[10px] ">Chat</span>
       </Link>

@@ -3,6 +3,7 @@ import SwapCard from "../components/SwapCard";
 import SwapFilters from "../components/SwapFilters";
 import useSwap from "../hooks/useSwap";
 import useAuth from "../../auth/hooks/useAuth";
+import { MenuSquare, X } from "lucide-react";
 
 const Swaps = () => {
   let typeConditions = {
@@ -31,6 +32,7 @@ const Swaps = () => {
       status: "all",
     },
   };
+  const [showFilter, setShowFilter] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const { userAllSwaps, loading, getSwapRequests } = useSwap();
   const [shipment_type, setShipment_type] = useState("all");
@@ -52,7 +54,7 @@ const Swaps = () => {
 
   return (
     <div className="w-full min-h-screen bg-brand-900 relative pt-[12vh]">
-      <div className="fixed top-[10vh] left-0 w-80">
+      <div className="fixed hidden lg:flex top-[10vh] left-0 w-80">
         <SwapFilters
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
@@ -60,7 +62,35 @@ const Swaps = () => {
           setShipment_type={setShipment_type}
         />
       </div>
-      <div className="flex flex-col  gap-4 px-3 py-2  md:ml-80">
+      {showFilter && (
+        <div className="fixed transition-all duration-300 ease-in-out top-[10vh] z-10 left-0 w-80 ">
+          {showFilter && (
+            <button
+              onClick={() => setShowFilter((prev) => !prev)}
+              className="absolute top-0 right-0  flex lg:hidden items-center gap-2 bg-red-500 text-white px-3 py-2 rounded-lg"
+            >
+              Close <X />
+            </button>
+          )}
+          <SwapFilters
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            shipment_type={shipment_type}
+            setShipment_type={setShipment_type}
+          />
+        </div>
+      )}
+      <div className="flex flex-col  gap-4 px-3 py-2  lg:ml-80">
+        {!showFilter && (
+          <div className=" border-t z-10 border-brand-700 fixed top-[10vh]">
+            <button
+              onClick={() => setShowFilter((prev) => !prev)}
+              className="flex lg:hidden items-center gap-2 bg-accent-500 text-brand-900 px-3 py-2 rounded-lg"
+            >
+              Filters <MenuSquare />
+            </button>
+          </div>
+        )}
         {userAllSwaps &&
           userAllSwaps.swaps.map((swap) => {
             return <SwapCard swap={swap} />;
@@ -75,7 +105,9 @@ const Swaps = () => {
               <br />
               Or create a new swap
             </p>
-            <button className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg">Go Back To Listings</button>
+            <button className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg">
+              Go Back To Listings
+            </button>
           </div>
         )}
       </div>

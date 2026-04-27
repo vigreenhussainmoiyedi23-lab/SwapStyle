@@ -11,7 +11,7 @@ export const LoginPage = () => {
   };
   return (
     <div className="min-h-screen flex">
-      <div className="hidden md:flex w-1/2 lg:w-2/5 text-white  flex-col justify-center ">
+      <div className="hidden lg:flex w-1/2 lg:w-2/5 text-white  flex-col justify-center ">
         <Panel heading={panelParams.heading} paragragh={panelParams.paragraph}/>
       </div>
 

@@ -1,9 +1,35 @@
 // ListingHeader.jsx
+import { MenuSquare,X } from "lucide-react";
 import React from "react";
 
-const ListingHeader = ({ sortBy, setSortBy, itemCount, search, setSearch }) => {
+const ListingHeader = ({
+  sortBy,
+  setSortBy,
+  itemCount,
+  search,
+  setSearch,
+  setIsMenuOpen,
+  isMenuOpen,
+}) => {
   return (
-    <div className="sticky top-0 z-10 bg-brand-900 border-b border-brand-700 px-6 py-5 flex flex-col sm:flex-row gap-4 items-center justify-between">
+    <div className="fixed top-[10vh] left-0 lg:left-80 right-0 z-10 bg-brand-900 border-b border-brand-700 px-6 py-5 flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <button
+        onClick={() => {
+          setIsMenuOpen((prev) => !prev);
+        }}
+        className="flex items-center gap-2 lg:hidden active:scale-96 bg-accent-500 text-brand-900 rounded-lg px-3 py-2"
+      >
+        {isMenuOpen ? (
+          <>
+          Close <X/>
+          </>
+        ) : (
+          <>
+            Filters 
+            <MenuSquare />
+          </>
+        )}
+      </button>
       <div className="flex-1 max-w-lg">
         <input
           type="text"

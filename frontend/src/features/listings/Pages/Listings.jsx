@@ -5,7 +5,7 @@ import FiltersSidebar from "../components/ui/FilterSidebar.jsx";
 import ListingHeader from "../components/ui/ListingHeader.jsx";
 import ListingGrid from "../components/ui/ListingGrid.jsx";
 import { useListing } from "../hooks/useListing.js";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 const Listings = () => {
   const { fetchListings, allListings, loading } = useListing();
@@ -29,7 +29,7 @@ const Listings = () => {
       sortBy: sortBy,
       search: search,
       lat: coordinates.lat,
-      lng: coordinates.lng
+      lng: coordinates.lng,
     };
     fetchListings(filter);
   }, [
@@ -39,9 +39,9 @@ const Listings = () => {
     selectedSizes,
     selectedConditions,
     search,
-    coordinates
+    coordinates,
   ]);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const clearAllFilters = () => {
     setSelectedCategory("All");
     setSelectedTypes([]);
@@ -58,37 +58,63 @@ const Listings = () => {
       setArr([...arr, value]);
     }
   };
-
   return (
     <section className="w-full pt-[10vh] min-h-screen bg-brand-900 text-white">
       {/* Filters Sidebar */}
-      <FiltersSidebar
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        selectedTypes={selectedTypes}
-        setSelectedTypes={setSelectedTypes}
-        selectedSizes={selectedSizes}
-        setSelectedSizes={setSelectedSizes}
-        selectedConditions={selectedConditions}
-        setSelectedConditions={setSelectedConditions}
-        clearAllFilters={clearAllFilters}
-        CATEGORIES={CATEGORIES}
-        CLOTHING_TYPES={CLOTHING_TYPES}
-        SIZES={SIZES}
-        CONDITIONS={CONDITIONS}
-        toggleArray={toggleArray}
-        coordinates={coordinates}
-        setCoordinates={setCoordinates}
-      />
-
+      <div className="hidden lg:block overflow-y-auto fixed left-0 top-[10vh] w-80 h-[90dvh]">
+        <FiltersSidebar
+        
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedTypes={selectedTypes}
+          setSelectedTypes={setSelectedTypes}
+          selectedSizes={selectedSizes}
+          setSelectedSizes={setSelectedSizes}
+          selectedConditions={selectedConditions}
+          setSelectedConditions={setSelectedConditions}
+          clearAllFilters={clearAllFilters}
+          CATEGORIES={CATEGORIES}
+          CLOTHING_TYPES={CLOTHING_TYPES}
+          SIZES={SIZES}
+          CONDITIONS={CONDITIONS}
+          toggleArray={toggleArray}
+          coordinates={coordinates}
+          setCoordinates={setCoordinates}
+        />
+      </div>
+      {isMenuOpen && (
+        <div className="fixed z-10 top-[10vh] left-0 w-80 h-[90dvh] lg:hidden overflow-y-auto">
+          
+          <FiltersSidebar
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedTypes={selectedTypes}
+            setSelectedTypes={setSelectedTypes}
+            selectedSizes={selectedSizes}
+            setSelectedSizes={setSelectedSizes}
+            selectedConditions={selectedConditions}
+            setSelectedConditions={setSelectedConditions}
+            clearAllFilters={clearAllFilters}
+            CATEGORIES={CATEGORIES}
+            CLOTHING_TYPES={CLOTHING_TYPES}
+            SIZES={SIZES}
+            CONDITIONS={CONDITIONS}
+            toggleArray={toggleArray}
+            coordinates={coordinates}
+            setCoordinates={setCoordinates}
+          />
+        </div>
+      )}
       {/* Main Content Area */}
-      <div className="relative md:ml-80 min-h-[90dvh] bg-brand-900">
+      <div className="relative lg:ml-80 min-h-[90dvh] bg-brand-900">
         <ListingHeader
           sortBy={sortBy}
           setSortBy={setSortBy}
           search={search}
           setSearch={setSearch}
           itemCount={allListings.length}
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
         />
 
         {!loading && <ListingGrid listings={allListings} />}
