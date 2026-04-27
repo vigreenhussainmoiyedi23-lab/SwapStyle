@@ -81,6 +81,14 @@ const Approutes = () => {
             </ProtectedLayout>
           }
         />
+        <Route
+          path="/chats/:id"
+          element={
+            <ProtectedLayout>
+              <Chats />
+            </ProtectedLayout>
+          }
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/register" element={<RegisterPage />} />

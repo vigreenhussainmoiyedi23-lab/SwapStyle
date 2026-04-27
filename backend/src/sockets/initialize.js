@@ -33,7 +33,7 @@ const initSocket = (server) => {
     });
     io.on("connection", (socket) => {
 
-        socketUserMap.set(socket.userId, [...(socketUserMap.get(socket.userId) || []),socket.id])
+        socketUserMap.set(socket.userId, [...(socketUserMap.get(socket.userId) || []), socket.id])
         console.log(socketUserMap.get(socket.userId))
         // join chat room
         socket.on("join_room", (chatId) => {
@@ -50,6 +50,7 @@ const initSocket = (server) => {
 
         socket.on("disconnect", () => {
             console.log("❌ User disconnected:", socket.id);
+            socketUserMap.set(socket.userId, socketUserMap.get(socket.userId).filter(id => id !== socket.id))
         });
     });
 

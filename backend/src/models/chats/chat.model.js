@@ -9,9 +9,9 @@ const chatSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "messages"
     },
-
-    lastMessageText: String,
-    lastMessageAt: Date,
+    lastMessageAt: {
+        type: Date
+    },
 
     unreadCount: {
         type: Map,
@@ -20,6 +20,8 @@ const chatSchema = new mongoose.Schema({
     }
 
 }, { timestamps: true });
+
+
 const chatModel = mongoose.model("chats", chatSchema, "chats")
 
 module.exports = chatModel

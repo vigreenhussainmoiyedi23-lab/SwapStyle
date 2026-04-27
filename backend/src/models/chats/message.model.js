@@ -12,6 +12,7 @@ const messageSchema = new mongoose.Schema({
   readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }]
 
 }, { timestamps: true });
+messageSchema.index({ chatId: 1 });
 const messageModel = mongoose.model("messages", messageSchema, "messages")
 
 module.exports = messageModel

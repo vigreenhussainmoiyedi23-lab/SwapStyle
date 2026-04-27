@@ -8,6 +8,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ListingContextProvider } from "./features/listings/listing.context.jsx";
 import { ProfileContextProvider } from "./features/Profile/profile.context.jsx";
 import SwapContextProvider from "./features/swap/swap.context.jsx";
+import ChatContextProvider from "./features/chats/chat.context.jsx";
 
 createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -15,9 +16,11 @@ createRoot(document.getElementById("root")).render(
       <ListingContextProvider>
         <ProfileContextProvider>
           <SwapContextProvider>
-            <StrictMode>
-              <App />
-            </StrictMode>
+            <ChatContextProvider>
+              <StrictMode>
+                <App />
+              </StrictMode>
+            </ChatContextProvider>
           </SwapContextProvider>
         </ProfileContextProvider>
       </ListingContextProvider>

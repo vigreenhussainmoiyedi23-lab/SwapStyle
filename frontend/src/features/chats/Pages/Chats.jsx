@@ -1,11 +1,30 @@
+import { useParams } from "react-router-dom";
 import ChatLayout from "../components/ChatLayout";
+import { useChatHttp } from "../hooks/useChatHttp";
+import { useEffect } from "react";
 
 export default function Chats() {
-  return (
-    <ChatLayout>
-      <div className="hidden md:flex flex-1 items-center justify-center text-brand-400">
-        Select a chat to start messaging
-      </div>
-    </ChatLayout>
-  );
+  const {
+    getUserAllChatsHandler,
+    getChatAllMessagesHandler,
+    userAllChats,
+    chatsAllMessages,
+  } = useChatHttp();
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function fetchData() {
+      await getUserAllChatsHandler();
+    }
+    fetchData();
+  }, []);
+  useEffect(() => {
+    if (!id) return;
+    async function fetchData() {
+      await getChatAllMessagesHandler({ chatId: id });
+    }
+    fetchData();
+  }, [id]);
+  
+  return <ChatLayout chatId={id} chats={userAllChats} />;
 }

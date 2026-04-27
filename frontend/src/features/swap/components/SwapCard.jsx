@@ -2,10 +2,14 @@ import React from "react";
 import { ArrowRightLeft } from "lucide-react";
 import ProductCard from "../../listings/components/ui/ProductCard";
 import useSwap from "../hooks/useSwap";
+import { useChatHttp } from "../../chats/hooks/useChatHttp";
+import { useNavigate } from "react-router-dom";
 const SwapCard = ({ swap }) => {
+  const { chatAccessHandler } = useChatHttp();
   let role = swap.role;
   let otherUserRole = role == "owner" ? "requester" : "owner";
   let status = swap.status;
+  const navigate = useNavigate();
   const {
     acceptSwapHandler,
     rejectSwapHandler,
@@ -98,7 +102,15 @@ const SwapCard = ({ swap }) => {
         )}
         {status === "accepted" && (
           <>
-            <button className="bg-accent-500 text-brand-900 font-bold source-code-pro whitespace-nowrap px-3 py-2 rounded-lg w-full">
+            <button
+              onClick={async () => {
+                const response = await chatAccessHandler(
+                  swap[otherUserRole]._id,
+                );
+                navigate(`/chats/${response.chatId}`);
+              }}
+              className="bg-accent-500 text-brand-900 font-bold source-code-pro whitespace-nowrap px-3 py-2 rounded-lg w-full"
+            >
               Negotiate With{" "}
               {role == "owner" ? swap.requester.username : swap.owner.username}
             </button>

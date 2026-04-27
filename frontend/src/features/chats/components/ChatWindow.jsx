@@ -1,7 +1,7 @@
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 
-export default function ChatWindow() {
+export default function ChatWindow({chatId}) {
   return (
     <div className="flex flex-col h-full">
 
