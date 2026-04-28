@@ -13,6 +13,10 @@ import ProtectedLayout from "./Layouts/ProtectedLayout";
 import Swaps from "./features/swap/Pages/Swaps";
 import Chats from "./features/chats/Pages/Chats";
 import ProtectedLayoutWithNoFooter from "./Layouts/ProtectedWithNofooterOrFootbar";
+import AdminHome from "./features/admin/pages/AdminHome";
+import Users from "./features/admin/pages/Users";
+import Disputes from "./features/admin/pages/Disputes";
+import AdminListings from "./features/admin/pages/AdminListings";
 
 const Approutes = () => {
   return (
@@ -90,6 +94,11 @@ const Approutes = () => {
             </ProtectedLayoutWithNoFooter>
           }
         />
+        <Route path="/admin" element={<AdminHome />} />
+        <Route path="/admin/users" element={<Users />} />
+        <Route path="/admin/disputes" element={<Disputes />} /> 
+        <Route path="/admin/listings" element={<AdminListings />} /> 
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/register" element={<RegisterPage />} />
