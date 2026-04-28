@@ -87,11 +87,10 @@ async function CreateListingHandler(req, res) {
         if (!value) return res.status(500).json({ message: "Error estimating value", success: false })
         const owner = req.userId
         const promises = req.files.map(file =>
-            uploadImage(file.buffer, Date.now() + "_" + Math.floor(Math.random() * 1000), "listingImages")
+            uploadImage(file.buffer, Date.now() + "_" + Math.floor(Math.random() * 1000), "/SwapStyle/listingImages")
         );
         const responses = await Promise.all(promises)
-        const images = responses.map(response => { return { url: response.url, fileId: response.fileId } })
-        console.log(location)
+        const images = responses.map(response => { return { url: response.url, fileId: response.fileId, thumbnail: response.thumbnailUrl } })
         const listing = await createListingService({ location: location, clothingType, brandName, size, condition, estimatedValue: value, images, owner, title, description, category })
         res.status(201).json({ listing, message: "Listing created successfully", success: true })
 

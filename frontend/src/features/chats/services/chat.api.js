@@ -36,5 +36,15 @@ const chatAccess = async (otherUserId) => {
         throw new Error(error.response.data.message);
     }
 }
+const UploadImage = async (files) => {
+    try {
+        const response = await apiClient.post(`/uploadImages`,
+            files
+            , { headers: { "Content-Type": "multipart/form-data" } })
+        return response.data
+    } catch (error) {
+        throw new Error(error.response.data.message);
+    }
+}
 
-export { getUserAllChats, getChatAllMessages, chatAccess }
+export { getUserAllChats, getChatAllMessages, chatAccess, UploadImage }

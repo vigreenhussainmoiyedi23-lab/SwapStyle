@@ -61,6 +61,10 @@ const listingSchema = new mongoose.Schema({
                 type: String,
                 required: [true, "Image fileId is required"]
             },
+            thumbnail: {
+                type: String,
+                required: [true, "Image thumbnail is required"]
+            }
         },
         required: [true, "At least one image is required"]
     }],

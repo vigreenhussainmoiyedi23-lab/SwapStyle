@@ -63,7 +63,6 @@ const Listings = () => {
       {/* Filters Sidebar */}
       <div className="hidden lg:block overflow-y-auto fixed left-0 top-[10vh] w-80 h-[90dvh]">
         <FiltersSidebar
-        
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           selectedTypes={selectedTypes}
@@ -79,12 +78,13 @@ const Listings = () => {
           CONDITIONS={CONDITIONS}
           toggleArray={toggleArray}
           coordinates={coordinates}
+          itemCount={allListings.length}
           setCoordinates={setCoordinates}
         />
       </div>
       {isMenuOpen && (
-        <div className="fixed z-10 top-[10vh] left-0 w-80 h-[90dvh] lg:hidden overflow-y-auto">
-          
+        <div className="fixed z-20 top-[10vh] left-0 w-80 h-[90dvh] lg:hidden overflow-y-auto">
+          <button className="text-white bg-red-500 p-2 absolute top-5 right-5 flex items-center justify-center gap-3 rounded-lg" onClick={() => setIsMenuOpen(false)}>Close <X/></button>
           <FiltersSidebar
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
@@ -98,8 +98,11 @@ const Listings = () => {
             CATEGORIES={CATEGORIES}
             CLOTHING_TYPES={CLOTHING_TYPES}
             SIZES={SIZES}
+            itemCount={allListings.length}
             CONDITIONS={CONDITIONS}
             toggleArray={toggleArray}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
             coordinates={coordinates}
             setCoordinates={setCoordinates}
           />

@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema({
 
   text: { type: String },
 
-  images: [{ type: String }], 
+  images: [{ url: String, fileId: String }],
 
   readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }]
 

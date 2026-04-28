@@ -12,6 +12,7 @@ import Profile from "./features/Profile/Pages/Profile";
 import ProtectedLayout from "./Layouts/ProtectedLayout";
 import Swaps from "./features/swap/Pages/Swaps";
 import Chats from "./features/chats/Pages/Chats";
+import ProtectedLayoutWithNoFooter from "./Layouts/ProtectedWithNofooterOrFootbar";
 
 const Approutes = () => {
   return (
@@ -76,17 +77,17 @@ const Approutes = () => {
         <Route
           path="/chats"
           element={
-            <ProtectedLayout>
+            <ProtectedLayoutWithNoFooter>
               <Chats />
-            </ProtectedLayout>
+            </ProtectedLayoutWithNoFooter>
           }
         />
         <Route
           path="/chats/:id"
           element={
-            <ProtectedLayout>
+            <ProtectedLayoutWithNoFooter>
               <Chats />
-            </ProtectedLayout>
+            </ProtectedLayoutWithNoFooter>
           }
         />
         <Route path="/login" element={<LoginPage />} />

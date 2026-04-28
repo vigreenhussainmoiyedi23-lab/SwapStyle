@@ -34,7 +34,7 @@ function Step({ title, desc, icon, path }) {
       >
         {icon}
         <div className="text-start">
-          <h4 className="text-xs playfair sm:text-sm text-white font-medium">
+          <h4 className="text-xs playfair sm:text-sm text-gray-300 font-medium">
             {title}
           </h4>
           <p className="text-[10px] montserrat sm:text-xs text-gray-400">
@@ -153,19 +153,19 @@ function HeroVisual() {
           path={"/createListing"}
           title="List Items"
           desc="Add what you want"
-          icon={<Plus className="text-white" />}
+          icon={<Plus className="text-gray-200" />}
         />
         <Step
           path={"/listings"}
           title="Find Matches"
           desc="Discover items"
-          icon={<Search />}
+          icon={<Search className="text-gray-200"/>}
         />
         <Step
           path={"/chat"}
           title="Negotiate"
           desc="Chat & agree"
-          icon={<MessageCircle className="text-white" />}
+          icon={<MessageCircle className="text-gray-200" />}
         />
       </div>
     </div>

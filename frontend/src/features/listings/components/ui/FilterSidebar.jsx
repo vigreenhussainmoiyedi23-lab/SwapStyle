@@ -19,6 +19,9 @@ const FiltersSidebar = ({
   toggleArray,
   coordinates, // {lat,lng}
   setCoordinates,
+    sortBy,
+  setSortBy,
+  itemCount
 }) => {
   const handleUseLocation = () => {
     if (!navigator.geolocation) {
@@ -40,7 +43,7 @@ const FiltersSidebar = ({
     );
   };
   return (
-    <div className=" flex  bg-brand-900 overflow-y-auto border-r border-brand-700 p-6 flex-col">
+    <div className=" flex   bg-brand-900 overflow-y-auto border-r border-brand-700 p-6 flex-col">
       <h2 className="text-2xl font-semibold mb-8 text-brand-100">Filters</h2>
       <button
         className="bg-accent-500 mb-3 active:scale-96 text-brand-900 px-3 py-2 rounded-lg source-code-pro font-bold text-lg flex items-center justify-center gap-1 whitespace-nowrap"
@@ -103,7 +106,31 @@ const FiltersSidebar = ({
           </div>
         </div>
       )}
+      {/* sortBy */}
+      <div className="flex lg:hidden items-center gap-4">
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="bg-brand-800 border border-brand-700 rounded-2xl px-6 py-3 text-sm focus:outline-none cursor-pointer"
+        >
+          <option value="newest" className=" bg-brand-900 text-accent-300">
+            Newest First
+          </option>
+          <option value="oldest" className=" bg-brand-900 text-accent-300">
+            Oldest First
+          </option>
+          <option value="price-low" className=" bg-brand-900 text-accent-300">
+            Price: Low to High
+          </option>
+          <option value="price-high" className=" bg-brand-900 text-accent-300">
+            Price: High to Low
+          </option>
+        </select>
 
+        <div className="text-sm text-brand-400 whitespace-nowrap">
+          {itemCount} items
+        </div>
+      </div>
       {/* Sizes */}
       <div className="mb-8">
         <h3 className="font-medium mb-3">Size</h3>

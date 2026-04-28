@@ -1,13 +1,21 @@
 const { createMessageFromSocket } = require("../services/chat/socket.services");
 
 const chatSockets = (io, socket, socketUserMap) => {
-    socket.on("createMessage", async ({ chatId, message }) => {
-        console.log("creating message..")
-        const sender = socket.userId
-        const data = await createMessageFromSocket({ chatId, message, senderId: sender })
-        io.to(data.chatId.toString()).emit("message", data);
-        console.log(data);
+    socket.on("createMessage", async (data) => {
+        try {
+            const senderId = socket.userId; // from auth middleware
+            const newMessage = await createMessageFromSocket({
+                ...data,
+                senderId,
+            });
+            console.log(newMessage);
+            io.to(data.chatId).emit("message", newMessage);
+
+        } catch (err) {
+            console.log(err);
+        }
     });
+
     socket.on("join_room", (chatId) => {
         socket.join(chatId.toString());
         console.log(`User joined room: ${chatId}`);

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { getChatAllMessages, getUserAllChats, chatAccess } from "../services/chat.api.js";
+import { getChatAllMessages, getUserAllChats, chatAccess, UploadImage } from "../services/chat.api.js";
 import { ChatContext } from "../chat.context.jsx";
 
 export const useChatHttp = () => {
@@ -50,6 +50,21 @@ export const useChatHttp = () => {
     const addNewMessage = async (message) => {
         setChatsAllMessages([...chatsAllMessages, message])
     }
+    const uploadImages = async (files) => {
+        setLoading(true)
+        try {
+            const formData = new FormData();
+            files.forEach((file) => {
+                formData.append("files", file); // key = "images"
+            });
+            const response = await UploadImage(formData)
+            return response
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
     return {
         loading,
         userAllChats,
@@ -57,6 +72,7 @@ export const useChatHttp = () => {
         getChatAllMessagesHandler,
         getUserAllChatsHandler,
         chatAccessHandler,
-        addNewMessage
+        addNewMessage,
+        uploadImages,
     }
 }

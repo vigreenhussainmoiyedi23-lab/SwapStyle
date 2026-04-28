@@ -3,7 +3,7 @@ import SwapCard from "../components/SwapCard";
 import SwapFilters from "../components/SwapFilters";
 import useSwap from "../hooks/useSwap";
 import useAuth from "../../auth/hooks/useAuth";
-import { MenuSquare, X } from "lucide-react";
+import { FilterIcon, MenuSquare, X } from "lucide-react";
 
 const Swaps = () => {
   let typeConditions = {
@@ -67,7 +67,7 @@ const Swaps = () => {
           {showFilter && (
             <button
               onClick={() => setShowFilter((prev) => !prev)}
-              className="absolute top-0 right-0  flex lg:hidden items-center gap-2 bg-red-500 text-white px-3 py-2 rounded-lg"
+              className="absolute top-5 right-5  flex lg:hidden items-center gap-2 bg-red-500 text-white px-3 py-2 rounded-lg"
             >
               Close <X />
             </button>
@@ -80,14 +80,14 @@ const Swaps = () => {
           />
         </div>
       )}
-      <div className="flex flex-col  gap-4 px-3 py-2  lg:ml-80">
+      <div className="flex flex-col relative gap-4 px-3 py-2  lg:ml-80">
         {!showFilter && (
-          <div className=" border-t z-10 border-brand-700 fixed top-[10vh]">
+          <div className="fixed z-10 top-[12vh] w-fit h-20 right-0">
             <button
               onClick={() => setShowFilter((prev) => !prev)}
               className="flex lg:hidden items-center gap-2 bg-accent-500 text-brand-900 px-3 py-2 rounded-lg"
             >
-              Filters <MenuSquare />
+              Filters <FilterIcon />
             </button>
           </div>
         )}

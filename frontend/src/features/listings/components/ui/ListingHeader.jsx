@@ -12,7 +12,7 @@ const ListingHeader = ({
   isMenuOpen,
 }) => {
   return (
-    <div className="fixed top-[10vh] left-0 lg:left-80 right-0 z-10 bg-brand-900 border-b border-brand-700 px-6 py-5 flex flex-col sm:flex-row gap-4 items-center justify-between">
+    <div className="fixed top-[10vh] left-0 lg:left-80 right-0 z-10 bg-brand-900 border-b border-brand-700 px-6 py-5 flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between">
       <button
         onClick={() => {
           setIsMenuOpen((prev) => !prev);
@@ -30,7 +30,8 @@ const ListingHeader = ({
           </>
         )}
       </button>
-      <div className="flex-1 max-w-lg">
+
+      <div className="flex-1 max-w-lg w-full">
         <input
           type="text"
           value={search}
@@ -42,7 +43,7 @@ const ListingHeader = ({
         />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="hidden lg:flex items-center gap-4">
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}

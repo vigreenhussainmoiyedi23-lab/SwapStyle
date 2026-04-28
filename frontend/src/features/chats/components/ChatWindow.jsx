@@ -1,7 +1,7 @@
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import { useChatHttp } from "../hooks/useChatHttp";
-import  useAuth  from "../../auth/hooks/useAuth";
+import useAuth from "../../auth/hooks/useAuth";
 export default function ChatWindow({ chat }) {
   const { user } = useAuth();
   const { chatsAllMessages } = useChatHttp();
@@ -12,8 +12,14 @@ export default function ChatWindow({ chat }) {
         className="
         p-4 border-b border-brand-800
         playfair text-brand-100
+        flex items-center justify-start gap-3
       "
       >
+        <img
+          className="w-10 h-10 rounded-full"
+          src={chat?.otherUser?.profilePicture}
+          alt="profilePicture"
+        />
         {chat?.otherUser?.username || "Username"}
       </div>
 
@@ -29,6 +35,7 @@ export default function ChatWindow({ chat }) {
                   : "other"
               }
               text={message.text}
+              images={message.images}
             />
           ))}
       </div>

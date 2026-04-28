@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
 import Navbar from "../features/commonComponents/Navbar";
-import Footer from "../features/commonComponents/Footer";
-import Footbar from "../features/commonComponents/Footbar";
-import { AuthContext } from "../features/auth/auth.context";
+
 import useAuth from "../features/auth/hooks/useAuth";
 import { Link } from "react-router-dom";
 
-const ProtectedLayout = ({ children }) => {
+const ProtectedLayoutWithNoFooter = ({ children }) => {
   const { user, loading } = useAuth();
   if (!user && !loading)
     return (
@@ -29,16 +26,18 @@ const ProtectedLayout = ({ children }) => {
       </div>
     );
   if (loading) {
-    return <div className="bg-brand-900 text-5xl flex items-center justify-center animate-pulse min-h-screen w-full text-white " >loading...</div>;
+    return (
+      <div className="bg-brand-900 text-5xl flex items-center justify-center animate-pulse min-h-screen w-full text-white ">
+        loading...
+      </div>
+    );
   }
   return (
     <section className="w-full relative">
       <Navbar user={user} />
       {children}
-      <Footer />
-      {user && <Footbar user={user} />}
     </section>
   );
 };
 
-export default ProtectedLayout;
+export default ProtectedLayoutWithNoFooter;
