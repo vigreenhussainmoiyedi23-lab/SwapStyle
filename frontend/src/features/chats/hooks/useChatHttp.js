@@ -49,6 +49,17 @@ export const useChatHttp = () => {
     }
     const addNewMessage = async (message) => {
         setChatsAllMessages([...chatsAllMessages, message])
+        setUserAllChats(prev =>
+            prev.map(chat =>
+                chat._id === message.chatId
+                    ? {
+                        ...chat,
+                        lastMessage: message,
+                        lastMessageAt: message.createdAt
+                    }
+                    : chat
+            )
+        );
     }
     const uploadImages = async (files) => {
         setLoading(true)

@@ -1,5 +1,4 @@
 export default function MessageBubble({ from, text, images }) {
-  if (images.length > 0) console.log(images);
   return (
     <div
       className={`

@@ -11,12 +11,19 @@ async function getChatAllMessagesHandler(req, res) {
 }
 async function getUserAllChatsHandler(req, res) {
     const userId = req.userId
-    const chats = await chatModel.find({ participants: userId }).populate({ path: "participants", select: "username profilePicture email" }).lean()
+    const chats = await chatModel.find({ participants: userId }).populate([
+        {
+            path: "participants",
+            select: "username profilePicture email"
+        }, {
+            path: "lastMessage",
+        }]
+    ).lean()
     const chatsWithOtherUserName = chats.map(c => {
         const otherUser = c.participants.find(p => p._id.toString() !== userId.toString())
         return { ...c, otherUser }
     })
-    res.status(200).json({ chats:chatsWithOtherUserName, message: "Chats fetched successfully", success: true });
+    res.status(200).json({ chats: chatsWithOtherUserName, message: "Chats fetched successfully", success: true });
 }
 
 async function chatAccessHandler(req, res) {

@@ -14,6 +14,7 @@ class SocketManager {
 
         // ✅ timers
         this.retryTimeout = null;
+        this.listeners = new Map();;
     }
 
     init() {
@@ -64,6 +65,13 @@ class SocketManager {
     retryAfterUserAction() {
         this.retryCount = 0; // reset retry cycle
         this.connect();
+    }
+    removeListener(event) {
+        const cb = this.listeners.get(event);
+        if (cb) {
+            this.socket.off(event, cb);
+            this.listeners.delete(event);
+        }
     }
 }
 

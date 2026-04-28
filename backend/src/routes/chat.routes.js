@@ -8,6 +8,8 @@ const { uploadImage } = require("../services/listing/UploadImage.service")
 router.get("/", isAuthenticated, getUserAllChatsHandler)
 router.get("/:chatId", isAuthenticated, getChatAllMessagesHandler)
 router.post("/", isAuthenticated, chatAccessHandler)
+
+
 router.post("/uploadImages", upload.array("files"), async (req, res) => {
     try {
         const files = req.files;
