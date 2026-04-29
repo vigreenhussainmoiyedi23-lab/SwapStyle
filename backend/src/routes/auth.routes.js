@@ -1,8 +1,8 @@
 const express = require("express")
 const authRouter = express.Router()
 // Middlewares  and Controllers ⚙️
-const { validate } = require("../middlewares/Validators/validate")
-const { authValidator } = require("../middlewares/Validators/auth.validator");
+const { validate } = require("../Validators/validate")
+const { authValidator } = require("../Validators/auth.validator");
 const { authLimiter, OtpLimiter, ResendOtpLimiter } = require("../middlewares/rateLimiter");
 const { logoutHandler, loginHandler, registerHandler, verifyOtpHandler, resendOtpHandler, getMeHandler, googleLoginHandler } = require("../controllers/auth.controller");
 const { loginDummyHandler, registerDummyHandler } = require("../controllers/developementDummyControllers/auth.controller");

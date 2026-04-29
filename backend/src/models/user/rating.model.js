@@ -1,9 +1,9 @@
 const mongoose = require("mongoose")
 
 const ratingSchema = new mongoose.Schema({
-    swapId: { type: mongoose.Schema.Types.ObjectId, ref: "Swap", required: true },
-    rater: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    ratee: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    swapId: { type: mongoose.Schema.Types.ObjectId, ref: "swaps", required: true },
+    rater: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
+    ratee: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
     role: {
         type: String,
         enum: ["requester", "owner"],
@@ -13,4 +13,6 @@ const ratingSchema = new mongoose.Schema({
     comment: { type: String }
 }, { timestamps: true })
 ratingSchema.index({ swapId: 1, rater: 1 }, { unique: true })
-module.exports = mongoose.model("ratings", ratingSchema, "ratings")
+
+const ratingModel = mongoose.model("ratings", ratingSchema)
+module.exports = ratingModel

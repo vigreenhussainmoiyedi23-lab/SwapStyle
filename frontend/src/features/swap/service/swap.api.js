@@ -93,6 +93,34 @@ const changeShipmentTypeSwapRequest = async (swapId, changeTo) => {
         throw error.response;
     }
 };
+const createDisputeApi = async (swapId, disputeDetails) => {
+    try {
+        const response = await apiClient.post(`/${swapId}/dispute`, disputeDetails);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating dispute for swap request:', error);
+        throw error.response;
+    }
+}
+const getSwapAllDisputeApi = async (swapId) => {
+    try {
+        const response = await apiClient.get(`/${swapId}/disputes`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching disputes for swap request:', error);
+        throw error.response.data;
+    }
+}
+const createRatingApi = async (swapId, ratingDetails) => {
+    try {
+        const response = await apiClient.post(`/${swapId}/rating`, ratingDetails);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating rating for other user:', error);
+        throw error.response;
+    }
+}
+
 export {
     createSwapRequest,
     fetchSwapRequests,
@@ -102,5 +130,8 @@ export {
     completeSwapRequest,
     shipmentUpdateSwapRequest,
     changeShipmentTypeSwapRequest,
-    shipmentAddressApi
+    shipmentAddressApi,
+    createDisputeApi,
+    createRatingApi,
+    getSwapAllDisputeApi
 };

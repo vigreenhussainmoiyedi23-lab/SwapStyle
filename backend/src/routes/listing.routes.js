@@ -19,8 +19,8 @@ const router = express.Router()
 const { CreateListingHandler, GetAllListingsHandler, GetListingByIdHandler, GetListingsByUserIdHandler, UpdateListingByIdHandler, AddImagesToListingHandler, RemoveImageFromListingHandler, DeleteListingByIdHandler } = require("../controllers/listing.controller")
 const { isAuthenticated } = require("../middlewares/protectedRoutes.middleware")
 const upload = require("../config/multer")
-const { createListingValidator, updateListingValidator } = require("../middlewares/Validators/listing.validator")
-const { validate } = require("../middlewares/Validators/validate")
+const { createListingValidator, updateListingValidator } = require("../Validators/listing.validator")
+const { validate } = require("../Validators/validate")
 const { CreateListingLimiter } = require("../middlewares/rateLimiter")
 
 

@@ -54,8 +54,42 @@ async function createSwapService(ownerListing, requesterListing, message, user) 
       throw new Error(error)
    }
 }
+const getTrackingLink = (courier, trackingId) => {
+   if (!trackingId) return null;
 
-module.exports = { createSwapService }
+   switch (courier) {
+      case "delhivery":
+         return `https://www.delhivery.com/track/package/${trackingId}`;
+
+      case "bluedart":
+         return `https://www.bluedart.com/tracking?awb=${trackingId}`;
+
+      case "dtdc":
+         return `https://www.dtdc.in/tracking.asp?strCnno=${trackingId}`;
+
+      case "indiapost":
+         return `https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx?consignment=${trackingId}`;
+
+      case "ekart":
+         return `https://ekartlogistics.com/shipmenttrack/${trackingId}`;
+
+      case "xpressbees":
+         return `https://www.xpressbees.com/track?awb=${trackingId}`;
+
+      case "amazon":
+         return `https://www.amazon.in/progress-tracker/package/ref=ppx_yo_dt_b_track_package?trackingId=${trackingId}`;
+
+      case "flipkart":
+         return `https://www.flipkart.com/order_details?trackingId=${trackingId}`;
+
+      case "other":
+      default:
+         return `https://www.google.com/search?q=${encodeURIComponent(
+            courier + " tracking " + trackingId
+         )}`;
+   }
+};
+module.exports = { createSwapService  ,getTrackingLink }
 
 /*  
 Swap Services Documentation - Hussain

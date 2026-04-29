@@ -9,7 +9,10 @@ import {
     acceptSwapRequest,
     shipmentUpdateSwapRequest,
     changeShipmentTypeSwapRequest,
-    shipmentAddressApi
+    shipmentAddressApi,
+    createDisputeApi,
+    getSwapAllDisputeApi,
+    createRatingApi
 } from "../service/swap.api";
 
 
@@ -19,9 +22,11 @@ const useSwap = () => {
         loading,
         userAllSwaps,
         filters,
+        swapAllDisputes,
         setLoading,
         setUserAllSwaps,
         setFilters,
+        setSwapAllDisputes
     } = useContext(SwapContext)
     const getSwapRequests = async ({ filters }) => {
         try {
@@ -103,6 +108,34 @@ const useSwap = () => {
             setLoading(false);
         }
     };
+    const createDisputeHandler = async (swapId, disputeDetails) => {
+        try {
+            setLoading(true);
+            const response = await createDisputeApi(swapId, disputeDetails);
+            showToast(response.message, "success");
+            getSwapRequests({ filters });
+        } catch (error) {
+            showToast(error.message, "error");
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+    const getSwapAllDisputesHandler = async (swapId) => {
+        try {
+            setLoading(true);
+            const response = await getSwapAllDisputeApi(swapId);
+            showToast(response.message, "success");
+            getSwapRequests({ filters });
+            setSwapAllDisputes(response.disputes);
+        } catch (error) {
+            console.error(error)
+            showToast(error.data.message, "error");
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
     const shipmentAddressHandler = async (swapId, shipmentAddress) => {
         try {
             setLoading(true);
@@ -134,6 +167,19 @@ const useSwap = () => {
             setLoading(false);
         }
     };
+    const createRatingHandler = async (swapId, ratingDetails) => {
+        try {
+            setLoading(true);
+            const response = await createRatingApi(swapId, ratingDetails);
+            showToast(response.message, "success");
+            getSwapRequests({ filters });
+        } catch (error) {
+            console.error("Error creating rating for other user:", error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }
     useEffect(() => {
         const fetch = async () => {
             await getSwapRequests({ filters });
@@ -149,9 +195,13 @@ const useSwap = () => {
         shipmentDetailsHandler,
         changeShipmentTypeHandler,
         shipmentAddressHandler,
+        createDisputeHandler,
+        getSwapAllDisputesHandler,
+        createRatingHandler,
         loading,
         filters,
-        userAllSwaps
+        userAllSwaps,
+        swapAllDisputes
     };
 };
 

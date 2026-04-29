@@ -1,4 +1,5 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const { COURIERS } = require("../../constants/CourierEnum");
 
 
 const swapSchema = new mongoose.Schema({
@@ -28,8 +29,9 @@ const swapSchema = new mongoose.Schema({
     from: {
       type: mongoose.Schema.Types.ObjectId, ref: "users"
     },
-    courier: String,
+    courier: { type: String },
     trackingId: String,
+    trackingUrl:String
   }],
   ownerAddress: {
     street: String,
@@ -37,6 +39,7 @@ const swapSchema = new mongoose.Schema({
     state: String,
     country: String,
     pincode: Number,
+    phoneNumber: String
   },
   requesterAddress: {
     street: String,

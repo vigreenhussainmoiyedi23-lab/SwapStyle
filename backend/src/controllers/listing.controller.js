@@ -15,7 +15,7 @@ APIs to build for listing.routes.js:
     */
 
 const imagekit = require("../config/imagekit");
-const { validateLocation } = require("../middlewares/Validators/locationValidator");
+const { validateLocation } = require("../Validators/locationValidator");
 const { EstimateValue } = require("../services/ai/ValueEstimate.service");
 const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService } = require("../services/listing/DBFunctions.service");
 const { deleteAllImageFromListing } = require("../services/listing/DeleteImage.service");

@@ -8,6 +8,7 @@ import React from "react";
 const SwapContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userAllSwaps, setUserAllSwaps] = useState(null);
+  const [swapAllDisputes, setSwapAllDisputes] = useState(null);
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -21,9 +22,11 @@ const SwapContextProvider = ({ children }) => {
         loading,
         userAllSwaps,
         filters,
+        swapAllDisputes,
         setLoading,
         setUserAllSwaps,
         setFilters,
+        setSwapAllDisputes,
       }}
     >
       {children}

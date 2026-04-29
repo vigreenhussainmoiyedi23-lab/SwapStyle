@@ -1,12 +1,14 @@
 const { response } = require("express");
-const { validateLocation } = require("../middlewares/Validators/locationValidator");
+const { validateLocation } = require("../Validators/locationValidator");
 const listingModel = require("../models/listing.model");
 const changeHistoryModel = require("../models/swap/changeHistory.model");
 const swapModel = require("../models/swap/swap.model");
 const { getListingByIdService } = require("../services/listing/DBFunctions.service");
-const { createSwapService } = require("../services/swap/swap.service");
+const { createSwapService, getTrackingLink } = require("../services/swap/swap.service");
 const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap } = require("../services/swap/swap.utiliy");
-const axios = require('axios')
+const axios = require('axios');
+const disputeModel = require("../models/swap/dispute.model");
+const ratingModel = require("../models/user/rating.model");
 
 async function createSwapHandler(req, res) {
     try {
@@ -142,6 +144,109 @@ async function getSingleSwapHandler(req, res) {
 // pending -> rejected
 // pending -> cancelled
 
+async function createDisputeHandler(req, res) {
+    try {
+        const { swapId } = req.params
+        const user = req.userId
+        const swap = await getSwapByIdService(swapId)
+        const { type, reason, description } = req.body
+        ValidateSwap(swap, user)
+        if (swap.status !== "shipping" && swap.status !== "disputed") {
+            return res.status(400).json({ message: "Swap is not in shipping or disputed state", success: false })
+        }
+        let role = swap.owner.toString() === user ? "owner" : "requester"
+
+        const dispute = await disputeModel.create({
+            swapId: swap._id,
+            raisedBy: user,
+            role,
+            type,
+            reason,
+            description
+        })
+
+        swap.status = "disputed"
+        await swap.save()
+        res.status(200).json({
+            message: "dispute Created",
+            success: true
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(error.status || 500).json({
+            message: error.message || "Error creating dispute",
+            success: false
+        })
+    }
+}
+async function createRatingHandler(req, res) {
+    try {
+        const { swapId } = req.params
+        const user = req.userId
+        const swap = await getSwapByIdService(swapId)
+        const { ratee, comment, ratingValue } = req.body
+        console.log(swapId,user,ratee,comment,ratingValue)
+        ValidateSwap(swap, user)
+        if (swap.status !== "completed") {
+            return res.status(400).json({ message: "Swap is not in completed state", success: false })
+        }
+        let ratingExists = await ratingModel.findOne({ swapId: swap._id, rater: user })
+        if (ratingExists) {
+            return res.status(400).json({ message: "You have already rated this swap", success: false })
+        }
+
+        let role = swap.owner.toString() === user ? "owner" : "requester"
+        const rating = await ratingModel.create({
+            swapId: swap._id,
+            ratee: ratee,
+            rater: user,
+            role,
+            ratingValue,
+            comment
+        })
+
+
+        res.status(200).json({
+            message: "rating Created",
+            success: true
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(error.status || 500).json({
+            message: error.message || "Error creating dispute",
+            success: false
+        })
+    }
+}
+
+async function getSwapAllDisputesHandler(req, res) {
+    try {
+        const { swapId } = req.params
+        const user = req.userId
+        const swap = await getSwapByIdService(swapId)
+        ValidateSwap(swap, user)
+        const disputes = await disputeModel.find({ swapId: swap._id }).populate([{
+            path: "raisedBy",
+            select: "username profilePicture email",
+        }])
+
+
+        res.status(200).json({
+            message: "Here Are All Disputes",
+            disputes,
+            success: true
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(error.status || 500).json({
+            message: error.message || "Error creating dispute",
+            success: false
+        })
+    }
+}
+
 async function acceptSwapHandler(req, res) {
     try {
         const { swapId } = req.params
@@ -176,8 +281,8 @@ async function rejectSwapHandler(req, res) {
 
         ValidateSwap(swap, user)
 
-        await validateSwapState(swap, "pending")
-        await validateUserRole(swap, user, "owner")
+        validateSwapState(swap, "pending")
+        validateUserRole(swap, user, "owner")
 
         swap.status = "rejected"
         await swap.save()
@@ -276,10 +381,12 @@ async function shipmentDetailsHandler(req, res) {
         if (isShipmentExist) {
             return res.status(400).json({ message: "Shipment details already exist", success: false })
         }
+        const url = await getTrackingLink(courier, trackingId)
         swap.shipments.push({
             from: user,
             courier,
-            trackingId
+            trackingId,
+            trackingUrl: url
         })
         swap.shippedBy[role] = true
         const { requester, owner } = swap.shippedBy
@@ -353,13 +460,16 @@ async function shippingAddressHandler(req, res) {
     try {
         const { swapId } = req.params
         const user = req.userId
-        const { street, city, pincode, country, state } = req.body
+        const { street, city, pincode, country, state, phone } = req.body
+        if (!street || !phone) {
+            return res.status(400).json({ message: "Both  Phone number And Street is required", success: false })
+        }
         const postalcheckerurl = process.env.POSTALCODE_CHECKER_URL + pincode
         const { data } = await axios.get(postalcheckerurl)
         if (data[0].Status == "Error") {
             return res.status(400).json({ message: "Invalid Pincode", success: false })
         }
-        await validateLocation({ country, state, city })
+        const response = await validateLocation({ country, state, city })
 
 
         const swap = await getSwapByIdService(swapId)
@@ -375,7 +485,8 @@ async function shippingAddressHandler(req, res) {
             city: response.city,
             state: response.state,
             pincode,
-            country: response.country
+            country: response.country,
+            phoneNumber: phone
         }
         swap.AddresGivenBy[role] = true
         const { owner, requester } = swap.AddresGivenBy
@@ -408,7 +519,9 @@ module.exports = {
     completeSwapHandler,
     shipmentDetailsHandler,
     changeShipmentTypeHandler,
-    shippingAddressHandler
+    shippingAddressHandler,
+    createDisputeHandler,
+    getSwapAllDisputesHandler, createRatingHandler
 }
 
 /*  Read the comments for better understanding of my 

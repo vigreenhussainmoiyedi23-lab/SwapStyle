@@ -1,4 +1,3 @@
-// ShippingDetailsForm.jsx
 import React, { useState } from "react";
 import useSwap from "../../hooks/useSwap";
 import Input from "./ui/Input";
@@ -7,8 +6,21 @@ import { X } from "lucide-react";
 const ShippingDetailsForm = ({ swapId, setShowForm }) => {
   const { shipmentDetailsHandler } = useSwap();
 
+  const COURIERS = [
+    "delhivery",
+    "bluedart",
+    "dtdc",
+    "indiapost",
+    "ekart",
+    "xpressbees",
+    "amazon",
+    "flipkart",
+    "other",
+  ];
+
   const [form, setForm] = useState({
-    courier: "",
+    courier: "delhivery",
+    customCourier: "",
     trackingId: "",
   });
 
@@ -18,7 +30,14 @@ const ShippingDetailsForm = ({ swapId, setShowForm }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    shipmentDetailsHandler(swapId, form);
+
+    const payload = {
+      courier:
+        form.courier === "other" ? form.customCourier : form.courier,
+      trackingId: form.trackingId,
+    };
+
+    shipmentDetailsHandler(swapId, payload);
   };
 
   return (
@@ -30,19 +49,37 @@ const ShippingDetailsForm = ({ swapId, setShowForm }) => {
         <h2 className="text-xl font-semibold text-text-primary">
           Shipment Details
         </h2>
+
         <h3
           onClick={() => setShowForm(false)}
           className="absolute top-2 right-2 cursor-pointer text-text-primary"
         >
           <X />
         </h3>
-        <Input
-          label="Courier Name"
-          name="courier"
+
+        <select
+          className="bg-cyan-300 px-3 py-2 text-brand-700"
           value={form.courier}
           onChange={handleChange}
-          placeholder="e.g. Delhivery"
-        />
+          name="courier"
+        >
+          {COURIERS.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        {/* 👇 Show input only when "other" is selected */}
+        {form.courier === "other" && (
+          <Input
+            label="Custom Courier Name"
+            name="customCourier"
+            value={form.customCourier}
+            onChange={handleChange}
+            placeholder="Enter courier name"
+          />
+        )}
 
         <Input
           label="Tracking ID"

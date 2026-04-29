@@ -14,8 +14,13 @@ const {
   completeSwapHandler,
   shipmentDetailsHandler,
   changeShipmentTypeHandler,
-  shippingAddressHandler
+  shippingAddressHandler,
+  createDisputeHandler,
+  getSwapAllDisputesHandler,
+  createRatingHandler
 } = require("../controllers/swap.controller")
+const { createDisputeValidator } = require("../Validators/swap.validator")
+const { validate } = require("../Validators/validate")
 // @req.userId contains the current user ID
 
 
@@ -41,7 +46,11 @@ swapRouter.post("/", isAuthenticated, getUserSwapsHandler)
 @params  swapId: ObjectId
 @return  swap: object*/
 swapRouter.get("/:swapId", isAuthenticated, getSingleSwapHandler)
+swapRouter.get("/:swapId/disputes", isAuthenticated, getSwapAllDisputesHandler)
 
+
+swapRouter.post("/:swapId/dispute", createDisputeValidator, validate, isAuthenticated, createDisputeHandler)
+swapRouter.post("/:swapId/rating",   isAuthenticated, createRatingHandler)
 
 /* @route PATCH - /api/swaps/:swapId/accept
 @description - Accept a swap request (only listing owner)

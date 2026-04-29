@@ -1,13 +1,20 @@
 import { ArrowRightLeft } from "lucide-react";
 import useSwap from "../hooks/useSwap";
+import useAuth from "../../auth/hooks/useAuth";
 import { useChatHttp } from "../../chats/hooks/useChatHttp";
 import { useNavigate } from "react-router-dom";
 import ShippingDetailsForm from "./shipping/ShippingDeatilsForm";
 import ShippingAddressForm from "./shipping/ShippingAddressForm";
 import { useState } from "react";
 import ShippingAddressShowcase from "./shipping/ShippingAddressShowcase";
+import CreateDisputeForm from "./disputes/CreateDisputeForm";
+import ViewAllSwapDisputes from "./disputes/ViewAllSwapDisputes";
+import RateUser from "./RateUser";
 const SwapCard = ({ swap }) => {
   const { chatAccessHandler } = useChatHttp();
+  const { user } = useAuth();
+  const [showDisputeForm, setShowDisputeForm] = useState(false);
+  const [showDisputes, setShowDisputes] = useState(false);
   let role = swap.role;
   let otherUserRole = role == "owner" ? "requester" : "owner";
   let status = swap.status;
@@ -42,7 +49,6 @@ const SwapCard = ({ swap }) => {
           </span>
         )}
       </div>
-
       {/* Listings */}
       <div className=" items-center flex justify-between gap-2">
         <ListingCard item={swap.ownerListing} isOwner={role === "owner"} />
@@ -69,7 +75,7 @@ const SwapCard = ({ swap }) => {
           cancelSwapHandler={cancelSwapHandler}
           swap={swap}
         />
-        <StatusShowcase status={status} />
+        <StatusShowcase status={status} user={user} swap={swap} otherUserRole={otherUserRole}/>
         <ChatCta
           status={status}
           chatAccessHandler={chatAccessHandler}
@@ -138,15 +144,71 @@ const SwapCard = ({ swap }) => {
             )}
           </>
         )}
+        {swap.status === "disputed" && (
+          <>
+            <button
+              onClick={() => setShowDisputes(true)}
+              className="bg-accent-500 text-brand-900 px-3 py-2 rounded-lg"
+            >
+              View All Disputes
+            </button>
+            <button
+              onClick={() => setShowDisputeForm(true)}
+              className="bg-red-500 px-3 py-2 rounded-lg whitespace-nowrap text-white"
+            >
+              Raise A dispute
+            </button>
+            <p className="text-sm montserrat text-accent-300 lg:absolute lg:-translate-x-1/2 left-1/2 -bottom-1/2">
+              Waiting For Admin To Resolve Dispute
+            </p>
+          </>
+        )}
         {swap.hasShipped && !swap.hasCompleted && status === "shipping" && (
           <>
             <button
-              onClick={() => completeSwapHandler(swap._id)}
+              onClick={() => {
+                let url = swap.shipments.find(
+                  (shipment) => shipment.from.toString() !== user.toString(),
+                );
+                window.open(url.trackingUrl, "_blank");
+              }}
+              className="bg-brand-500 whitespace-nowrap source-code-pro px-3 py-2 rounded-lg w-1/2"
+            >
+              Track Order
+            </button>
+            <button
+              onClick={() => setShowDisputeForm(true)}
+              className="bg-red-500 px-3 py-2 rounded-lg whitespace-nowrap text-white"
+            >
+              Raise A dispute
+            </button>
+
+            <button
+              onClick={() => {
+                let isConfirmed = confirm(
+                  "Are you sure you want to continue? This Means You Have Recieved the Item.",
+                );
+                if (!isConfirmed) return;
+                completeSwapHandler(swap._id);
+              }}
               className="bg-yellow-500 whitespace-nowrap source-code-pro px-3 py-2 rounded-lg w-1/2 "
             >
               Complete Request
             </button>
           </>
+        )}
+        {showDisputeForm && (
+          <CreateDisputeForm
+            swapId={swap._id}
+            setShowForm={setShowDisputeForm}
+          />
+        )}
+
+        {showDisputes && (
+          <ViewAllSwapDisputes
+            swapId={swap._id}
+            setShowDisputes={setShowDisputes}
+          />
         )}
       </div>
     </div>
@@ -189,17 +251,24 @@ function PendingCTAButton({
     </>
   );
 }
-function StatusShowcase({ status }) {
-  {
-    status === "completed" && (
-      <span className="text-green-400 text-sm ">Completed</span>
-    );
-  }
-  {
-    (status === "rejected" || status === "cancelled") && (
-      <span className="text-red-400 text-sm">Declined</span>
-    );
-  }
+function StatusShowcase({ status, swap, otherUserRole, user }) {
+  return (
+    <>
+      {status === "completed" && (
+        <>
+          <span className="text-green-400 text-sm ">Completed</span>
+          <RateUser
+            swapId={swap._id}
+            rateeId={swap[otherUserRole]._id}
+            raterId={user._id}
+          />
+        </>
+      )}
+      {(status === "rejected" || status === "cancelled") && (
+        <span className="text-red-400 text-sm">Declined</span>
+      )}
+    </>
+  );
 }
 function ChatCta({
   status,
@@ -267,14 +336,6 @@ function ShippingTypeUpdateCTA({ swap, changeShipmentTypeHandler }) {
       )
     );
   }
-}
-
-function shippingLogic() {
-  return (
-    <div className="mt-3 text-sm text-gray-300">
-      <p>Shipping Details</p>
-    </div>
-  );
 }
 
 function ListingCard({ item, isOwner }) {

@@ -1,9 +1,9 @@
 const mongoose = require("mongoose")
 
 const disputeSchema = new mongoose.Schema({
-    swapId: { type: mongoose.Schema.Types.ObjectId, ref: "Swap", required: true },
+    swapId: { type: mongoose.Schema.Types.ObjectId, ref: "swaps", required: true },
     raisedBy: {
-        type: mongoose.Schema.Types.ObjectId, ref: "User", required: true
+        type: mongoose.Schema.Types.ObjectId, ref: "users", required: true
     },
     role: {
         type: String,
