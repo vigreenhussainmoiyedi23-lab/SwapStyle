@@ -16,6 +16,9 @@ const swapSchema = new mongoose.Schema({
     enum: [
       "pending",
       "accepted",
+      "prepared_to_ship",
+      "shipping",
+      "disputed",
       "completed",
       "rejected",
       "cancelled"
@@ -23,11 +26,25 @@ const swapSchema = new mongoose.Schema({
   },
   shipments: [{
     from: {
-      type: mongoose.Schema.Types.ObjectId, ref: "User"
+      type: mongoose.Schema.Types.ObjectId, ref: "users"
     },
     courier: String,
     trackingId: String,
   }],
+  ownerAddress: {
+    street: String,
+    city: String,
+    state: String,
+    country: String,
+    pincode: Number,
+  },
+  requesterAddress: {
+    street: String,
+    city: String,
+    state: String,
+    country: String,
+    pincode: Number,
+  },
   shipment_type: {
     type: String,
     enum: ["local_swap", "shipping"],
@@ -38,6 +55,10 @@ const swapSchema = new mongoose.Schema({
     owner: { type: Boolean, default: false }
   },
   shippedBy: {
+    requester: { type: Boolean, default: false },
+    owner: { type: Boolean, default: false }
+  },
+  AddresGivenBy: {
     requester: { type: Boolean, default: false },
     owner: { type: Boolean, default: false }
   },

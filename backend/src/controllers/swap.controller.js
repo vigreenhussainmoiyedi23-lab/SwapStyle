@@ -1,10 +1,12 @@
+const { response } = require("express");
+const { validateLocation } = require("../middlewares/Validators/locationValidator");
 const listingModel = require("../models/listing.model");
 const changeHistoryModel = require("../models/swap/changeHistory.model");
 const swapModel = require("../models/swap/swap.model");
 const { getListingByIdService } = require("../services/listing/DBFunctions.service");
 const { createSwapService } = require("../services/swap/swap.service");
 const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap } = require("../services/swap/swap.utiliy");
-
+const axios = require('axios')
 
 async function createSwapHandler(req, res) {
     try {
@@ -80,7 +82,6 @@ async function getUserSwapsHandler(req, res) {
         let swapWithRolesAndShipped = swaps.map(swap => {
             let role = null
             let hasShipped = swap.shipment_type == "local_swap" || !!swap.shipments.find(s => s.from.toString() === user.toString())
-            
             if (swap.requester._id.toString() === user) {
                 role = "requester"
             }
@@ -88,7 +89,8 @@ async function getUserSwapsHandler(req, res) {
                 role = "owner"
             }
             let hasCompleted = swap.completedBy[role]
-            return { ...swap, role, hasShipped,hasCompleted }
+            let hasGivenAddress = swap.AddresGivenBy[role]
+            return { ...swap, role, hasShipped, hasCompleted, hasGivenAddress }
         })
         res.status(200).json({
             swaps: swapWithRolesAndShipped,
@@ -225,7 +227,7 @@ async function completeSwapHandler(req, res) {
         const swap = await getSwapByIdService(swapId)
 
         ValidateSwap(swap, user)
-        validateSwapState(swap, "accepted")
+        validateSwapState(swap, "shipping")
 
         let hasShipped = swap.shipments.find(s => s.from.toString() === user)
         if (!hasShipped && swap.shipment_type === "shipping") {
@@ -254,15 +256,17 @@ async function completeSwapHandler(req, res) {
 }
 async function shipmentDetailsHandler(req, res) {
     try {
+        console.log("swap shipment updating...")
         const { swapId } = req.params
         const user = req.userId
         const { courier, trackingId } = req.body
-        if (swap.shipment_type === "local_swap") {
-            return res.status(400).json({ message: "No shipment details needed for local swap", success: false })
-        }
         const swap = await getSwapByIdService(swapId)
         ValidateSwap(swap, user)
-        validateSwapState(swap, "accepted")
+        validateSwapState(swap, "prepared_to_ship")
+        let role = user.toString() === swap.owner.toString() ? "owner" : "requester"
+        if (swap.shipment_type === "local_swap") {
+            return res.status(200).json({ message: "No shipment details needed for local swap", success: false })
+        }
         const isShipmentExist = swap.shipments?.find(
             (shipment) => shipment.from.toString() === user
         )
@@ -270,25 +274,21 @@ async function shipmentDetailsHandler(req, res) {
             swap.shipments = []
         }
         if (isShipmentExist) {
-            isShipmentExist.courier = courier
-            isShipmentExist.trackingId = trackingId
-            swap.shipments = swap.shipments.map(s => s.from.toString() === user ? isShipmentExist : s)
-            await swap.save()
-            return res.status(200).json({
-                message: "Shipment details updated",
-                success: true
-            })
+            return res.status(400).json({ message: "Shipment details already exist", success: false })
         }
         swap.shipments.push({
             from: user,
             courier,
             trackingId
         })
-
+        swap.shippedBy[role] = true
+        const { requester, owner } = swap.shippedBy
+        if (requester && owner) {
+            swap.status = "shipping"
+        }
         await swap.save()
-
         res.status(200).json({
-            message: "Shipment details updated",
+            message: "Shipment details added succesfully",
             success: true
         })
     } catch (error) {
@@ -310,12 +310,23 @@ async function changeShipmentTypeHandler(req, res) {
 
         const swap = await getSwapByIdService(swapId)
         ValidateSwap(swap, user)
-        validateSwapState(swap, "accepted")
+        if (swap.shipment_type === changeTo) {
+            return res.status(400).json({ message: "Shipment type already same", success: false })
+        }
+        if (swap.shipment_type === "shipping" && swap.status !== "accepted") {
+            return res.status(400).json({ message: "Swap already shipped", success: false })
+        }
         let { owner, requester } = swap.completedBy
         if (owner || requester) {
             return res.status(400).json({ message: "Swap already completed By one of the users", success: false })
         }
         swap.shipment_type = changeTo
+        if (changeTo === "local_swap") {
+            swap.status = "shipping"
+        }
+        if (changeTo === "shipping") {
+            swap.status = "accepted"
+        }
         const changeHistory = await changeHistoryModel.create({
             changedBy: user,
             changeType: "shipment_type_update",
@@ -338,6 +349,53 @@ async function changeShipmentTypeHandler(req, res) {
         })
     }
 }
+async function shippingAddressHandler(req, res) {
+    try {
+        const { swapId } = req.params
+        const user = req.userId
+        const { street, city, pincode, country, state } = req.body
+        const postalcheckerurl = process.env.POSTALCODE_CHECKER_URL + pincode
+        const { data } = await axios.get(postalcheckerurl)
+        if (data[0].Status == "Error") {
+            return res.status(400).json({ message: "Invalid Pincode", success: false })
+        }
+        await validateLocation({ country, state, city })
+
+
+        const swap = await getSwapByIdService(swapId)
+        let role = swap.owner.toString() === user ? "owner" : "requester"
+        if (swap.AddresGivenBy[role]) {
+            return res.status(400).json({ message: "Shipping address already given", success: false })
+        }
+        ValidateSwap(swap, user)
+        validateSwapState(swap, "accepted")
+        let AddressToBeAdded = swap.owner.toString() === user ? "ownerAddress" : "requesterAddress"
+        swap[AddressToBeAdded] = {
+            street,
+            city: response.city,
+            state: response.state,
+            pincode,
+            country: response.country
+        }
+        swap.AddresGivenBy[role] = true
+        const { owner, requester } = swap.AddresGivenBy
+        if (owner && requester) {
+            swap.status = "prepared_to_ship"
+        }
+        await swap.save()
+        res.status(200).json({
+            message: "shipping Address updated successfully",
+            success: true,
+            swap: swap
+        })
+    } catch (error) {
+        if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
+        res.status(error.status || 500).json({
+            message: error.message || "Error updating shipping address for swap",
+            success: false
+        })
+    }
+}
 
 
 module.exports = {
@@ -349,7 +407,8 @@ module.exports = {
     cancelSwapHandler,
     completeSwapHandler,
     shipmentDetailsHandler,
-    changeShipmentTypeHandler
+    changeShipmentTypeHandler,
+    shippingAddressHandler
 }
 
 /*  Read the comments for better understanding of my 

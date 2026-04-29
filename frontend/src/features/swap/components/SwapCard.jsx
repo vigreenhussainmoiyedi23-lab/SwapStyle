@@ -1,9 +1,11 @@
-import React from "react";
 import { ArrowRightLeft } from "lucide-react";
-import ProductCard from "../../listings/components/ui/ProductCard";
 import useSwap from "../hooks/useSwap";
 import { useChatHttp } from "../../chats/hooks/useChatHttp";
 import { useNavigate } from "react-router-dom";
+import ShippingDetailsForm from "./shipping/ShippingDeatilsForm";
+import ShippingAddressForm from "./shipping/ShippingAddressForm";
+import { useState } from "react";
+import ShippingAddressShowcase from "./shipping/ShippingAddressShowcase";
 const SwapCard = ({ swap }) => {
   const { chatAccessHandler } = useChatHttp();
   let role = swap.role;
@@ -15,13 +17,13 @@ const SwapCard = ({ swap }) => {
     rejectSwapHandler,
     cancelSwapHandler,
     completeSwapHandler,
-    shipmentDetailsHandler,
-    changeShipmentTypeSwapRequestHandler,
-    loading,
+    changeShipmentTypeHandler,
   } = useSwap();
   const diffrence = Math.abs(
     swap.ownerListing.estimatedValue - swap.requesterListing.estimatedValue,
   );
+  const [showForm, setShowForm] = useState(false);
+  const [showAddress, setShowAddress] = useState(false);
   return (
     <div className="bg-brand-700 rounded-2xl p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
       {/* Profit / Loss */}
@@ -51,7 +53,6 @@ const SwapCard = ({ swap }) => {
           isOwner={role === "requester"}
         />
       </div>
-
       {/* User + Message */}
       <div className="mt-3 text-sm text-gray-300">
         <p>Requested by {swap.requester.username}</p>
@@ -59,33 +60,85 @@ const SwapCard = ({ swap }) => {
       </div>
 
       {/* CTA Buttons */}
-      <div className="mt-4 flex gap-2 relative items-center justify-center lg:flex-row flex-col">
-        {role === "owner" && status === "pending" && (
+      <div className="mt-4 flex gap-2 relative items-center justify-evenly lg:flex-row flex-col">
+        <PendingCTAButton
+          role={role}
+          status={status}
+          acceptSwapHandler={acceptSwapHandler}
+          rejectSwapHandler={rejectSwapHandler}
+          cancelSwapHandler={cancelSwapHandler}
+          swap={swap}
+        />
+        <StatusShowcase status={status} />
+        <ChatCta
+          status={status}
+          chatAccessHandler={chatAccessHandler}
+          swap={swap}
+          navigate={navigate}
+          role={role}
+          otherUserRole={otherUserRole}
+        />
+        <ShippingTypeUpdateCTA
+          swap={swap}
+          changeShipmentTypeHandler={changeShipmentTypeHandler}
+        />
+
+        {swap.status == "accepted" && swap.shipment_type == "shipping" && (
           <>
-            <button
-              onClick={() => acceptSwapHandler(swap._id)}
-              className="bg-accent-500 px-3 py-2 rounded-lg w-full"
-            >
-              Accept
-            </button>
-            <button
-              onClick={() => rejectSwapHandler(swap._id)}
-              className="bg-red-600 px-3 py-2 rounded-lg w-full"
-            >
-              Reject
-            </button>
+            {!swap.hasGivenAddress && (
+              <button
+                className="bg-brand-500 rounded-lg p-3 source-code-pro "
+                onClick={() => setShowForm(!showForm)}
+              >
+                Add Shipping Address
+              </button>
+            )}
+            {swap.hasGivenAddress && (
+              <p className="text-lg montserrat text-accent-500">
+                Shipping Address Added. <br /> Waiting For Other User Response
+              </p>
+            )}
+            {showForm && (
+              <ShippingAddressForm
+                setShowForm={setShowForm}
+                swapId={swap._id}
+              />
+            )}
           </>
         )}
-
-        {role === "requester" && status === "pending" && (
-          <button
-            onClick={() => cancelSwapHandler(swap._id)}
-            className="bg-red-500 px-3 py-2 rounded-lg w-1/2 "
-          >
-            Withdraw Request (cancel)
-          </button>
+        {swap.status == "prepared_to_ship" && (
+          <>
+            {!swap.hasShipped && (
+              <button
+                className="bg-brand-500 rounded-lg p-3 source-code-pro "
+                onClick={() => setShowForm(!showForm)}
+              >
+                Add Shipment details
+              </button>
+            )}
+            <button
+              onClick={() => setShowAddress(!showAddress)}
+              className="bg-brand-500 rounded-lg p-3 source-code-pro "
+            >
+              View Other User's Address
+            </button>
+            {showAddress && (
+              <ShippingAddressShowcase
+                ownerAddress={swap.ownerAddress}
+                requesterAddress={swap.requesterAddress}
+                setShowAddress={setShowAddress}
+                otherUserRole={otherUserRole}
+              />
+            )}
+            {showForm && (
+              <ShippingDetailsForm
+                swapId={swap._id}
+                setShowForm={setShowForm}
+              />
+            )}
+          </>
         )}
-        {swap.hasShipped && !swap.hasCompleted && status === "accepted" && (
+        {swap.hasShipped && !swap.hasCompleted && status === "shipping" && (
           <>
             <button
               onClick={() => completeSwapHandler(swap._id)}
@@ -95,70 +148,135 @@ const SwapCard = ({ swap }) => {
             </button>
           </>
         )}
-        {swap.hasShipped && swap.hasCompleted && status === "accepted" && (
-          <>
-            {swap.shipment_type == "shipping" && <button>View Shipment</button>}
-          </>
-        )}
-        {status === "accepted" && (
-          <>
-            <button
-              onClick={async () => {
-                const response = await chatAccessHandler(
-                  swap[otherUserRole]._id,
-                );
-                navigate(`/chats/${response.chatId}`);
-              }}
-              className="bg-accent-500 text-brand-900 font-bold source-code-pro whitespace-nowrap px-3 py-2 rounded-lg w-full"
-            >
-              Negotiate With{" "}
-              {role == "owner" ? swap.requester.username : swap.owner.username}
-            </button>
-            {swap.shipment_type == "shipping" && (
-              <button className="bg-brand-500 px-3 py-2 rounded-lg w-full">
-                Add Shipping
-              </button>
-            )}
-            {!swap.hasCompleted && !swap.completedBy[otherUserRole] && (
-              <div className="px-3 py-2 mt-5 lg:mt-0 rounded-lg w-full flex items-center  relative  flex-col">
-                <label
-                  className=" text-gray-500 px-3 py-2 rounded-lg absolute -top-6 overflow-hidden h-fit whitespace-nowrap"
-                  htmlFor="shipmentType"
-                >
-                  Change Shipping Type
-                </label>
-                <select
-                  onChange={(e) => {
-                    if (loading) return alert("Please wait");
-                    changeShipmentTypeSwapRequestHandler(
-                      swap._id,
-                      e.target.value,
-                    );
-                  }}
-                  value={swap.shipment_type}
-                  name="shipmentType"
-                  id="shipmentType"
-                  className="outline-none w-full text-center h-full bg-brand-900 rounded-lg px-2 py-1 flex items-center justify-center"
-                >
-                  <option value="local_swap">Local Swap</option>
-                  <option value="shipping">Shipping</option>
-                </select>
-              </div>
-            )}
-          </>
-        )}
-
-        {status === "completed" && (
-          <span className="text-green-400 text-sm ">Completed</span>
-        )}
-
-        {(status === "rejected" || status === "cancelled") && (
-          <span className="text-red-400 text-sm">Declined</span>
-        )}
       </div>
     </div>
   );
 };
+function PendingCTAButton({
+  role,
+  status,
+  acceptSwapHandler,
+  rejectSwapHandler,
+  cancelSwapHandler,
+  swap,
+}) {
+  return (
+    <>
+      {role === "owner" && status === "pending" && (
+        <>
+          <button
+            onClick={() => acceptSwapHandler(swap._id)}
+            className="bg-accent-500 px-3 py-2 rounded-lg w-full"
+          >
+            Accept
+          </button>
+          <button
+            onClick={() => rejectSwapHandler(swap._id)}
+            className="bg-red-600 px-3 py-2 rounded-lg w-full"
+          >
+            Reject
+          </button>
+        </>
+      )}
+      {role === "requester" && status === "pending" && (
+        <button
+          onClick={() => cancelSwapHandler(swap._id)}
+          className="bg-red-500 px-3 py-2 rounded-lg w-1/2 "
+        >
+          Withdraw Request (cancel)
+        </button>
+      )}
+    </>
+  );
+}
+function StatusShowcase({ status }) {
+  {
+    status === "completed" && (
+      <span className="text-green-400 text-sm ">Completed</span>
+    );
+  }
+  {
+    (status === "rejected" || status === "cancelled") && (
+      <span className="text-red-400 text-sm">Declined</span>
+    );
+  }
+}
+function ChatCta({
+  status,
+  chatAccessHandler,
+  swap,
+  role,
+  otherUserRole,
+  navigate,
+}) {
+  return (
+    (status === "pending" ||
+      status === "accepted" ||
+      status === "prepare_to_ship" ||
+      status === "shipping") && (
+      <button
+        onClick={async () => {
+          const response = await chatAccessHandler(swap[otherUserRole]._id);
+          navigate(`/chats/${response.chatId}`);
+        }}
+        className="bg-accent-500 text-brand-900 font-bold source-code-pro whitespace-nowrap px-3 py-2 rounded-lg"
+      >
+        {status === "pending" || status === "accepted"
+          ? "Negotiate With "
+          : "Chat With "}
+        {role == "owner" ? swap.requester.username : swap.owner.username}
+      </button>
+    )
+  );
+}
+function ShippingTypeUpdateCTA({ swap, changeShipmentTypeHandler }) {
+  {
+    return (
+      (swap.status === "accepted" || swap.shipment_type === "local_swap") && (
+        <div className="flex flex-col  gap-2 w-fit relative">
+          <p className="text-sm text-brand-400 montserrat ">
+            Change Shipment Type
+          </p>
+          <div className="relative">
+            <select
+              value={swap.shipment_type}
+              onChange={(e) =>
+                changeShipmentTypeHandler(swap._id, e.target.value)
+              }
+              className="appearance-none w-48 px-4 py-2 pr-10 rounded-lg 
+                 bg-brand-800 text-white border border-border 
+                  montserrat focus:outline-none cursor-pointer"
+            >
+              <option className="bg-brand-800 text-accent-500" value="shipping">
+                🚚 Shipping
+              </option>
+              <option
+                className="bg-brand-800 text-accent-500"
+                value="local_swap"
+              >
+                🤝 Local Swap
+              </option>
+            </select>
+
+            {/* custom dropdown arrow */}
+            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-text-muted">
+              ▼
+            </div>
+          </div>
+        </div>
+      )
+    );
+  }
+}
+
+function shippingLogic() {
+  return (
+    <div className="mt-3 text-sm text-gray-300">
+      <p>Shipping Details</p>
+    </div>
+  );
+}
+
 function ListingCard({ item, isOwner }) {
   return (
     <div className="w-full relative lg:h-75 lg:w-[48%] bg-accent-500 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 flex flex-col lg:flex-row">
@@ -213,3 +331,11 @@ function ListingCard({ item, isOwner }) {
   );
 }
 export default SwapCard;
+
+/*
+
+        {swap.hasShipped && swap.hasCompleted && status === "accepted" && (
+          <>
+            {swap.shipment_type == "shipping" && <button>View Shipment</button>}
+          </>
+        )} */

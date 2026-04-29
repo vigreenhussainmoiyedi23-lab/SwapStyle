@@ -8,7 +8,8 @@ import {
     rejectSwapRequest,
     acceptSwapRequest,
     shipmentUpdateSwapRequest,
-    changeShipmentTypeSwapRequest
+    changeShipmentTypeSwapRequest,
+    shipmentAddressApi
 } from "../service/swap.api";
 
 
@@ -88,7 +89,7 @@ const useSwap = () => {
             setLoading(false);
         }
     };
-    const shipmentUpdateSwapRequestHandler = async (swapId, shipmentDetails) => {
+    const shipmentDetailsHandler = async (swapId, shipmentDetails) => {
         try {
             setLoading(true);
             const response = await shipmentUpdateSwapRequest(swapId, shipmentDetails);
@@ -96,13 +97,28 @@ const useSwap = () => {
             showToast("Before Completing Make Sure You receive the item", "info");
             getSwapRequests({ filters });
         } catch (error) {
-            console.error("Error updating shipment details for swap request:", error);
+            showToast(error.message, "error");
             throw error;
         } finally {
             setLoading(false);
         }
     };
-    const changeShipmentTypeSwapRequestHandler = async (swapId, changeTo) => {
+    const shipmentAddressHandler = async (swapId, shipmentAddress) => {
+        try {
+            setLoading(true);
+            const response = await shipmentAddressApi(swapId, shipmentAddress);
+            showToast(response.message, "success");
+            showToast("Add Tracking Number And Courier Id After Shipping", "info");
+            getSwapRequests({ filters });
+        } catch (error) {
+            console.error("Error updating shipment details for swap request:", error);
+            showToast(error.message, "error");
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+    const changeShipmentTypeHandler = async (swapId, changeTo) => {
         try {
             setLoading(true);
             const response = await changeShipmentTypeSwapRequest(swapId, changeTo);
@@ -130,8 +146,9 @@ const useSwap = () => {
         rejectSwapHandler,
         cancelSwapHandler,
         completeSwapHandler,
-        shipmentUpdateSwapRequestHandler,
-        changeShipmentTypeSwapRequestHandler,
+        shipmentDetailsHandler,
+        changeShipmentTypeHandler,
+        shipmentAddressHandler,
         loading,
         filters,
         userAllSwaps

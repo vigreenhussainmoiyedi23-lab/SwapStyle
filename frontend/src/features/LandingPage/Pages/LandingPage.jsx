@@ -2,7 +2,6 @@ import CategoriesSlider from "../components/CategoriesSlider";
 import Hero from "../components/Hero";
 import HowItWorks from "../components/HowItWorks";
 import SystemFeatures from "../components/SystemFeatures";
-import CTASection from "../components/CTASectionSimple";
 
 const LandingPage = () => {
   return (
@@ -11,7 +10,6 @@ const LandingPage = () => {
       <CategoriesSlider />
       <HowItWorks />
       <SystemFeatures />
-      <CTASection />
     </div>
   );
 };

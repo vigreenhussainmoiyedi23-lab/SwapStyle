@@ -67,11 +67,21 @@ const completeSwapRequest = async (swapId) => {
 };
 const shipmentUpdateSwapRequest = async (swapId, shipmentDetails) => {
     try {
+        console.log(shipmentDetails)
         const response = await apiClient.patch(`/${swapId}/shipment`, { ...shipmentDetails });
         return response.data;
     } catch (error) {
         console.error('Error updating shipment details for swap request:', error);
-        throw error.response;
+        throw error.response.data;
+    }
+};
+const shipmentAddressApi = async (swapId, shipmentAddress) => {
+    try {
+        const response = await apiClient.patch(`/${swapId}/shippingAddress`, { ...shipmentAddress });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating shipment details for swap request:', error);
+        throw error.response.data;
     }
 };
 const changeShipmentTypeSwapRequest = async (swapId, changeTo) => {
@@ -91,5 +101,6 @@ export {
     cancelSwapRequest,
     completeSwapRequest,
     shipmentUpdateSwapRequest,
-    changeShipmentTypeSwapRequest
+    changeShipmentTypeSwapRequest,
+    shipmentAddressApi
 };

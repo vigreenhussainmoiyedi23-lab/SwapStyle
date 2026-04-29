@@ -16,7 +16,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
     const validCountry = countriesRes.data.find(
       (c) => c.iso2 === country
     );
-    if (!validCountry) throw new Error("Invalid country");
+    if (!validCountry) throw new Error("Invalid country",400);
 
     // 2️⃣ Validate State
     const statesRes = await axios.get(
@@ -29,7 +29,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
     const validState = statesRes.data.find(
       (s) => s.iso2 === state
     );
-    if (!validState) throw new Error("Invalid state");
+    if (!validState) throw new Error("Invalid state",400);
 
     // 3️⃣ Validate City
     const citiesRes = await axios.get(
@@ -42,7 +42,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
     const validCity = citiesRes.data.find(
       (c) => c.name.toLowerCase() === city.toLowerCase()
     );
-    if (!validCity) throw new Error("Invalid city");
+    if (!validCity) throw new Error("Invalid city",400);
 
     // 4️⃣ Get accurate lat/lng from OpenCage
     const geoRes = await axios.get(

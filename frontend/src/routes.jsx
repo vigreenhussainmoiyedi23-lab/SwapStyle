@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { LoginPage } from "./features/auth/pages/Login";
 import { RegisterPage } from "./features/auth/pages/Register";
 import NormalLayout from "./Layouts/NormalLayout";
-import LandingPage from "./features/LandingPage/pages/LandingPage";
+
 import Listings from "./features/listings/Pages/Listings";
 import VerifyOtp from "./features/auth/pages/VerifyOtp";
 import CreateListing from "./features/listings/Pages/CreateListing";
@@ -17,6 +17,7 @@ import AdminHome from "./features/admin/pages/AdminHome";
 import Users from "./features/admin/pages/Users";
 import Disputes from "./features/admin/pages/Disputes";
 import AdminListings from "./features/admin/pages/AdminListings";
+import LandingPage from "./features/LandingPage/Pages/LandingPage";
 
 const Approutes = () => {
   return (

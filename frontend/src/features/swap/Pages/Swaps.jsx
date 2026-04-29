@@ -37,6 +37,7 @@ const Swaps = () => {
   const { userAllSwaps, loading, getSwapRequests } = useSwap();
   const [shipment_type, setShipment_type] = useState("all");
   const [page, setPage] = useState(1);
+  const [addShipmentForm, setAddShipmentForm] = useState(false);
   shipment_type;
   useEffect(() => {
     const second = async () => {

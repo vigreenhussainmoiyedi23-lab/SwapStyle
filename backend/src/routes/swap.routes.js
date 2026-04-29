@@ -13,7 +13,8 @@ const {
   cancelSwapHandler,
   completeSwapHandler,
   shipmentDetailsHandler,
-  changeShipmentTypeHandler
+  changeShipmentTypeHandler,
+  shippingAddressHandler
 } = require("../controllers/swap.controller")
 // @req.userId contains the current user ID
 
@@ -59,20 +60,17 @@ swapRouter.patch("/:swapId/reject", isAuthenticated, rejectSwapHandler)
 @return message: "Swap cancelled" */
 swapRouter.patch("/:swapId/cancel", isAuthenticated, cancelSwapHandler)
 
-
 /* @route PATCH - /api/swaps/:swapId/complete
 @description - Mark swap as completed after exchange (only requester) - Only allowed if status is ACCEPTED
 @params swapId: ObjectId
 @return message: "Swap completed" */
 swapRouter.patch("/:swapId/complete", isAuthenticated, completeSwapHandler)
 
-/*@route PATCH /api/swaps/:swapId/shipment
-@description - Update shipment details (only requester)
-@params swapId: ObjectId
-@body { courier, trackingId } 
-@return message: "Shipment details updated"
-*/
-swapRouter.patch("/:swapId/shipment", isAuthenticated, shipmentDetailsHandler)
+
+
+
+
+
 
 /*
 @route PATCH /api/swaps/:swapId/shipment
@@ -82,6 +80,22 @@ swapRouter.patch("/:swapId/shipment", isAuthenticated, shipmentDetailsHandler)
 @return message: "Shipment details updated"
 */
 swapRouter.patch("/:swapId/shipmentType", isAuthenticated, changeShipmentTypeHandler)
+
+/*
+@route PATCH - /api/swaps/:swapId/shippingAddress
+@description - Update shipping address (requester and owner)
+@params swapId: ObjectId
+@return message: "Shipping address updated"
+*/
+swapRouter.patch("/:swapId/shippingAddress", isAuthenticated, shippingAddressHandler)
+
+/*@route PATCH /api/swaps/:swapId/shipment
+@description - Update shipment details (only requester)
+@params swapId: ObjectId
+@body { courier, trackingId } 
+@return message: "Shipment details updated"
+*/
+swapRouter.patch("/:swapId/shipment", isAuthenticated, shipmentDetailsHandler)
 
 
 module.exports = swapRouter

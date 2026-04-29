@@ -9,8 +9,15 @@ const messageSchema = new mongoose.Schema({
 
   images: [{ url: String, fileId: String }],
 
-  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }]
-
+  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  isEdited: {
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true });
 messageSchema.index({ chatId: 1 });
 const messageModel = mongoose.model("messages", messageSchema, "messages")
