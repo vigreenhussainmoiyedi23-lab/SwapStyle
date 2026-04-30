@@ -33,7 +33,7 @@ const SwapCard = ({ swap }) => {
   );
   const [showForm, setShowForm] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
-  console.log(swap);
+  console.log(swap.hasRaisedDispute);
   return (
     <div className="bg-brand-700 rounded-2xl p-1 md:p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
       {/* Profit / Loss */}
@@ -160,12 +160,14 @@ const SwapCard = ({ swap }) => {
             >
               View All Disputes
             </button>
-            <button
-              onClick={() => setShowDisputeForm(true)}
-              className="bg-red-500 px-3 w-full py-2 rounded-lg whitespace-nowrap text-white"
-            >
-              Raise A dispute
-            </button>
+            {!swap.hasRaisedDispute && (
+              <button
+                onClick={() => setShowDisputeForm(true)}
+                className="bg-red-500 px-3 w-full py-2 rounded-lg whitespace-nowrap text-white"
+              >
+                Raise A dispute
+              </button>
+            )}
             <p className="text-sm w-full montserrat text-accent-300 lg:absolute lg:-translate-x-1/2 left-1/2 -bottom-1/2">
               Waiting For Admin To Resolve Dispute
             </p>
@@ -186,12 +188,14 @@ const SwapCard = ({ swap }) => {
                 Track Order
               </button>
             )}
-            <button
-              onClick={() => setShowDisputeForm(true)}
-              className="bg-red-500 w-full px-3 py-2 rounded-lg whitespace-nowrap text-white"
-            >
-              Raise A dispute
-            </button>
+            {!swap.hasRaisedDispute && (
+              <button
+                onClick={() => setShowDisputeForm(true)}
+                className="bg-red-500 w-full px-3 py-2 rounded-lg whitespace-nowrap text-white"
+              >
+                Raise A dispute
+              </button>
+            )}
 
             <button
               onClick={() => {

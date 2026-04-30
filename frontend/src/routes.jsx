@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { LoginPage } from "./features/auth/pages/Login";
 import { RegisterPage } from "./features/auth/pages/Register";
 import NormalLayout from "./Layouts/NormalLayout";
-
+import LandingPage from "./features/LandingPage/Pages/LandingPage";
 import Listings from "./features/listings/Pages/Listings";
 import VerifyOtp from "./features/auth/pages/VerifyOtp";
 import CreateListing from "./features/listings/Pages/CreateListing";
@@ -13,11 +13,12 @@ import ProtectedLayout from "./Layouts/ProtectedLayout";
 import Swaps from "./features/swap/Pages/Swaps";
 import Chats from "./features/chats/Pages/Chats";
 import ProtectedLayoutWithNoFooter from "./Layouts/ProtectedWithNofooterOrFootbar";
-import AdminHome from "./features/admin/pages/AdminHome";
+import AdminLayout from "./Layouts/AdminLayout";
+import Dashboard from "./features/admin/pages/Dashboard";
 import Users from "./features/admin/pages/Users";
 import Disputes from "./features/admin/pages/Disputes";
-import AdminListings from "./features/admin/pages/AdminListings";
-import LandingPage from "./features/LandingPage/Pages/LandingPage";
+import ListingsAdmin from "./features/admin/pages/Listings";
+import Settings from "./features/admin/pages/Settings";
 
 const Approutes = () => {
   return (
@@ -95,10 +96,46 @@ const Approutes = () => {
             </ProtectedLayoutWithNoFooter>
           }
         />
-        <Route path="/admin" element={<AdminHome />} />
-        <Route path="/admin/users" element={<Users />} />
-        <Route path="/admin/disputes" element={<Disputes />} /> 
-        <Route path="/admin/listings" element={<AdminListings />} /> 
+        <Route
+          path="/admin"
+          element={
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminLayout>
+              <Users />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/disputes"
+          element={
+            <AdminLayout>
+              <Disputes />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/listings"
+          element={
+            <AdminLayout>
+              <ListingsAdmin />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <AdminLayout>
+              <Settings />
+            </AdminLayout>
+          }
+        />
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />

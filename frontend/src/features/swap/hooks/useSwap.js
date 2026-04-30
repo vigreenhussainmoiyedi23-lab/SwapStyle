@@ -112,10 +112,12 @@ const useSwap = () => {
         try {
             setLoading(true);
             const response = await createDisputeApi(swapId, disputeDetails);
+            
             showToast(response.message, "success");
             getSwapRequests({ filters });
         } catch (error) {
-            showToast(error.message, "error");
+            showToast(error.data.message, "error");
+            console.log(error)
             throw error;
         } finally {
             setLoading(false);

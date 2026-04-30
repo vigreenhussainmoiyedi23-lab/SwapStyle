@@ -1,19 +1,24 @@
 const { Router } = require('express');
 const router = Router();
 
-const { } = require('../controllers/admin.controller');
+const {
 
-router.get("/users", () => { })
-router.get("/listings", () => { })
-router.get("/swaps", () => { })
+} = require('../controllers/admin.controller');
 
-router.get("/users/analytics", () => { })
-router.get("/listings/analytics", () => { })
-router.get("/swaps/analytics", () => { })
-router.get("/platform/analytics", () => { })
+// ===== MANAGEMENT =====
+// router.get("/users", );
+// router.get("/listings", getAllListings);
+// router.get("/swaps", getAllSwaps);
 
-router.patch("/user/:userId", () => { }) //ban/unban a user
-router.patch("/listing/:listingId", () => { }) //remove a listing
-router.patch("/dispute/:disputeId", () => { }) //resolve/reject a dispute
+// // ===== ANALYTICS =====
+// router.get("/users/analytics", getUserAnalytics);
+// router.get("/listings/analytics", getListingAnalytics);
+// router.get("/swaps/analytics", getSwapAnalytics);
+// router.get("/platform/analytics", getPlatformAnalytics);
+
+// // ===== ACTIONS =====
+// router.patch("/user/:userId", updateUserStatus);       // ban/unban
+// router.patch("/listing/:listingId", updateListingStatus); // remove/restore
+// router.patch("/dispute/:disputeId", handleDispute);   // resolve/reject
 
 module.exports = router;

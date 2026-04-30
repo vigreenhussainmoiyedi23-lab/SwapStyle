@@ -1,38 +1,25 @@
-import { users } from "../data/mockData";
+import { users } from "../data/dummyData";
+import Button from "../components/Button";
 
-const Users = () => {
+export default function Users() {
   return (
-    <div className="p-6 space-y-4">
+    <div>
+      <h1 className="playfair text-3xl mb-6">Users</h1>
 
-      {users.map(user => (
-        <div key={user.id} className="bg-surface p-4 rounded-xl flex justify-between items-center">
+      <div className="bg-surface p-4 rounded text-black">
+        {users.map(user => (
+          <div key={user.id} className="flex justify-between p-3 border-b">
+            <div>
+              <p className="montserrat">{user.username}</p>
+              <p className="text-sm text-gray-500">{user.email}</p>
+            </div>
 
-          <div>
-            <h2 className="font-bold">{user.name}</h2>
-            <p className="text-sm text-text-muted">{user.email}</p>
-            <p className="text-sm">Location: {user.location}</p>
+            <Button variant={user.isBanned ? "secondary" : "danger"}>
+              {user.isBanned ? "Unban" : "Ban"}
+            </Button>
           </div>
-
-          <div className="text-right">
-            <p className="text-sm">
-              Fraud Score:{" "}
-              <span className={user.fraudScore > 60 ? "text-error" : "text-success"}>
-                {user.fraudScore}
-              </span>
-            </p>
-
-            <p className="text-sm">Swaps: {user.swaps}</p>
-
-            <button className="mt-2 px-3 py-1 bg-accent-500 text-black rounded">
-              View
-            </button>
-          </div>
-
-        </div>
-      ))}
-
+        ))}
+      </div>
     </div>
   );
-};
-
-export default Users;
+}

@@ -1,33 +1,19 @@
-import { disputes } from "../data/mockData";
+import { disputes } from "../data/dummyData";
 
-const Disputes = () => {
+export default function Disputes() {
   return (
-    <div className="p-6 space-y-4">
+    <div>
+      <h1 className="playfair text-3xl mb-6">Disputes</h1>
 
-      {disputes.map(d => (
-        <div key={d.id} className="bg-surface p-4 rounded-xl">
-
-          <h2 className="font-bold">Swap ID: {d.swapId}</h2>
-          <p className="text-sm text-text-muted">{d.reason}</p>
-
-          <p className="text-sm mt-2">
-            Users: {d.users.join(" vs ")}
-          </p>
-
-          <div className="flex gap-2 mt-3">
-            <button className="px-3 py-1 bg-success text-white rounded">
-              Resolve
-            </button>
-            <button className="px-3 py-1 bg-error text-white rounded">
-              Reject
-            </button>
+      <div className="bg-surface p-4 rounded text-black">
+        {disputes.map(d => (
+          <div key={d.id} className="p-4 border-b">
+            <p className="montserrat font-semibold">{d.type}</p>
+            <p>{d.reason}</p>
+            <p className="text-sm text-gray-500">{d.status}</p>
           </div>
-
-        </div>
-      ))}
-
+        ))}
+      </div>
     </div>
   );
-};
-
-export default Disputes;
+}

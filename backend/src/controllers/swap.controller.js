@@ -169,10 +169,11 @@ async function createDisputeHandler(req, res) {
             reason,
             description
         })
-
+     
         swap.status = "disputed"
-        swap.disputedBy = { ...swap.disputedBy, [role]: true }
+        swap.disputedBy[role] = true
         await swap.save()
+       
         res.status(200).json({
             message: "dispute Created",
             success: true
