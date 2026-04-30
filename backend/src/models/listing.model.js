@@ -77,6 +77,10 @@ const listingSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    isRemoved: {
+        type: Boolean,
+        default: false
+    },
     isLocked: {
         type: Boolean,
         default: false

@@ -27,6 +27,7 @@ const disputeSchema = new mongoose.Schema({
         type: String,
         enum: ["FAVOR_REQUESTER", "FAVOR_OWNER", "NO_FAULT", "REFUND", "CANCEL_SWAP"]
     },
+    adminNote: { type: String },
     status: {
         type: String,
         enum: ["open", "resolved", "closed"],

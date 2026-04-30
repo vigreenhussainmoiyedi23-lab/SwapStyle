@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema({
         type: [String],
         default: ["Newbie"]
     }
-})
+},{timestamps: true})
 
 
 const userModel = mongoose.model("users", userSchema)
