@@ -30,12 +30,12 @@ export default function ChatWindow({ chat }) {
             <MessageBubble
               key={message._id}
               from={
-                user?._id.toString() === message.sender.toString()
+                user?._id.toString() === message.sender?._id.toString()
                   ? "me"
                   : "other"
               }
-              text={message.text}
-              images={message.images}
+              message={message}
+              currentUser={user}
             />
           ))}
       </div>

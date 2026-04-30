@@ -110,13 +110,16 @@ async function getListingByIdService(listingId) {
  * @description Fetches all listings from the database and returns them in a paginated format (default 10 per page) to avoid performance issues.
  * @throws Throws the error to controller if any happens
  */
-async function getAllListingsService(filters) {
+async function getAllListingsService(filters, isAdmin = false) {
     try {
         const { category, types, sizes, conditions, sortBy, page, search, lat, lng } = filters
-        let query = {
-            isAvailable: true,
-            isLocked: false
-        };
+        let query = {};
+        if (!isAdmin) {
+            query = {
+                isAvailable: true,
+                isLocked: false
+            }
+        }
         let skip = 0;
         // Category filter
         if (category && category !== "All") {
@@ -124,6 +127,7 @@ async function getAllListingsService(filters) {
         }
         if (lat && lng) {
             query = {
+                ...query,
                 "location.geo": {
 
                     $near: {

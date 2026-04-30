@@ -4,9 +4,11 @@ import { ChatContext } from "../chat.context";
 import { useEffect } from "react";
 import { socketManager } from "../../../utils/socket";
 
+
+
 export const useChatSocket = () => {
     const { addNewMessage } = useChatHttp();
-    const { setUserAllChats, userAllChats ,loading } = useContext(ChatContext)
+    const { setChatsAllMessages, setUserAllChats, userAllChats, loading } = useContext(ChatContext)
     useEffect(() => {
         const handleOnline = ({ userId }) => {
             setUserAllChats(prev =>
@@ -37,11 +39,34 @@ export const useChatSocket = () => {
                 )
             );
         };
+        const handleEditMessage = (editedMessage) => {
+            setChatsAllMessages(prev => {
+                return prev.map(message => {
+                    if (message._id.toString() === editedMessage._id.toString()) {
+                        return editedMessage;
+                    }
+                    return message;
+                })
+            })
+        }
+
+        const handleDeleteMessage = (deletedMessage) => {
+            setChatsAllMessages(prev => {
+                return prev.map(message => {
+                    if (message._id.toString() === deletedMessage._id.toString()) {
+                        return deletedMessage;
+                    }
+                    return message;
+                })
+            })
+        };
 
         // register listeners
         socketManager.listenMessage("user-online", handleOnline);
         socketManager.listenMessage("user-offline", handleOffline);
         socketManager.listenMessage("presence:init", handleInit);
+        socketManager.listenMessage("messageEdited", handleEditMessage);
+        socketManager.listenMessage("messageDeleted", handleDeleteMessage);
         // cleanup
         return () => {
             socketManager.removeListener("user-online");
@@ -53,6 +78,13 @@ export const useChatSocket = () => {
     if (userAllChats && !loading) socketManager.emitMessage("get-presence");
     const createMessage = (payload) => {
         socketManager.emitMessage("createMessage", payload);
+    };
+    const EditMessage = (payload) => {
+        console.log("editMessage payload", payload);
+        socketManager.emitMessage("updateMessage", payload);
+    };
+    const deleteMessage = (payload) => {
+        socketManager.emitMessage("deleteMessage", payload);
     };
 
     const joinRoom = (chatId) => {
@@ -68,5 +100,5 @@ export const useChatSocket = () => {
         addNewMessage(data);
     });
 
-    return { createMessage, joinRoom, leaveRoom };
+    return { createMessage, joinRoom, leaveRoom, EditMessage, deleteMessage };
 };

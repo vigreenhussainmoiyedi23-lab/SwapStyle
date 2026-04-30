@@ -13,6 +13,7 @@
 
 */
 
+const listingModel = require("../../models/listing.model");
 const swapModel = require("../../models/swap/swap.model");
 
 async function getSwapByIdService(swapId) {
@@ -48,4 +49,19 @@ function validateUserRole(swap, userId, role) {
       throw new Error("Only owner can perform this action", 403);
    }
 }
-module.exports = { getSwapByIdService, validateSwapState, validateUserRole, ValidateSwap }
+async function updateBothListingFromSwapId(swapId, updateDetails) {
+   const { requesterListing, ownerListing } = await getSwapByIdService(swapId)
+   await listingModel.findByIdAndUpdate(requesterListing, updateDetails)
+   await listingModel.findByIdAndUpdate(ownerListing, updateDetails)
+   return { requesterListing, ownerListing }
+}
+async function checkBothListingAreElligibleToSwap(swapId) {
+   const { requesterListing, ownerListing } = await getSwapByIdService(swapId)
+   const requester = await listingModel.findById(requesterListing)
+   const owner = await listingModel.findById(ownerListing)
+   if (requester.isAvailable && owner.isAvailable && !requester.isLocked && !owner.isLocked) {
+      return true
+   }
+   return false
+}
+module.exports = { updateBothListingFromSwapId,checkBothListingAreElligibleToSwap, getSwapByIdService, validateSwapState, validateUserRole, ValidateSwap }

@@ -42,7 +42,6 @@ const initSocket = (server) => {
 
         socketUserMap.get(userId).add(socket.id);
         socket.on("get-presence", () => {
-            console.log("givingpresence")
             const payload = Array.from(socketUserMap.keys());
 
             socket.emit("presence:init", payload);

@@ -72,10 +72,13 @@ export default function ChatItem({ chat, current }) {
         <p className="montserrat font-medium ">{chat.otherUser.username}</p>
         <p className="text-sm text-brand-300 truncate flex items-center justify-between w-full">
           <span className="truncate ">
-            {chat?.lastMessage?.text ||
-              (chat?.lastMessage?.images?.length > 0
-                ? "Sent An Image"
-                : "Start Messaging Now")}
+            {chat?.lastMessage?.isDeleted
+              ? "Message deleted"
+              : chat?.lastMessage?.text
+                ? chat.lastMessage.text
+                : chat?.lastMessage?.images?.length > 0
+                  ? "Sent an image"
+                  : "Start Messaging Now"}
           </span>
           <span className="text-brand-900">
             <span className="text-brand-900">

@@ -4,6 +4,7 @@ import SwapFilters from "../components/SwapFilters";
 import useSwap from "../hooks/useSwap";
 import useAuth from "../../auth/hooks/useAuth";
 import { FilterIcon, MenuSquare, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Swaps = () => {
   let typeConditions = {
@@ -32,7 +33,7 @@ const Swaps = () => {
       status: "all",
     },
   };
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
   const { userAllSwaps, loading, getSwapRequests } = useSwap();
   const [shipment_type, setShipment_type] = useState("all");
@@ -106,9 +107,9 @@ const Swaps = () => {
               <br />
               Or create a new swap
             </p>
-            <button className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg">
+            <Link to="/listings" className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg">
               Go Back To Listings
-            </button>
+            </Link>
           </div>
         )}
       </div>

@@ -33,5 +33,5 @@ const disputeSchema = new mongoose.Schema({
         default: "open"
     }
 }, { timestamps: true });
-
+disputeSchema.index({ swapId: 1, raisedBy: 1 }, { unique: true });
 module.exports = mongoose.model("disputes", disputeSchema);

@@ -6,7 +6,7 @@ const messageModel = require("../models/chats/message.model")
 async function getChatAllMessagesHandler(req, res) {
     const { chatId } = req.params
     const { skip, limit } = req.query
-    const messages = await messageModel.find({ chatId: chatId }).skip(skip).limit(limit)
+    const messages = await messageModel.find({ chatId: chatId }).skip(skip).limit(limit).populate({ path: "sender", select: "username profilePicture email" });
     res.status(200).json({ messages, message: "Messages fetched successfully", success: true });
 }
 async function getUserAllChatsHandler(req, res) {

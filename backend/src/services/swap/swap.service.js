@@ -16,20 +16,19 @@ async function createSwapService(ownerListing, requesterListing, message, user) 
       }
       const swapRequestAlreadyExists = await swapModel.findOne({
          $or: [
+
             {
-               requester: user?._id,
-               owner: ownerListing.owner || ownerListing.owner._id,
-               ownerListing: ownerListing._id,
-               requesterListing: requesterListing._id
+               requesterListing: requesterListing._id,
+               ownerListing: ownerListing._id
             },
+
             {
-               requester: requesterListing.owner?._id,
-               owner: ownerListing.owner || ownerListing.owner._id,
-               ownerListing: ownerListing._id,
-               requesterListing: requesterListing._id
+               requesterListing: ownerListing._id,
+               ownerListing: requesterListing._id
             }
-         ]
-      })
+         ],
+         status: { $in: ["pending", "accepted"] } // important
+      });
       if (swapRequestAlreadyExists) {
          return {
             message: "Swap request already exists",
@@ -89,7 +88,7 @@ const getTrackingLink = (courier, trackingId) => {
          )}`;
    }
 };
-module.exports = { createSwapService  ,getTrackingLink }
+module.exports = { createSwapService, getTrackingLink }
 
 /*  
 Swap Services Documentation - Hussain

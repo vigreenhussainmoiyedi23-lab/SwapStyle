@@ -65,6 +65,14 @@ const swapSchema = new mongoose.Schema({
     requester: { type: Boolean, default: false },
     owner: { type: Boolean, default: false }
   },
+  disputedBy: {
+    requester: { type: Boolean, default: false },
+    owner: { type: Boolean, default: false }
+  },
+  ratedBy: {
+    requester: { type: Boolean, default: false },
+    owner: { type: Boolean, default: false }
+  },
   changeHistory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "ChangeHistory"

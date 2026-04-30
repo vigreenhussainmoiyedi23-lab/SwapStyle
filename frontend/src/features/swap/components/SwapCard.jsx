@@ -15,6 +15,8 @@ const SwapCard = ({ swap }) => {
   const { user } = useAuth();
   const [showDisputeForm, setShowDisputeForm] = useState(false);
   const [showDisputes, setShowDisputes] = useState(false);
+  const [rateUser, setRateUser] = useState(false);
+
   let role = swap.role;
   let otherUserRole = role == "owner" ? "requester" : "owner";
   let status = swap.status;
@@ -31,8 +33,9 @@ const SwapCard = ({ swap }) => {
   );
   const [showForm, setShowForm] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
+  console.log(swap);
   return (
-    <div className="bg-brand-700 rounded-2xl p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
+    <div className="bg-brand-700 rounded-2xl p-1 md:p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
       {/* Profit / Loss */}
       <div className="mb-2">
         {diffrence < 100 ? (
@@ -50,7 +53,7 @@ const SwapCard = ({ swap }) => {
         )}
       </div>
       {/* Listings */}
-      <div className=" items-center flex justify-between gap-2">
+      <div className=" items-center flex justify-between w-full">
         <ListingCard item={swap.ownerListing} isOwner={role === "owner"} />
         {/* Swap Icon */}
         <ArrowRightLeft className="text-accent-400 w-1/5 h-12" />
@@ -66,7 +69,7 @@ const SwapCard = ({ swap }) => {
       </div>
 
       {/* CTA Buttons */}
-      <div className="mt-4 flex gap-2 relative items-center justify-evenly lg:flex-row flex-col">
+      <div className="mt-4 grid grid-cols-2 gap-2 relative items-center justify-evenly lg:flex-row flex-col">
         <PendingCTAButton
           role={role}
           status={status}
@@ -75,7 +78,12 @@ const SwapCard = ({ swap }) => {
           cancelSwapHandler={cancelSwapHandler}
           swap={swap}
         />
-        <StatusShowcase status={status} user={user} swap={swap} otherUserRole={otherUserRole}/>
+        <StatusShowcase
+          status={status}
+          user={user}
+          swap={swap}
+          otherUserRole={otherUserRole}
+        />
         <ChatCta
           status={status}
           chatAccessHandler={chatAccessHandler}
@@ -93,14 +101,14 @@ const SwapCard = ({ swap }) => {
           <>
             {!swap.hasGivenAddress && (
               <button
-                className="bg-brand-500 rounded-lg p-3 source-code-pro "
+                className="bg-brand-500 rounded-lg p-3 w-full source-code-pro "
                 onClick={() => setShowForm(!showForm)}
               >
                 Add Shipping Address
               </button>
             )}
             {swap.hasGivenAddress && (
-              <p className="text-lg montserrat text-accent-500">
+              <p className="text-lg montserrat w-full text-center text-accent-500">
                 Shipping Address Added. <br /> Waiting For Other User Response
               </p>
             )}
@@ -116,7 +124,7 @@ const SwapCard = ({ swap }) => {
           <>
             {!swap.hasShipped && (
               <button
-                className="bg-brand-500 rounded-lg p-3 source-code-pro "
+                className="bg-brand-500 w-full rounded-lg p-3 source-code-pro "
                 onClick={() => setShowForm(!showForm)}
               >
                 Add Shipment details
@@ -124,7 +132,7 @@ const SwapCard = ({ swap }) => {
             )}
             <button
               onClick={() => setShowAddress(!showAddress)}
-              className="bg-brand-500 rounded-lg p-3 source-code-pro "
+              className="bg-brand-500 w-full rounded-lg p-3 source-code-pro "
             >
               View Other User's Address
             </button>
@@ -148,37 +156,39 @@ const SwapCard = ({ swap }) => {
           <>
             <button
               onClick={() => setShowDisputes(true)}
-              className="bg-accent-500 text-brand-900 px-3 py-2 rounded-lg"
+              className="bg-accent-500 w-full text-brand-900 px-3 py-2 rounded-lg"
             >
               View All Disputes
             </button>
             <button
               onClick={() => setShowDisputeForm(true)}
-              className="bg-red-500 px-3 py-2 rounded-lg whitespace-nowrap text-white"
+              className="bg-red-500 px-3 w-full py-2 rounded-lg whitespace-nowrap text-white"
             >
               Raise A dispute
             </button>
-            <p className="text-sm montserrat text-accent-300 lg:absolute lg:-translate-x-1/2 left-1/2 -bottom-1/2">
+            <p className="text-sm w-full montserrat text-accent-300 lg:absolute lg:-translate-x-1/2 left-1/2 -bottom-1/2">
               Waiting For Admin To Resolve Dispute
             </p>
           </>
         )}
         {swap.hasShipped && !swap.hasCompleted && status === "shipping" && (
           <>
-            <button
-              onClick={() => {
-                let url = swap.shipments.find(
-                  (shipment) => shipment.from.toString() !== user.toString(),
-                );
-                window.open(url.trackingUrl, "_blank");
-              }}
-              className="bg-brand-500 whitespace-nowrap source-code-pro px-3 py-2 rounded-lg w-1/2"
-            >
-              Track Order
-            </button>
+            {swap.shipment_type == "shipping" && (
+              <button
+                onClick={() => {
+                  let url = swap.shipments.find(
+                    (shipment) => shipment.from.toString() !== user.toString(),
+                  );
+                  window.open(url.trackingUrl, "_blank");
+                }}
+                className="bg-brand-500 w-full whitespace-nowrap source-code-pro px-3 py-2 rounded-lg "
+              >
+                Track Order
+              </button>
+            )}
             <button
               onClick={() => setShowDisputeForm(true)}
-              className="bg-red-500 px-3 py-2 rounded-lg whitespace-nowrap text-white"
+              className="bg-red-500 w-full px-3 py-2 rounded-lg whitespace-nowrap text-white"
             >
               Raise A dispute
             </button>
@@ -191,7 +201,7 @@ const SwapCard = ({ swap }) => {
                 if (!isConfirmed) return;
                 completeSwapHandler(swap._id);
               }}
-              className="bg-yellow-500 whitespace-nowrap source-code-pro px-3 py-2 rounded-lg w-1/2 "
+              className="bg-yellow-500 w-full  md:whitespace-nowrap source-code-pro px-3 py-2 rounded-lg "
             >
               Complete Request
             </button>
@@ -243,7 +253,7 @@ function PendingCTAButton({
       {role === "requester" && status === "pending" && (
         <button
           onClick={() => cancelSwapHandler(swap._id)}
-          className="bg-red-500 px-3 py-2 rounded-lg w-1/2 "
+          className="bg-red-500 px-3 py-2 rounded-lg w-full "
         >
           Withdraw Request (cancel)
         </button>
@@ -288,7 +298,7 @@ function ChatCta({
           const response = await chatAccessHandler(swap[otherUserRole]._id);
           navigate(`/chats/${response.chatId}`);
         }}
-        className="bg-accent-500 text-brand-900 font-bold source-code-pro whitespace-nowrap px-3 py-2 rounded-lg"
+        className="text-sm  bg-accent-500 w-full text-brand-900 md:font-bold source-code-pro lg:whitespace-nowrap px-3 py-2 rounded-lg"
       >
         {status === "pending" || status === "accepted"
           ? "Negotiate With "
@@ -302,19 +312,19 @@ function ShippingTypeUpdateCTA({ swap, changeShipmentTypeHandler }) {
   {
     return (
       (swap.status === "accepted" || swap.shipment_type === "local_swap") && (
-        <div className="flex flex-col  gap-2 w-fit relative">
-          <p className="text-sm text-brand-400 montserrat ">
+        <div className="flex flex-col  gap-2 w-full relative">
+          <p className="text-sm md:absolute z-10 text-brand-200 text-center montserrat w-full">
             Change Shipment Type
           </p>
-          <div className="relative">
+          <div className="relative w-full">
             <select
               value={swap.shipment_type}
               onChange={(e) =>
                 changeShipmentTypeHandler(swap._id, e.target.value)
               }
-              className="appearance-none w-48 px-4 py-2 pr-10 rounded-lg 
+              className="appearance-none w-full px-4 py-2 pr-10 rounded-lg 
                  bg-brand-800 text-white border border-border 
-                  montserrat focus:outline-none cursor-pointer"
+                  montserrat focus:outline-none cursor-pointer "
             >
               <option className="bg-brand-800 text-accent-500" value="shipping">
                 🚚 Shipping
@@ -375,10 +385,10 @@ function ListingCard({ item, isOwner }) {
               {item.size}
             </span>
             <span className="bg-brand-900  text-accent-500 text-xs px-3 py-1 rounded-full">
-              {item.condition.split("_").join(" ")}
+              {item.brandName}
             </span>
             <span className="bg-brand-900  text-accent-500 text-xs px-3 py-1 rounded-full">
-              {item.brandName}
+              {item.condition.split("_").join(" ")}
             </span>
           </div>
 

@@ -5,7 +5,7 @@ const changeHistoryModel = require("../models/swap/changeHistory.model");
 const swapModel = require("../models/swap/swap.model");
 const { getListingByIdService } = require("../services/listing/DBFunctions.service");
 const { createSwapService, getTrackingLink } = require("../services/swap/swap.service");
-const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap } = require("../services/swap/swap.utiliy");
+const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap, updateBothListingFromSwapId, checkBothListingAreElligibleToSwap } = require("../services/swap/swap.utiliy");
 const axios = require('axios');
 const disputeModel = require("../models/swap/dispute.model");
 const ratingModel = require("../models/user/rating.model");
@@ -92,7 +92,9 @@ async function getUserSwapsHandler(req, res) {
             }
             let hasCompleted = swap.completedBy[role]
             let hasGivenAddress = swap.AddresGivenBy[role]
-            return { ...swap, role, hasShipped, hasCompleted, hasGivenAddress }
+            let hasRaisedDispute = swap.disputedBy[role]
+            let hasRatedUser = swap.ratedBy[role]
+            return { ...swap, role, hasShipped, hasCompleted, hasGivenAddress, hasRaisedDispute, hasRatedUser }
         })
         res.status(200).json({
             swaps: swapWithRolesAndShipped,
@@ -155,7 +157,10 @@ async function createDisputeHandler(req, res) {
             return res.status(400).json({ message: "Swap is not in shipping or disputed state", success: false })
         }
         let role = swap.owner.toString() === user ? "owner" : "requester"
-
+        let hasAlreadyCreatedADispute = swap.disputedBy[role]
+        if (hasAlreadyCreatedADispute) {
+            return res.status(400).json({ message: "You have already raised a dispute", success: false })
+        }
         const dispute = await disputeModel.create({
             swapId: swap._id,
             raisedBy: user,
@@ -166,6 +171,7 @@ async function createDisputeHandler(req, res) {
         })
 
         swap.status = "disputed"
+        swap.disputedBy = { ...swap.disputedBy, [role]: true }
         await swap.save()
         res.status(200).json({
             message: "dispute Created",
@@ -186,7 +192,6 @@ async function createRatingHandler(req, res) {
         const user = req.userId
         const swap = await getSwapByIdService(swapId)
         const { ratee, comment, ratingValue } = req.body
-        console.log(swapId,user,ratee,comment,ratingValue)
         ValidateSwap(swap, user)
         if (swap.status !== "completed") {
             return res.status(400).json({ message: "Swap is not in completed state", success: false })
@@ -206,7 +211,8 @@ async function createRatingHandler(req, res) {
             comment
         })
 
-
+        swap.ratedBy = { ...swap.ratedBy, [role]: true }
+        await swap.save()
         res.status(200).json({
             message: "rating Created",
             success: true
@@ -253,13 +259,30 @@ async function acceptSwapHandler(req, res) {
         const user = req.userId
         const swap = await getSwapByIdService(swapId)
 
+        const isEligible = await checkBothListingAreElligibleToSwap(swapId)
+        if (!isEligible) {
+            return res.status(400).json({ message: "One of the listing is not available or locked", success: false })
+        }
         ValidateSwap(swap, user)
         validateSwapState(swap, "pending")
         validateUserRole(swap, user, "owner")
-
         swap.status = "accepted"
         await swap.save()
-
+        await updateBothListingFromSwapId(swapId, { isLocked: true })
+        await swapModel.updateMany(
+            {
+                _id: { $ne: swap._id },
+                $or: [
+                    { requesterListing: swap.requesterListing },
+                    { ownerListing: swap.ownerListing },
+                    { ownerListing: swap.requesterListing },
+                    { requesterListing: swap.ownerListing },
+                ]
+            },
+            {
+                $set: { status: "cancelled" }
+            }
+        );
         res.status(200).json({
             message: "Swap accepted",
             success: true
@@ -286,6 +309,7 @@ async function rejectSwapHandler(req, res) {
 
         swap.status = "rejected"
         await swap.save()
+        await updateBothListingFromSwapId(swapId, { isLocked: false })
 
         res.status(200).json({
             message: "Swap rejected",
@@ -308,6 +332,7 @@ async function cancelSwapHandler(req, res) {
         validateUserRole(swap, user, "requester")
         ValidateSwap(swap, user)
         validateSwapState(swap, "pending")
+        await updateBothListingFromSwapId(swapId, { isLocked: false })
 
         swap.status = "cancelled"
         await swap.save()
@@ -345,6 +370,7 @@ async function completeSwapHandler(req, res) {
         if (swap.completedBy.owner && swap.completedBy.requester) {
             swap.status = "completed"
             await swap.save()
+            await updateBothListingFromSwapId(swapId, { isAvailable: false })
         }
         res.status(200).json({
             message: "Swap completed",
