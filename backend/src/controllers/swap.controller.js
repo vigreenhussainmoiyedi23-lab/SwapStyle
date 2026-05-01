@@ -9,6 +9,7 @@ const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUse
 const axios = require('axios');
 const disputeModel = require("../models/swap/dispute.model");
 const ratingModel = require("../models/user/rating.model");
+const userModel = require("../models/user/user.model");
 
 async function createSwapHandler(req, res) {
     try {
@@ -169,11 +170,11 @@ async function createDisputeHandler(req, res) {
             reason,
             description
         })
-     
+
         swap.status = "disputed"
         swap.disputedBy[role] = true
         await swap.save()
-       
+
         res.status(200).json({
             message: "dispute Created",
             success: true
@@ -188,44 +189,100 @@ async function createDisputeHandler(req, res) {
     }
 }
 async function createRatingHandler(req, res) {
-    try {
-        const { swapId } = req.params
-        const user = req.userId
-        const swap = await getSwapByIdService(swapId)
-        const { ratee, comment, ratingValue } = req.body
-        ValidateSwap(swap, user)
-        if (swap.status !== "completed") {
-            return res.status(400).json({ message: "Swap is not in completed state", success: false })
-        }
-        let ratingExists = await ratingModel.findOne({ swapId: swap._id, rater: user })
-        if (ratingExists) {
-            return res.status(400).json({ message: "You have already rated this swap", success: false })
-        }
+  try {
+    const { swapId } = req.params;
+    const user = req.userId;
 
-        let role = swap.owner.toString() === user ? "owner" : "requester"
-        const rating = await ratingModel.create({
-            swapId: swap._id,
-            ratee: ratee,
-            rater: user,
-            role,
-            ratingValue,
-            comment
-        })
+    const swap = await getSwapByIdService(swapId);
+    ValidateSwap(swap, user);
 
-        swap.ratedBy = { ...swap.ratedBy, [role]: true }
-        await swap.save()
-        res.status(200).json({
-            message: "rating Created",
-            success: true
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(error.status || 500).json({
-            message: error.message || "Error creating dispute",
-            success: false
-        })
+    if (swap.status !== "completed") {
+      return res.status(400).json({
+        message: "Swap is not in completed state",
+        success: false,
+      });
     }
+
+    // ✅ Determine role + ratee securely
+    let role, ratee;
+
+    if (swap.owner.toString() === user) {
+      role = "owner";
+      ratee = swap.requester;
+    } else {
+      role = "requester";
+      ratee = swap.owner;
+    }
+
+    // ❌ prevent self rating
+    if (ratee.toString() === user) {
+      return res.status(400).json({
+        message: "You cannot rate yourself",
+        success: false,
+      });
+    }
+
+    // ✅ check if already rated
+    const ratingExists = await ratingModel.findOne({
+      swapId: swap._id,
+      rater: user,
+    });
+
+    if (ratingExists) {
+      return res.status(400).json({
+        message: "You have already rated this swap",
+        success: false,
+      });
+    }
+
+    // ✅ create rating
+    await ratingModel.create({
+      swapId: swap._id,
+      ratee,
+      rater: user,
+      role,
+      ratingValue: Number(req.body.ratingValue),
+      comment: req.body.comment,
+    });
+
+    // ✅ update swap state
+    swap.ratedBy = {
+      ...swap.ratedBy,
+      [role]: true,
+    };
+    await swap.save();
+
+    // ✅ OPTIMIZED aggregation (NO full scan in JS)
+    const stats = await ratingModel.aggregate([
+      { $match: { ratee } },
+      {
+        $group: {
+          _id: "$ratee",
+          avgRating: { $avg: "$ratingValue" },
+          totalRatings: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const avgRating = stats[0]?.avgRating || 0;
+
+    // ✅ update user
+    await userModel.findByIdAndUpdate(ratee, {
+      rating: Number(avgRating.toFixed(2)), // keeps decimal
+    });
+
+    return res.status(200).json({
+      message: "Rating created successfully",
+      success: true,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(error.status || 500).json({
+      message: error.message || "Error creating rating",
+      success: false,
+    });
+  }
 }
 
 async function getSwapAllDisputesHandler(req, res) {

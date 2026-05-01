@@ -67,9 +67,9 @@ const RemoveOrRestoreListing = async (listingId) => {
         throw new Error(error.response.data.message);
     }
 }
-const ResolveDispute = async (swapId, resolveData) => {
+const ResolveDispute = async (diputeId, resolveData) => {
     try {
-        const response = await apiClient.patch(`/swap/${swapId}`, resolveData);
+        const response = await apiClient.patch(`/dispute/${diputeId}`, resolveData);
         return response?.data
     } catch (error) {
         throw new Error(error.response.data.message);

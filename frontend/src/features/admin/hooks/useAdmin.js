@@ -18,6 +18,8 @@ export default function useAdmin() {
         setAnalyticsTotal,
         analyticsDaily,
         setAnalyticsDaily,
+        insights,
+        setInsights,
     } = useContext(AdminContext);
     const GetAllUsersHandler = async () => {
         setLoading(true);
@@ -75,6 +77,7 @@ export default function useAdmin() {
             console.log("platform analytics", data);
             setAnalyticsTotal(data.totals);
             setAnalyticsDaily(data.daily);
+            setInsights(data.insights?.value);
         } catch (error) {
             throw new Error(error.response.data.message);
         } finally {
@@ -105,10 +108,11 @@ export default function useAdmin() {
             setLoading(false);
         }
     };
-    const ResolveDisputeHandler = async (swapId, resolveData) => {
+    const ResolveDisputeHandler = async (disputeId, resolveData) => {
         setLoading(true);
         try {
-            const response = await ResolveDispute(swapId, resolveData);
+            const response = await ResolveDispute(disputeId, resolveData);
+            await GetAllDisputesHandler()
             return response;
         } catch (error) {
             throw new Error(error.response.data.message);
@@ -124,6 +128,7 @@ export default function useAdmin() {
         loading,
         analyticsTotal,
         analyticsDaily,
+        insights,
         GetAllUsersHandler,
         GetAllListingsHandler,
         GetAllSwapsHandler,

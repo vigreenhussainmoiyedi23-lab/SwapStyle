@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { ListingContext } from "../listing.context";
 import service from "../service/api.service";
-import showToast from "../../../utils/Toastify.util";
+import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util";
 import { createSwapRequest } from "../../swap/service/swap.api";
+import { useNavigate } from "react-router-dom";
 
 export const useListing = () => {
     // Access listing context values and functions
@@ -20,6 +21,7 @@ export const useListing = () => {
         filters,
         setFilters,
     } = useContext(ListingContext);
+    const navigate = useNavigate();
 
     const fetchListings = async (filters) => {
         setLoading(true);
@@ -36,25 +38,31 @@ export const useListing = () => {
     };
     const createListing = async (listingData) => {
         setLoading(true);
+        const id = showLoadingToast("Creating listing...")
         try {
             const data = await service.createListing(listingData);
-            showToast("Listing created successfully!", "success");
             await fetchListings(filters);
+            const update = updateToast(id, data.message, "success");
+            navigate("/listings")
         } catch (error) {
             console.error('Error creating listing:', error);
-            showToast(error?.response?.data?.message || "Error creating listing", "error");
-
+            const update = updateToast(id, error.data.message, "error")
         } finally {
             setLoading(false);
         }
     };
     const updateListing = async (listingId, listingData) => {
         setLoading(true);
+        const id = showLoadingToast("Updating listing...")
+
         try {
             const data = await service.updateListing(listingId, listingData);
-            showToast("Listing updated successfully!", "success");
+            await fetchListings(filters);
+            const update = updateToast(id, data.message, "success");
         } catch (error) {
             console.error('Error updating listing:', error);
+            const update = updateToast(id, error.data.message, "error")
+
         } finally {
             setLoading(false);
         }
@@ -72,23 +80,29 @@ export const useListing = () => {
     };
     const deleteListing = async (listingId) => {
         setLoading(true);
+        const id = showLoadingToast("Deleting listing...")
         try {
             const data = await service.deleteListing(listingId);
-            fetchListings(filters);
-            showToast("Listing deleted successfully!", "success");
+            await fetchListings(filters);
+            const update = updateToast(id, data.message, "success");
+
         } catch (error) {
             console.error('Error deleting listing:', error);
+            const update = updateToast(id, error.data.message, "error")
+
         } finally {
             setLoading(false);
         }
     };
     const createSwap = async ({ offeredListingId, requestedListingId }) => {
         setLoading(true);
+        const id = showLoadingToast("Creating Swap...")
         try {
-            const data = await createSwapRequest({ offeredListingId:offeredListingId, requestedListingId:requestedListingId });
+            const data = await createSwapRequest({ offeredListingId: offeredListingId, requestedListingId: requestedListingId });
             showToast("Swap created successfully!", "success");
+            const update = updateToast(id, data.message, "success")
         } catch (error) {
-            showToast(error?.data?.message || error.message, "error");
+            const update = updateToast(id, error.data.message || error?.message, "error")
             throw error;
         } finally {
             setLoading(false);

@@ -3,6 +3,7 @@ const userModel = require("../models/user/user.model")
 const swapModel = require("../models/swap/swap.model.js")
 const listingModel = require("../models/listing.model")
 const disputeModel = require("../models/swap/dispute.model")
+const { GeneratePlatformInsight } = require("../services/ai/PlatformSummary.service.js")
 
 
 /**
@@ -169,7 +170,8 @@ async function GetPlatformOverviewHandler(req, res) {
 
             usersDaily,
             listingsDaily,
-            swapsDaily
+            swapsDaily,
+            disputesDaily
         ] = await Promise.all([
             userModel.countDocuments(),
             listingModel.countDocuments(),
@@ -178,7 +180,8 @@ async function GetPlatformOverviewHandler(req, res) {
 
             getDailyData(userModel),
             getDailyData(listingModel),
-            getDailyData(swapModel)
+            getDailyData(swapModel),
+            getDailyData(disputeModel)
         ])
 
         const data = {
@@ -191,11 +194,13 @@ async function GetPlatformOverviewHandler(req, res) {
             daily: {
                 users: usersDaily,
                 listings: listingsDaily,
-                swaps: swapsDaily
+                swaps: swapsDaily,
+                disputes: disputesDaily
             }
         }
-
-        await redis.set(cacheKey, JSON.stringify(data), "EX", 300)
+        const insight = await GeneratePlatformInsight(data)
+        data.insights = insight
+        await redis.set(cacheKey, JSON.stringify(data), "EX", 100)
 
         res.status(200).json({
             success: true,
@@ -269,7 +274,15 @@ async function ResolveDisputeHandler(req, res) {
         dispute.resolution = resolution
         dispute.adminNote = adminNote
         await dispute.save()
-
+        const swap = await swapModel.findById(dispute.swapId)
+        swap.disputedBy[dispute.role] = false
+        const { owner, requester } = swap.disputedBy
+        if (!owner && !requester) {
+            swap.status = "shipping"
+            console.log("shipping set")
+        }
+        console.log("reached endpoint", swap.disputedBy)
+        await swap.save()
         res.json({ success: true, dispute })
     } catch (err) {
         res.status(500).json({ success: false, message: err.message })

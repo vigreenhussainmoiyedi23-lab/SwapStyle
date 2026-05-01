@@ -15,7 +15,6 @@ const SwapCard = ({ swap }) => {
   const { user } = useAuth();
   const [showDisputeForm, setShowDisputeForm] = useState(false);
   const [showDisputes, setShowDisputes] = useState(false);
-  const [rateUser, setRateUser] = useState(false);
 
   let role = swap.role;
   let otherUserRole = role == "owner" ? "requester" : "owner";
@@ -33,7 +32,7 @@ const SwapCard = ({ swap }) => {
   );
   const [showForm, setShowForm] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
-  console.log(swap.hasRaisedDispute);
+
   return (
     <div className="bg-brand-700 rounded-2xl p-1 md:p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
       {/* Profit / Loss */}
@@ -120,6 +119,7 @@ const SwapCard = ({ swap }) => {
             )}
           </>
         )}
+
         {swap.status == "prepared_to_ship" && (
           <>
             {!swap.hasShipped && (
@@ -266,15 +266,18 @@ function PendingCTAButton({
   );
 }
 function StatusShowcase({ status, swap, otherUserRole, user }) {
+  const [open, setOpen] = useState(false);
   return (
     <>
       {status === "completed" && (
         <>
-          <span className="text-green-400 text-sm ">Completed</span>
+          <span className="text-green-400 text-sm self-center">Completed</span>
           <RateUser
             swapId={swap._id}
             rateeId={swap[otherUserRole]._id}
-            raterId={user._id}
+            open={open}
+            setOpen={setOpen}
+            hasRated={swap.hasRatedUser}
           />
         </>
       )}
@@ -315,7 +318,8 @@ function ChatCta({
 function ShippingTypeUpdateCTA({ swap, changeShipmentTypeHandler }) {
   {
     return (
-      (swap.status === "accepted" || swap.shipment_type === "local_swap") && (
+      (swap.status === "accepted" ||
+        (swap.status == "shipping" && swap.shipment_type === "local_swap")) && (
         <div className="flex flex-col  gap-2 w-full relative">
           <p className="text-sm md:absolute z-10 text-brand-200 text-center montserrat w-full">
             Change Shipment Type

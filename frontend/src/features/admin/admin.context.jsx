@@ -10,6 +10,7 @@ function AdminContextProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [analyticsTotal, setAnalyticsTotal] = useState({});
   const [analyticsDaily, setAnalyticsDaily] = useState({});
+  const [insights, setInsights] = useState("");
   return (
     <AdminContext.Provider
       value={{
@@ -27,6 +28,8 @@ function AdminContextProvider({ children }) {
         setAnalyticsDaily,
         disputes,
         setDisputes,
+        insights,
+        setInsights,
       }}
     >
       {children}

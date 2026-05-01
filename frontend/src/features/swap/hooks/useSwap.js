@@ -1,6 +1,6 @@
 import { SwapContext } from "../swap.context";
 import { useContext, useEffect } from "react";
-import showToast from "../../../utils/Toastify.util.jsx";
+import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util.jsx";
 import {
     fetchSwapRequests,
     cancelSwapRequest,
@@ -33,6 +33,7 @@ const useSwap = () => {
             setLoading(true);
             const swaps = await fetchSwapRequests({ filters });
             setUserAllSwaps(swaps);
+
         } catch (error) {
             console.error("Error fetching swap requests:", error);
             throw error;
@@ -41,26 +42,30 @@ const useSwap = () => {
         }
     };
     const acceptSwapHandler = async (swapId) => {
+        const id = showLoadingToast("accepting swap request...");
         try {
             setLoading(true);
             const response = await acceptSwapRequest(swapId);
             showToast(response.message, "success");
-            showToast("Make Sure You Negotiate Before Shipping or Completing", "info");
             getSwapRequests({ filters });
+            const update = updateToast(id, "Make Sure You Negotiate Before Shipping or Completing", "info")
         } catch (error) {
             console.error("Error accepting swap request:", error);
+            const update = updateToast(id, error.data.message, "error")
             throw error;
         } finally {
             setLoading(false);
         }
     };
     const rejectSwapHandler = async (swapId) => {
+        const id = showLoadingToast("rejecting swap request...");
         try {
             setLoading(true);
             const response = await rejectSwapRequest(swapId);
-            showToast(response.message, "success");
             getSwapRequests({ filters });
+            const update = updateToast(id, response.message, "success")
         } catch (error) {
+            const update = updateToast(id, error.data.message, "error")
             console.error("Error rejecting swap request:", error);
             throw error;
         } finally {
@@ -68,12 +73,16 @@ const useSwap = () => {
         }
     };
     const cancelSwapHandler = async (swapId) => {
+        const id = showLoadingToast("withdrawing swap request...");
         try {
+
             setLoading(true);
             const response = await cancelSwapRequest(swapId);
-            showToast(response.message, "success");
             getSwapRequests({ filters });
+            const update = updateToast(id, response.message, "success")
         } catch (error) {
+            const update = updateToast(id, error.data.message, "error")
+
             console.error("Error canceling swap request:", error);
             throw error;
         } finally {
@@ -81,13 +90,17 @@ const useSwap = () => {
         }
     };
     const completeSwapHandler = async (swapId) => {
+        const id = showLoadingToast("completing swap request From your side...");
         try {
+
             setLoading(true);
             const response = await completeSwapRequest(swapId);
-            showToast(response.message, "success");
+            await getSwapRequests({ filters });
+
+            const update = updateToast(id, response.message, "success")
             showToast("The Swap Will Be Completed As Soon As The Other User completes it", "info");
-            getSwapRequests({ filters });
         } catch (error) {
+            const update = updateToast(id, error.data.message, "error")
             console.error("Error completing swap request:", error);
             throw error;
         } finally {
@@ -95,88 +108,100 @@ const useSwap = () => {
         }
     };
     const shipmentDetailsHandler = async (swapId, shipmentDetails) => {
+        const id = showLoadingToast("adding sipment details...");
         try {
+
             setLoading(true);
             const response = await shipmentUpdateSwapRequest(swapId, shipmentDetails);
-            showToast(response.message, "success");
+            await getSwapRequests({ filters });
             showToast("Before Completing Make Sure You receive the item", "info");
-            getSwapRequests({ filters });
+            const update = updateToast(id, response.message, "success")
         } catch (error) {
-            showToast(error.message, "error");
+            const update = updateToast(id, error.message, "error")
             throw error;
         } finally {
             setLoading(false);
         }
     };
     const createDisputeHandler = async (swapId, disputeDetails) => {
+        const id = showLoadingToast("creating a dispute...");
         try {
+
             setLoading(true);
             const response = await createDisputeApi(swapId, disputeDetails);
-            
-            showToast(response.message, "success");
+
+            const update = updateToast(id, response.message, "success")
+
             getSwapRequests({ filters });
         } catch (error) {
-            showToast(error.data.message, "error");
-            console.log(error)
+            const update = updateToast(id, error?.data?.message, "error")
+
             throw error;
         } finally {
             setLoading(false);
         }
     };
     const getSwapAllDisputesHandler = async (swapId) => {
+        const id = showLoadingToast("Loading All disputes...");
         try {
             setLoading(true);
             const response = await getSwapAllDisputeApi(swapId);
-            showToast(response.message, "success");
-            getSwapRequests({ filters });
-            setSwapAllDisputes(response.disputes);
+            await getSwapRequests({ filters });
+            await setSwapAllDisputes(response.disputes);
+            const update = updateToast(id, response.message, "success")
         } catch (error) {
-            console.error(error)
-            showToast(error.data.message, "error");
+            const update = updateToast(id, error?.data?.message, "error")
             throw error;
         } finally {
             setLoading(false);
         }
     };
     const shipmentAddressHandler = async (swapId, shipmentAddress) => {
+        const id = showLoadingToast("adding shipping address...");
         try {
             setLoading(true);
             const response = await shipmentAddressApi(swapId, shipmentAddress);
-            showToast(response.message, "success");
+            await getSwapRequests({ filters });
+
+            const update = updateToast(id, response.message, "success")
             showToast("Add Tracking Number And Courier Id After Shipping", "info");
-            getSwapRequests({ filters });
         } catch (error) {
-            console.error("Error updating shipment details for swap request:", error);
-            showToast(error.message, "error");
+            const update = updateToast(id, error.message, "success")
+
             throw error;
         } finally {
             setLoading(false);
         }
     };
     const changeShipmentTypeHandler = async (swapId, changeTo) => {
+        const id = showLoadingToast("updating shipment type...");
         try {
+
             setLoading(true);
             const response = await changeShipmentTypeSwapRequest(swapId, changeTo);
-            showToast(response.message, "success");
+            await getSwapRequests({ filters });
             if (changeTo === "local_swap") {
                 showToast("Before Completing Make Sure You receive the item", "info");
             }
-            getSwapRequests({ filters });
+            const update = updateToast(id, response.message, "success")
         } catch (error) {
-            console.error("Error changing shipment type for swap request:", error);
+            const update = updateToast(id, error.message, "success")
             throw error;
         } finally {
             setLoading(false);
         }
     };
     const createRatingHandler = async (swapId, ratingDetails) => {
+        const id = showLoadingToast("Creating Rating...");
+
         try {
             setLoading(true);
             const response = await createRatingApi(swapId, ratingDetails);
-            showToast(response.message, "success");
-            getSwapRequests({ filters });
+            console.log(response)
+            await getSwapRequests({ filters });
+            const update = updateToast(id, response?.message, "success")
         } catch (error) {
-            console.error("Error creating rating for other user:", error);
+            const update = updateToast(id, error.data.message, "error")
             throw error;
         } finally {
             setLoading(false);

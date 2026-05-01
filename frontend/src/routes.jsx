@@ -18,7 +18,6 @@ import Dashboard from "./features/admin/pages/Dashboard";
 import Users from "./features/admin/pages/Users";
 import Disputes from "./features/admin/pages/Disputes";
 import ListingsAdmin from "./features/admin/pages/Listings";
-import Settings from "./features/admin/pages/Settings";
 
 const Approutes = () => {
   return (
@@ -128,14 +127,7 @@ const Approutes = () => {
             </AdminLayout>
           }
         />
-        <Route
-          path="/admin/settings"
-          element={
-            <AdminLayout>
-              <Settings />
-            </AdminLayout>
-          }
-        />
+     
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />

@@ -36,7 +36,6 @@ const CreateListing = () => {
   const { createListing } = useListing();
   const [selectedImages, setSelectedImages] = useState([]);
   const [availableTypes, setAvailableTypes] = useState([]);
-  const navigate = useNavigate();
   // Dynamic Clothing Types
   useEffect(() => {
     if (formData.category) {
@@ -49,7 +48,6 @@ const CreateListing = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -66,7 +64,7 @@ const CreateListing = () => {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let ListingData = new FormData();
     ListingData.append("title", formData.title);
@@ -78,8 +76,6 @@ const CreateListing = () => {
     ListingData.append("condition", formData.condition);
     ListingData.append("location", JSON.stringify(location));
     selectedImages.map((img) => ListingData.append("images", img.file));
-    createListing(ListingData);
-    navigate("/listings");
     setFormData({
       title: "",
       description: "",
@@ -90,6 +86,11 @@ const CreateListing = () => {
       condition: "",
     });
     setSelectedImages([]);
+    try {
+      await createListing(ListingData);
+    } catch (error) {
+      console.error("Error creating listing:", error);
+    }
   };
 
   return (

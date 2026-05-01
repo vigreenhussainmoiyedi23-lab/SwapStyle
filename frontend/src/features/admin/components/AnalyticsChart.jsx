@@ -12,13 +12,16 @@ import {
 
 export default function AnalyticsChart({ data, dataKey, title }) {
   return (
-    <div className="bg-brand-800 lg:p-5 p-2 rounded text-brand-500">
+    <div className="bg-brand-800 lg:p-5 p-0 rounded text-brand-500">
       <h2 className="playfair text-xl mb-4 text-white">{title}</h2>
 
       <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={data}>
+        <LineChart
+          data={data}
+          margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
+        >
           <CartesianGrid
-            strokeDasharray="3 3"
+            strokeDasharray="4 4"
             stroke="var(--color-accent-500)"
           />
 
@@ -32,7 +35,7 @@ export default function AnalyticsChart({ data, dataKey, title }) {
             dataKey="count"
             stroke="var(--color-accent-500)"
             strokeWidth={3}
-            dot={{ r: 4,stroke:"#fff" }}
+            dot={{ r: 4, stroke: "#fff" }}
             activeDot={{ stroke: "var(--color-accent-500)" }}
           />
         </LineChart>

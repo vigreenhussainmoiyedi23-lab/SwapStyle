@@ -30,9 +30,9 @@ const disputeSchema = new mongoose.Schema({
     adminNote: { type: String },
     status: {
         type: String,
-        enum: ["open", "resolved", "closed"],
+        enum: ["open", "resolved", "rejected"],
         default: "open"
     }
 }, { timestamps: true });
-disputeSchema.index({ swapId: 1, raisedBy: 1 }, { unique: true });
+disputeSchema.index({ swapId: 1, raisedBy: 1 });
 module.exports = mongoose.model("disputes", disputeSchema);

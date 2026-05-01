@@ -18,7 +18,7 @@ export default function Users() {
     <div>
       <h1 className="playfair text-3xl mb-6">Users</h1>
 
-      <div className="p-4 rounded flex flex-col gap-3 text-black">
+      <div className="p-4 rounded flex bg-brand-800 flex-col gap-3 text-black">
         {users.map((user) => (
           <div
             key={user.id}
@@ -39,6 +39,7 @@ export default function Users() {
             </Button>
           </div>
         ))}
+        {users.length == 0 && <p className="text-center text-white">No users</p>}
       </div>
     </div>
   );

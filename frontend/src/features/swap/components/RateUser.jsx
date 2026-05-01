@@ -2,32 +2,12 @@ import React, { useState } from "react";
 import { Star } from "lucide-react";
 import useSwap from "../hooks/useSwap";
 
-const RateUser = ({ swapId, rateeId, raterId }) => {
-  const [open, setOpen] = useState(false);
-  const [hasRated, setHasRated] = useState(false);
+const RateUser = ({ swapId, rateeId, open, setOpen, hasRated }) => {
   const { createRatingHandler } = useSwap();
   const [form, setForm] = useState({
     ratingValue: 5,
     comment: "",
   });
-
-  // 🔥 MOCK API (replace tomorrow with backend)
-  const mockCheckRating = async () => {
-    return false; // pretend user hasn't rated yet
-  };
-
-  const mockSubmitRating = async (data) => {
-    console.log("Submitting rating:", data);
-    return true;
-  };
-
-  React.useEffect(() => {
-    const check = async () => {
-      const res = await mockCheckRating();
-      setHasRated(res);
-    };
-    check();
-  }, []);
 
   const submitHandler = async () => {
     const payload = {
@@ -37,7 +17,6 @@ const RateUser = ({ swapId, rateeId, raterId }) => {
     };
 
     await createRatingHandler(swapId, payload);
-    setHasRated(true);
     setOpen(false);
   };
 
@@ -61,12 +40,12 @@ const RateUser = ({ swapId, rateeId, raterId }) => {
       {/* MODAL */}
       {open && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-brand-300 w-[380px] p-5 rounded-xl flex flex-col gap-4">
+          <div className="bg-brand-800 w-[380px] p-5 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-semibold">Give Rating</h2>
 
             {/* ⭐ Stars UI */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-gray-600">
+              <label className="text-sm text-accent-300">
                 Rating: {form.ratingValue} ⭐
               </label>
 

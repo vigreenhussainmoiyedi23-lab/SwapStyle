@@ -6,15 +6,16 @@ export default function Sidebar() {
     { name: "Users", path: "/admin/users" },
     { name: "Listings", path: "/admin/listings" },
     { name: "Disputes", path: "/admin/disputes" },
-    { name: "Settings", path: "/admin/settings" },
   ];
 
   return (
-    <div className="w-64 bg-brand-800 p-5 hidden md:block">
-      <h1 className="playfair text-2xl mb-6">Admin Panel</h1>
-
+    <div className="w-64 bg-brand-900 border-accent-500 border-r p-5 hidden lg:block">
+      <h1 className="playfair text-2xl mb-6 ">
+        Admin Panel
+      </h1>
+      <hr className="mb-6 text-accent-500 w-full"/>
       <div className="space-y-3">
-        {links.map(link => (
+        {links.map((link) => (
           <NavLink
             key={link.name}
             to={link.path}

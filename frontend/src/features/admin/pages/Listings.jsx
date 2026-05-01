@@ -62,6 +62,8 @@ export default function Listings() {
             </Button>
           </div>
         ))}
+        {listings.length == 0 && <p className="text-white">No Listings found.</p>}
+
       </div>
     </div>
   );
