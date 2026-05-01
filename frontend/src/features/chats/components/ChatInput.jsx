@@ -4,17 +4,25 @@ import { ImagePlusIcon, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { useChatHttp } from "../hooks/useChatHttp";
 
-export default function ChatInput({ chatId }) {
+export default function ChatInput({ chatId, socket }) {
   const [message, setMessage] = useState("");
   const [images, setImages] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
-
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
   const fileRef = useRef();
-  const { createMessage } = useChatSocket();
+  const { createMessage, emitTyping, emitStopTyping } = socket;
   const { uploadImages, loading } = useChatHttp();
-
+  console.log(socket);
   const MAX_IMAGES = 5;
-
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      emitStopTyping({ chatId });
+    };
+  }, [chatId]);
   // 🔥 send message
   const submitHandler = async () => {
     if (!message.trim() && images.length === 0) return;
@@ -31,6 +39,8 @@ export default function ChatInput({ chatId }) {
         message,
         files: data?.urls,
       });
+      emitStopTyping({ chatId });
+      setIsTyping(false);
       setMessage("");
       setImages([]);
     } catch (error) {
@@ -114,7 +124,24 @@ export default function ChatInput({ chatId }) {
         <input
           placeholder="Type a message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setMessage(value);
+
+            if (!isTyping) {
+              setIsTyping(true);
+              emitTyping({ chatId });
+            }
+
+            if (typingTimeoutRef.current) {
+              clearTimeout(typingTimeoutRef.current);
+            }
+
+            typingTimeoutRef.current = setTimeout(() => {
+              setIsTyping(false);
+              emitStopTyping({ chatId });
+            }, 1500);
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") submitHandler();
           }}

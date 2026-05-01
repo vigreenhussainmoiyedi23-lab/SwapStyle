@@ -37,12 +37,14 @@ class SocketManager {
         socket.off("connect");
         socket.off("connect_error");
 
-
         socket.connect();
 
         socket.on("connect", () => {
             this.retryCount = 0; // reset on success
             clearTimeout(this.retryTimeout);
+
+            // join personal notification room for targeted emits
+            socket.emit("join_notification_room");
         });
 
         socket.on("connect_error", () => {
@@ -56,11 +58,15 @@ class SocketManager {
         });
     }
     emitMessage(messageName, messageData) {
+        if (!this.socket) return;
         this.socket.emit(messageName, messageData);
     }
     listenMessage(messageName, callbackFunction) {
+        this.listeners.set(messageName, callbackFunction); // store it
+        if (!this.socket) return;
         this.socket.on(messageName, callbackFunction);
     }
+
     // 🔥 This is the key part
     retryAfterUserAction() {
         this.retryCount = 0; // reset retry cycle

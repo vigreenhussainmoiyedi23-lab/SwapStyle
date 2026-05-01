@@ -14,10 +14,13 @@ import {
     getSwapAllDisputeApi,
     createRatingApi
 } from "../service/swap.api";
+import { emitNotification } from "../../../utils/emitNotifications.js";
 
+import useAuth from "../../auth/hooks/useAuth";
 
 
 const useSwap = () => {
+    const { user } = useAuth();
     const {
         loading,
         userAllSwaps,
@@ -47,6 +50,18 @@ const useSwap = () => {
             setLoading(true);
             const response = await acceptSwapRequest(swapId);
             showToast(response.message, "success");
+            const swap = response?.swap;
+
+            if (swap) {
+                emitNotification({
+                    recipient: swap.requester,
+                    type: "SWAP_ACCEPTED",
+                    title: "Swap Accepted 🎉",
+                    message: "Your swap request has been accepted",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             getSwapRequests({ filters });
             const update = updateToast(id, "Make Sure You Negotiate Before Shipping or Completing", "info")
         } catch (error) {
@@ -62,6 +77,18 @@ const useSwap = () => {
         try {
             setLoading(true);
             const response = await rejectSwapRequest(swapId);
+            const swap = response?.swap;
+
+            if (swap) {
+                emitNotification({
+                    recipient: swap.requester,
+                    type: "SWAP_REJECTED",
+                    title: "Swap Rejected",
+                    message: "Your swap request was rejected",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             getSwapRequests({ filters });
             const update = updateToast(id, response.message, "success")
         } catch (error) {
@@ -78,6 +105,18 @@ const useSwap = () => {
 
             setLoading(true);
             const response = await cancelSwapRequest(swapId);
+            const swap = response?.swap;
+
+            if (swap) {
+                emitNotification({
+                    recipient: swap.owner,
+                    type: "SWAP_CANCELLED",
+                    title: "Swap Cancelled",
+                    message: "The swap request has been withdrawn",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             getSwapRequests({ filters });
             const update = updateToast(id, response.message, "success")
         } catch (error) {
@@ -96,7 +135,23 @@ const useSwap = () => {
             setLoading(true);
             const response = await completeSwapRequest(swapId);
             await getSwapRequests({ filters });
+            const swap = response?.swap;
 
+            if (swap) {
+                const otherUser =
+                    user._id.toString() === swap.requester.toString()
+                        ? swap.owner
+                        : swap.requester;
+
+                emitNotification({
+                    recipient: otherUser,
+                    type: "SWAP_COMPLETED",
+                    title: "Swap Progress Updated",
+                    message: "The other user marked swap as completed",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             const update = updateToast(id, response.message, "success")
             showToast("The Swap Will Be Completed As Soon As The Other User completes it", "info");
         } catch (error) {
@@ -114,6 +169,23 @@ const useSwap = () => {
             setLoading(true);
             const response = await shipmentUpdateSwapRequest(swapId, shipmentDetails);
             await getSwapRequests({ filters });
+            const swap = response?.swap;
+
+            if (swap) {
+                const otherUser =
+                    user._id.toString() === swap.requester.toString()
+                        ? swap.owner
+                        : swap.requester;
+
+                emitNotification({
+                    recipient: otherUser,
+                    type: "SWAP_SHIPPED",
+                    title: "Item Shipped 📦",
+                    message: "Shipment details have been added",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             showToast("Before Completing Make Sure You receive the item", "info");
             const update = updateToast(id, response.message, "success")
         } catch (error) {
@@ -129,7 +201,23 @@ const useSwap = () => {
 
             setLoading(true);
             const response = await createDisputeApi(swapId, disputeDetails);
+            const swap = response?.swap;
 
+            if (swap) {
+                const otherUser =
+                    user._id.toString() === swap.requester.toString()
+                        ? swap.owner
+                        : swap.requester;
+
+                emitNotification({
+                    recipient: otherUser,
+                    type: "DISPUTE_CREATED",
+                    title: "Dispute Raised ⚠️",
+                    message: "A dispute has been raised for this swap",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             const update = updateToast(id, response.message, "success")
 
             getSwapRequests({ filters });
@@ -162,7 +250,23 @@ const useSwap = () => {
             setLoading(true);
             const response = await shipmentAddressApi(swapId, shipmentAddress);
             await getSwapRequests({ filters });
+            const swap = response?.swap;
 
+            if (swap) {
+                const otherUser =
+                    user._id.toString() === swap.requester.toString()
+                        ? swap.owner
+                        : swap.requester;
+
+                emitNotification({
+                    recipient: otherUser,
+                    type: "SWAP_ADDRESS_ADDED",
+                    title: "Address Added",
+                    message: "Shipping address has been provided",
+                    link: `/swaps`,
+                    meta: { swapId }
+                });
+            }
             const update = updateToast(id, response.message, "success")
             showToast("Add Tracking Number And Courier Id After Shipping", "info");
         } catch (error) {
@@ -197,8 +301,24 @@ const useSwap = () => {
         try {
             setLoading(true);
             const response = await createRatingApi(swapId, ratingDetails);
-            console.log(response)
             await getSwapRequests({ filters });
+            const swap = response?.swap;
+
+            if (swap) {
+                const otherUser =
+                    user._id.toString() === swap.requester.toString()
+                        ? swap.owner
+                        : swap.requester;
+
+                emitNotification({
+                    recipient: otherUser,
+                    type: "NEW_RATING",
+                    title: "New Rating ⭐",
+                    message: "You received a rating from your swap partner",
+                    link: `/profile/${user._id}`,
+                    meta: { swapId }
+                });
+            }
             const update = updateToast(id, response?.message, "success")
         } catch (error) {
             const update = updateToast(id, error.data.message, "error")
@@ -213,6 +333,7 @@ const useSwap = () => {
         };
         fetch();
     }, []);
+
     return {
         getSwapRequests,
         acceptSwapHandler,

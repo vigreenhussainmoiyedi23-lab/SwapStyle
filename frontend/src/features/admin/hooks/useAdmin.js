@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { AdminContext } from "../admin.context";
 import { GetAllListings, GetAllSwaps, GetAllUsers, GetPlatformAnalytics, BanOrUnbanUser, RemoveOrRestoreListing, ResolveDispute, GetAllDisputes } from "../service/admin.api";
+import { emitNotification } from "../../../utils/emitNotifications";
 
 export default function useAdmin() {
     const {
@@ -89,6 +90,13 @@ export default function useAdmin() {
         try {
             const response = await BanOrUnbanUser(userId);
             GetAllUsersHandler()
+            emitNotification({
+                recipient: userId,
+                type: "ADMIN_ALERT",
+                title: "Account Status Updated",
+                message: response?.message || "Your account status was updated by admin",
+                link: "/profile",
+            });
             return response;
         } catch (error) {
             throw new Error(error.response.data.message);
@@ -101,6 +109,18 @@ export default function useAdmin() {
         try {
             const response = await RemoveOrRestoreListing(listingId);
             GetAllListingsHandler()
+            // 🔔 Notification (if owner exists)
+            const ownerId = response?.listing?.owner;
+
+            if (ownerId) {
+                emitNotification({
+                    recipient: ownerId,
+                    type: "ADMIN_ALERT",
+                    title: "Listing Updated",
+                    message: response?.message || "Your listing status was updated by admin",
+                    link: `/listing/${listingId}`,
+                });
+            }
             return response;
         } catch (error) {
             throw new Error(error.response.data.message);
@@ -113,6 +133,25 @@ export default function useAdmin() {
         try {
             const response = await ResolveDispute(disputeId, resolveData);
             await GetAllDisputesHandler()
+            // 🔔 Notifications to both parties
+            const dispute = response?.dispute;
+
+            if (dispute) {
+                const users = [dispute.raisedBy, dispute.against];
+
+                users.forEach((userId) => {
+                    if (userId) {
+                        emitNotification({
+                            recipient: userId,
+                            type: "DISPUTE_CREATED", // you can rename later to RESOLVED
+                            title: "Dispute Resolved",
+                            message: "Your dispute has been reviewed by admin",
+                            link: `/swaps`,
+                            meta: { disputeId }
+                        });
+                    }
+                });
+            }
             return response;
         } catch (error) {
             throw new Error(error.response.data.message);
@@ -120,6 +159,7 @@ export default function useAdmin() {
             setLoading(false);
         }
     };
+
     return {
         users,
         listings,

@@ -86,10 +86,11 @@ const chatSockets = (io, socket, socketUserMap) => {
 
     socket.on("typing", (data) => {
         socket.to(data.chatId).emit("typing", data);
-    })
-    socket.on("NotTyping", (data) => {
-        socket.to(data.chatId).emit("NotTyping", data);
-    })
+    });
+
+    socket.on("stop_typing", (data) => {
+        socket.to(data.chatId).emit("stop_typing", data);
+    });
     socket.on("join_room", (chatId) => {
         socket.join(chatId.toString());
     });

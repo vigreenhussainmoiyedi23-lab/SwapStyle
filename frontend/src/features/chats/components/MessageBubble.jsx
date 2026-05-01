@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useChatSocket } from "../hooks/useChatSocket";
 import { MoreVertical, X } from "lucide-react";
 
-export default function MessageBubble({ from, message ,currentUser }) {
+export default function MessageBubble({ from, message, currentUser, socket }) {
   const { text, images, _id: messageId, chatId, isDeleted, sender } = message;
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(text);
-  const { EditMessage, deleteMessage } = useChatSocket();
+  const { EditMessage, deleteMessage } = socket;
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const HandleSubmit = async () => {
     if (loading) return;
     setLoading(true);

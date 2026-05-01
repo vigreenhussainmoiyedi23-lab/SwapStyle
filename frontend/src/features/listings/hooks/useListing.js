@@ -4,6 +4,7 @@ import service from "../service/api.service";
 import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util";
 import { createSwapRequest } from "../../swap/service/swap.api";
 import { useNavigate } from "react-router-dom";
+import { emitNotification } from "../../../utils/emitNotifications";
 
 export const useListing = () => {
     // Access listing context values and functions
@@ -100,6 +101,18 @@ export const useListing = () => {
         try {
             const data = await createSwapRequest({ offeredListingId: offeredListingId, requestedListingId: requestedListingId });
             showToast("Swap created successfully!", "success");
+            const swap = data?.swap;
+
+            if (swap) {
+                emitNotification({
+                    recipient: swap.requester,
+                    type: "SWAP_REQUEST",
+                    title: "Swap Request 🎉",
+                    message: "You have a new swap request",
+                    link: `/swaps`,
+                    meta: { swapId: swap._id }
+                });
+            }
             const update = updateToast(id, data.message, "success")
         } catch (error) {
             const update = updateToast(id, error.data.message || error?.message, "error")
@@ -108,6 +121,7 @@ export const useListing = () => {
             setLoading(false);
         }
     };
+
     return {
         // Handlers
         fetchListings,

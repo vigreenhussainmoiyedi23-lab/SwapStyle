@@ -3,11 +3,13 @@ import { useChatHttp } from "./useChatHttp";
 import { ChatContext } from "../chat.context";
 import { useEffect } from "react";
 import { socketManager } from "../../../utils/socket";
+import { useState } from "react";
 
 
 
 export const useChatSocket = () => {
     const { addNewMessage } = useChatHttp();
+    const [typingUsers, setTypingUsers] = useState([]);
     const { setChatsAllMessages, setUserAllChats, userAllChats, loading } = useContext(ChatContext)
     useEffect(() => {
         const handleOnline = ({ userId }) => {
@@ -60,7 +62,23 @@ export const useChatSocket = () => {
                 })
             })
         };
+        const handleTyping = ({ chatId, userId }) => {
+            setTypingUsers(prev => {
+                const users = new Set(prev[chatId] || []);
+                users.add(userId);
+                return { ...prev, [chatId]: Array.from(users) };
+            });
+        };
 
+        const handleStopTyping = ({ chatId, userId }) => {
+            setTypingUsers(prev => {
+                const users = (prev[chatId] || []).filter(id => id !== userId);
+                return { ...prev, [chatId]: users };
+            });
+        };
+
+        socketManager.listenMessage("typing", handleTyping);
+        socketManager.listenMessage("stop_typing", handleStopTyping);
         // register listeners
         socketManager.listenMessage("user-online", handleOnline);
         socketManager.listenMessage("user-offline", handleOffline);
@@ -72,6 +90,8 @@ export const useChatSocket = () => {
             socketManager.removeListener("user-online");
             socketManager.removeListener("user-offline");
             socketManager.removeListener("presence:init");
+            socketManager.removeListener("typing");
+            socketManager.removeListener("stop_typing");
         };
     }, []);
 
@@ -86,7 +106,13 @@ export const useChatSocket = () => {
     const deleteMessage = (payload) => {
         socketManager.emitMessage("deleteMessage", payload);
     };
+    const emitTyping = (payload) => {
+        socketManager.emitMessage("typing", payload);
+    };
 
+    const emitStopTyping = (payload) => {
+        socketManager.emitMessage("stop_typing", payload);
+    };
     const joinRoom = (chatId) => {
         socketManager.emitMessage("join_room", chatId);
     };
@@ -100,5 +126,5 @@ export const useChatSocket = () => {
         addNewMessage(data);
     });
 
-    return { createMessage, joinRoom, leaveRoom, EditMessage, deleteMessage };
+    return { createMessage, joinRoom, leaveRoom, EditMessage, deleteMessage, emitTyping, emitStopTyping ,typingUsers };
 };

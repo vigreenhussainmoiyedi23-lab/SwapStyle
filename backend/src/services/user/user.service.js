@@ -1,4 +1,5 @@
 const listingModel = require("../../models/listing.model");
+const notificationModel = require("../../models/user/notification.model");
 const userModel = require("../../models/user/user.model");
 
 async function findUserByEmail(email) {
@@ -37,5 +38,38 @@ async function getUserAllDataService(userId) {
         throw error;
     }
 }
+async function getNotificationService(userId, page = 1, limit = 20) {
+    try {
+        const skip = (page - 1) * limit;
 
-module.exports = { findUserByEmail, findUserById, findUserByIdAndUpdate, createUser, getUserAllListingsService, getUserAllDataService };
+        const notifications = await notificationModel
+            .find({ recipient: userId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(Number(limit))
+            .populate("sender", "username profilePicture")
+            .lean();
+
+        // unread count BEFORE marking read
+        const unreadCount = await notificationModel.countDocuments({
+            recipient: userId,
+            isRead: false
+        });
+
+        const total = await notificationModel.countDocuments({
+            recipient: userId
+        });
+
+        return {
+            notifications,
+            unreadCount,
+            total
+        };
+
+    } catch (error) {
+        console.log("Error fetching notifications:", error);
+        throw error;
+    }
+}
+
+module.exports = { findUserByEmail, getNotificationService, findUserById, findUserByIdAndUpdate, createUser, getUserAllListingsService, getUserAllDataService };

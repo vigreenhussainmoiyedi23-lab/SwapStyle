@@ -18,6 +18,7 @@ import Dashboard from "./features/admin/pages/Dashboard";
 import Users from "./features/admin/pages/Users";
 import Disputes from "./features/admin/pages/Disputes";
 import ListingsAdmin from "./features/admin/pages/Listings";
+import Notification from "./features/notifications/Pages/Notification";
 
 const Approutes = () => {
   return (
@@ -53,6 +54,14 @@ const Approutes = () => {
             <NormalLayout>
               <ListingMore />
             </NormalLayout>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedLayout>
+              <Notification />
+            </ProtectedLayout>
           }
         />
         <Route

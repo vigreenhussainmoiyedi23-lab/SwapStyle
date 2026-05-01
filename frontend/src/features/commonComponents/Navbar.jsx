@@ -2,8 +2,10 @@ import React from "react";
 import Logo from "./Logo";
 import { Link } from "react-router-dom";
 import { Bell, Plus } from "lucide-react";
+import useNotification from "../notifications/hook/useNotification";
 
 const Navbar = ({ user }) => {
+  const { unreadCount } = useNotification();
   return (
     <nav className="bg-[#0a140f] w-full fixed text-white border-b border-white/10 py-5  top-0 z-50">
       {/* Navbar */}
@@ -12,20 +14,28 @@ const Navbar = ({ user }) => {
           <Logo />
         </div>
 
-        {user &&<div className="hidden lg:flex items-center gap-8 text-sm">
-          <Link
-            to="/listings"
-            className="hover:text-emerald-400 transition-colors"
-          >
-            Listings
-          </Link>
-          <Link to="/swaps" className="hover:text-emerald-400 transition-colors">
-            Swaps
-          </Link>
-          <Link to="/chats" className="hover:text-emerald-400 transition-colors">
-            Chats
-          </Link>
-        </div>}
+        {user && (
+          <div className="hidden lg:flex items-center gap-8 text-sm">
+            <Link
+              to="/listings"
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Listings
+            </Link>
+            <Link
+              to="/swaps"
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Swaps
+            </Link>
+            <Link
+              to="/chats"
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Chats
+            </Link>
+          </div>
+        )}
 
         {!user && (
           <div className="flex items-center sm:gap-4 sm:scale-100 scale-70 gap-2">
@@ -50,13 +60,16 @@ const Navbar = ({ user }) => {
               to="/createListing"
               className=" text-sm py-1 gap-3 font-medium hidden  lg:flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all "
             >
-              <Plus className="w-8 h-8 " /> 
+              <Plus className="w-8 h-8 " />
               <span className="font-bold text-base">List Item</span>
             </Link>
             <Link
               to="/notifications"
-              className=" text-sm font-medium hover:bg-white/10 rounded-xl transition-all flex flex-col items-center justify-end gap-1"
+              className=" text-sm font-medium relative hover:bg-white/10 rounded-xl transition-all flex flex-col items-center justify-end gap-1"
             >
+              {unreadCount > 0 && (
+                <span className="bg-red-500 w-4 h-4 absolute -top-2 right-1/2 items-center flex justify-center rounded-full">{unreadCount}</span>
+              )}
               <Bell className="w-6 h-6 " />
               <p className="text-xs text-gray-300">notifications</p>
             </Link>

@@ -3,6 +3,7 @@ const { getDataFromToken } = require("../utils/jsonwebtoken");
 const redis = require("../config/cache");
 const cookie = require("cookie");
 const { chatSockets } = require("./chat.socket");
+const { notificationSockets } = require("./notification.socket");
 const initSocket = (server) => {
     const frontendUrl = process.env.FRONTEND_URL
     const io = new Server(server, {
@@ -53,9 +54,10 @@ const initSocket = (server) => {
 
 
         chatSockets(io, socket, socketUserMap);
+        notificationSockets(io, socket, socketUserMap);
         socket.on("disconnect", () => {
             const userSockets = socketUserMap.get(socket.userId);
-            // 🔴 USER OFFLINE EVENT
+            // USER OFFLINE EVENT
             if (userSockets) {
                 userSockets.delete(socket.id);
 
