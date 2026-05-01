@@ -28,5 +28,14 @@ const getUserData = async (userId) => {
         throw error;
     }
 };
+const getRecentSwaps = async (userId) => {
+    try {
+        const response = await apiClient.get(`/recentSwaps/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        throw error;
+    }
+};
 
-export { getUserAllListings, getUserData };
+export { getUserAllListings, getUserData ,getRecentSwaps };

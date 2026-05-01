@@ -130,6 +130,14 @@ const SwapCard = ({ swap }) => {
                 Add Shipment details
               </button>
             )}
+            {!swap.hasRaisedDispute && (
+              <button
+                onClick={() => setShowDisputeForm(true)}
+                className="bg-red-500 px-3 w-full py-2 rounded-lg whitespace-nowrap text-white"
+              >
+                Raise A dispute
+              </button>
+            )}
             <button
               onClick={() => setShowAddress(!showAddress)}
               className="bg-brand-500 w-full rounded-lg p-3 source-code-pro "

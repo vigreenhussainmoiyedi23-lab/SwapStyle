@@ -24,6 +24,7 @@ const notificationSchema = new mongoose.Schema(
                 "SWAP_COMPLETED",
                 "LISTING_LIKED",
                 "DISPUTE_CREATED",
+                "DISPUTE_RESOLVED",
                 "ADMIN_ALERT",
                 "SWAP_CANCELLED",
                 "SWAP_SHIPPED",

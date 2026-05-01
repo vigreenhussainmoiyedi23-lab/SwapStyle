@@ -6,9 +6,10 @@ import ListingHeader from "../components/ui/ListingHeader.jsx";
 import ListingGrid from "../components/ui/ListingGrid.jsx";
 import { useListing } from "../hooks/useListing.js";
 import { Loader2, X } from "lucide-react";
+import Pagination from "../../commonComponents/Pagination.jsx";
 
 const Listings = () => {
-  const { fetchListings, allListings, loading } = useListing();
+  const { fetchListings, allListings, loading, totalPages } = useListing();
 
   const [coordinates, setCoordinates] = useState({
     lat: null,
@@ -20,6 +21,7 @@ const Listings = () => {
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [sortBy, setSortBy] = useState("newest");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   useEffect(() => {
     let filter = {
       category: selectedCategory,
@@ -30,6 +32,7 @@ const Listings = () => {
       search: search,
       lat: coordinates.lat,
       lng: coordinates.lng,
+      page,
     };
     fetchListings(filter);
   }, [
@@ -40,6 +43,7 @@ const Listings = () => {
     selectedConditions,
     search,
     coordinates,
+    page,
   ]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const clearAllFilters = () => {
@@ -84,7 +88,12 @@ const Listings = () => {
       </div>
       {isMenuOpen && (
         <div className="fixed z-20 top-[10vh] left-0 w-80 h-[90dvh] lg:hidden overflow-y-auto">
-          <button className="text-white bg-red-500 p-2 absolute top-5 right-5 flex items-center justify-center gap-3 rounded-lg" onClick={() => setIsMenuOpen(false)}>Close <X/></button>
+          <button
+            className="text-white bg-red-500 p-2 absolute top-5 right-5 flex items-center justify-center gap-3 rounded-lg"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Close <X />
+          </button>
           <FiltersSidebar
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
@@ -126,6 +135,11 @@ const Listings = () => {
             Loading Lisitings...
           </div>
         )}
+        <Pagination
+          page={page}
+          setPage={setPage}
+          totalPages={Number(totalPages)}
+        />
       </div>
     </section>
   );

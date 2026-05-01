@@ -112,6 +112,7 @@ export const useListing = () => {
                     link: `/swaps`,
                     meta: { swapId: swap._id }
                 });
+                console.log("emitted a notification to", swap.requester);
             }
             const update = updateToast(id, data.message, "success")
         } catch (error) {
@@ -133,7 +134,8 @@ export const useListing = () => {
 
         //States
         allListings,
-        loading
+        loading,
+        totalPages
     };
 };
 

@@ -9,8 +9,8 @@ const MainDashboard = ({user,listings,isOwner}) => {
     <div className="flex flex-col gap-6">
       <ProfileHeader user={user}/>
       <SwapsBreifHistory user={user}/>
-      <UserAllListings listings={listings} isOwner={isOwner}/>
-      <RecentSwaps user={user}/>
+      <UserAllListings user={user} listings={listings} isOwner={isOwner}/>
+      <RecentSwaps user={user} isOwner={isOwner}/>
     </div>
   );
 };

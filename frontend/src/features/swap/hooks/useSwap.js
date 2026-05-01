@@ -25,18 +25,20 @@ const useSwap = () => {
         loading,
         userAllSwaps,
         filters,
+        totalPages,
         swapAllDisputes,
         setLoading,
         setUserAllSwaps,
         setFilters,
-        setSwapAllDisputes
+        setSwapAllDisputes,
+        setTotalPages
     } = useContext(SwapContext)
     const getSwapRequests = async ({ filters }) => {
         try {
             setLoading(true);
-            const swaps = await fetchSwapRequests({ filters });
-            setUserAllSwaps(swaps);
-
+            const data = await fetchSwapRequests({ filters });
+            setUserAllSwaps(data);
+            setTotalPages(data.totalPages);
         } catch (error) {
             console.error("Error fetching swap requests:", error);
             throw error;
@@ -57,7 +59,7 @@ const useSwap = () => {
                     recipient: swap.requester,
                     type: "SWAP_ACCEPTED",
                     title: "Swap Accepted 🎉",
-                    message: "Your swap request has been accepted",
+                    message: "Your swap request has been accepted " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
@@ -84,7 +86,7 @@ const useSwap = () => {
                     recipient: swap.requester,
                     type: "SWAP_REJECTED",
                     title: "Swap Rejected",
-                    message: "Your swap request was rejected",
+                    message: "Your swap request was rejected " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
@@ -112,7 +114,7 @@ const useSwap = () => {
                     recipient: swap.owner,
                     type: "SWAP_CANCELLED",
                     title: "Swap Cancelled",
-                    message: "The swap request has been withdrawn",
+                    message: "The swap request has been withdrawn " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
@@ -147,7 +149,7 @@ const useSwap = () => {
                     recipient: otherUser,
                     type: "SWAP_COMPLETED",
                     title: "Swap Progress Updated",
-                    message: "The other user marked swap as completed",
+                    message: "The other user marked swap as completed " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
@@ -181,7 +183,7 @@ const useSwap = () => {
                     recipient: otherUser,
                     type: "SWAP_SHIPPED",
                     title: "Item Shipped 📦",
-                    message: "Shipment details have been added",
+                    message: "Shipment details have been added " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
@@ -208,15 +210,17 @@ const useSwap = () => {
                     user._id.toString() === swap.requester.toString()
                         ? swap.owner
                         : swap.requester;
+                console.log(swap, otherUser)
 
                 emitNotification({
                     recipient: otherUser,
                     type: "DISPUTE_CREATED",
                     title: "Dispute Raised ⚠️",
-                    message: "A dispute has been raised for this swap",
+                    message: "A dispute has been raised for this swap " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
+                console.log("emitted notification to", otherUser);
             }
             const update = updateToast(id, response.message, "success")
 
@@ -262,7 +266,7 @@ const useSwap = () => {
                     recipient: otherUser,
                     type: "SWAP_ADDRESS_ADDED",
                     title: "Address Added",
-                    message: "Shipping address has been provided",
+                    message: "Shipping address has been provided " + swapId.slice(-6),
                     link: `/swaps`,
                     meta: { swapId }
                 });
@@ -314,7 +318,7 @@ const useSwap = () => {
                     recipient: otherUser,
                     type: "NEW_RATING",
                     title: "New Rating ⭐",
-                    message: "You received a rating from your swap partner",
+                    message: "You received a rating from your swap partner " + swapId.slice(-6),
                     link: `/profile/${user._id}`,
                     meta: { swapId }
                 });
@@ -349,7 +353,8 @@ const useSwap = () => {
         loading,
         filters,
         userAllSwaps,
-        swapAllDisputes
+        swapAllDisputes,
+        totalPages
     };
 };
 

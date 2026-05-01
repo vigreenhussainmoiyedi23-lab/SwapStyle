@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useListing } from "../hooks/useListing";
 import MyListingsOverlay from "../components/ListingMore/MyListingsOverlay";
 import { AuthContext } from "../../auth/auth.context";
@@ -38,7 +38,10 @@ const ListingMore = () => {
   if (!listing) return <div>Loading...</div>;
   async function createSwapHandler(offerefListingId) {
     try {
-      await createSwap( {offeredListingId:offerefListingId, requestedListingId:id });
+      await createSwap({
+        offeredListingId: offerefListingId,
+        requestedListingId: id,
+      });
       navigate("/swaps");
     } catch (error) {
       showToast(error?.response?.data?.message || error.message, "error");
@@ -130,12 +133,20 @@ const ListingMore = () => {
 
           {/* ACTION BUTTON */}
           {user && user?._id.toString() !== listing?.owner?._id.toString() && (
-            <button
-              onClick={() => setIsActive(true)}
-              className="mt-6 w-full bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
-            >
-              Request Swap
-            </button>
+            <div className="  z-10 flex-col gap-3  flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
+              <Link
+                to={`/profile/${listing?.owner?._id}`}
+                className=" w-full text-center bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
+              >
+                VIEW USER PROFILE
+              </Link>
+              <button
+                onClick={() => setIsActive(true)}
+                className="w-full text-center bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
+              >
+                Request Swap
+              </button>
+            </div>
           )}
           {user && user?._id.toString() === listing?.owner?._id.toString() && (
             <div className=" text-black z-10 flex-col gap-3 justify-between flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">

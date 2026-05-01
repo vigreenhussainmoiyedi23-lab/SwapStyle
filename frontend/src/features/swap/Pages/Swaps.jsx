@@ -5,6 +5,7 @@ import useSwap from "../hooks/useSwap";
 import useAuth from "../../auth/hooks/useAuth";
 import { FilterIcon, MenuSquare, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import Pagination from "../../commonComponents/Pagination";
 
 const Swaps = () => {
   let typeConditions = {
@@ -35,10 +36,10 @@ const Swaps = () => {
   };
   const [showFilter, setShowFilter] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
-  const { userAllSwaps, loading, getSwapRequests } = useSwap();
+  const { userAllSwaps, loading, getSwapRequests, totalPages } = useSwap();
   const [shipment_type, setShipment_type] = useState("all");
   const [page, setPage] = useState(1);
-  const [addShipmentForm, setAddShipmentForm] = useState(false);
+
   shipment_type;
   useEffect(() => {
     const second = async () => {
@@ -52,7 +53,7 @@ const Swaps = () => {
       await getSwapRequests({ filters });
     };
     second();
-  }, [activeFilter, shipment_type]);
+  }, [activeFilter, shipment_type ,page]);
 
   return (
     <div className="w-full min-h-screen bg-brand-900 relative pt-[12vh]">
@@ -97,6 +98,7 @@ const Swaps = () => {
           userAllSwaps.swaps.map((swap) => {
             return <SwapCard swap={swap} />;
           })}
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         {userAllSwaps && userAllSwaps.swaps.length === 0 && (
           <div className="bg-brand-900 min-h-screen w-full  flex-col flex items-center justify-center text-white">
             <h3 className="text-accent-500 text-5xl lg:text-6xl xl:text-7xl mb-2 playfair font-bold underline  decoration-brand-300">
@@ -107,7 +109,10 @@ const Swaps = () => {
               <br />
               Or create a new swap
             </p>
-            <Link to="/listings" className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg">
+            <Link
+              to="/listings"
+              className="bg-accent-500 text-brand-900 font-bold source-code-pro text-xl lg:text-2xl px-4 py-2 rounded-lg"
+            >
               Go Back To Listings
             </Link>
           </div>

@@ -36,7 +36,7 @@ async function createSwapService(ownerListing, requesterListing, message, user) 
             swap: null
          }
       }
-      const swap = swapModel.create({
+      const swap = await swapModel.create({
          requester: user,
          owner: ownerListing.owner,
          ownerListing: ownerListing._id,// the listing of the owner or the listing user asks for
@@ -46,7 +46,7 @@ async function createSwapService(ownerListing, requesterListing, message, user) 
       })
       return {
          success: true,
-         swap,
+         swap: swap.toObject(),
          message: "Swap request created"
       }
    } catch (error) {

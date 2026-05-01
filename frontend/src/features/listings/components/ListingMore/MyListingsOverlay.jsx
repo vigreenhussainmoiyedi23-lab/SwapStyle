@@ -10,7 +10,7 @@ const MyListingsOverlay = ({
   return (
     <div
       style={{ display: isActive ? "flex" : "none" }}
-      className="absolute top-0 left-0 w-full h-full bg-brand-900  items-start justify-center"
+      className="absolute top-0 left-0 w-full min-h-screen bg-brand-900  items-start justify-center"
     >
       <button
         onClick={() => setIsActive(false)}
@@ -27,13 +27,14 @@ const MyListingsOverlay = ({
             {listing &&
               listing.length > 0 &&
               listing.map((l) => {
-                return (
-                  <ListingHorizontalCard
-                    listing={l}
-                    createSwapHandler={createSwapHandler}
-                    key={l._id}
-                  />
-                );
+                if (!l.isAvailable || l.isLocked)return null
+                  return (
+                    <ListingHorizontalCard
+                      listing={l}
+                      createSwapHandler={createSwapHandler}
+                      key={l._id}
+                    />
+                  );
               })}
           </div>
         </div>

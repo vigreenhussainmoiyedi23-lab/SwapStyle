@@ -176,8 +176,9 @@ async function getAllListingsService(filters, isAdmin = false) {
             }
         }
         const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
+        const totalPages = Math.ceil((await listingModel.countDocuments(query)) / 10);
         // const listings = await listingModel.find()
-        return listings;
+        return { listings, totalPages };
     } catch (error) {
         console.log("Error fetching listing:", error);
         throw error;

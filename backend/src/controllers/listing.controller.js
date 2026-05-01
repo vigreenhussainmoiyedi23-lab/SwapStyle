@@ -25,8 +25,8 @@ const { uploadImage } = require("../services/listing/UploadImage.service");
 async function GetAllListingsHandler(req, res) {
     try {
         const filters = req.body;
-        const listings = await getAllListingsService(filters);
-        res.status(200).json({ listings, message: "Listings fetched successfully", success: true });
+        const {listings,totalPages} = await getAllListingsService(filters);
+        res.status(200).json({ listings,totalPages, message: "Listings fetched successfully", success: true });
     } catch (error) {
         res.status(500).json({ message: "Error fetching listings", success: false })
     }

@@ -11,6 +11,7 @@ export default function Navbar() {
     { name: "Listings", path: "/admin/listings" },
     { name: "Disputes", path: "/admin/disputes" },
   ];
+  
   return (
     <div className="bg-brand-900 border-b border-accent-500 p-4 lg:hidden flex justify-between items-center">
       <h2 className="playfair text-xl">Admin Dashboard</h2>

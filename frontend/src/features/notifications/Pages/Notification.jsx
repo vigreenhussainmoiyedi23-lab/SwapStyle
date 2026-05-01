@@ -12,9 +12,7 @@ const Notification = () => {
     loadMore,
   } = useNotification();
 
-  useEffect(() => {
-    fetchNotifications({ page: 1, limit: 20, append: false });
-  }, []);
+
 
   if (loading) {
     return (
@@ -25,7 +23,7 @@ const Notification = () => {
   }
 
   return (
-    <div className="h-full flex flex-col pt-[10vh] min-h-screen bg-brand-900 text-brand-100">
+    <div className="h-full flex flex-col pt-[12vh] min-h-screen bg-brand-900 text-brand-100">
       
       {/* Header */}
       <div className="p-4 border-b border-brand-800 flex justify-between items-center">

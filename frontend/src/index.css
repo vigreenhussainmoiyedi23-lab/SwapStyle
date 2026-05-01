@@ -91,6 +91,7 @@ html,
   overflow-x: hidden;
   scrollbar-color: var(--color-bg-main) var(--color-brand-900);
   scrollbar-width: thin;
+  background-color: #0f1a14;
 }
 .playfair {
   font-family: "Playfair", serif;

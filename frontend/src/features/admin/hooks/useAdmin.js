@@ -135,15 +135,16 @@ export default function useAdmin() {
             await GetAllDisputesHandler()
             // 🔔 Notifications to both parties
             const dispute = response?.dispute;
-
+            console.log("dispute", dispute);
             if (dispute) {
                 const users = [dispute.raisedBy, dispute.against];
-
+                
                 users.forEach((userId) => {
+                    console.log("emitting notification", userId);
                     if (userId) {
                         emitNotification({
                             recipient: userId,
-                            type: "DISPUTE_CREATED", // you can rename later to RESOLVED
+                            type: "DISPUTE_RESOLVED", // you can rename later to RESOLVED
                             title: "Dispute Resolved",
                             message: "Your dispute has been reviewed by admin",
                             link: `/swaps`,

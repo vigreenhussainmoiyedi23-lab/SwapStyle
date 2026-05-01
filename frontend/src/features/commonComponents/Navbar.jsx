@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Logo from "./Logo";
 import { Link } from "react-router-dom";
 import { Bell, Plus } from "lucide-react";
 import useNotification from "../notifications/hook/useNotification";
 
 const Navbar = ({ user }) => {
-  const { unreadCount } = useNotification();
+  const { unreadCount,fetchNotifications } = useNotification();
+  useEffect(() => {
+    fetchNotifications({ page: 1, limit: 20, append: false });
+  }, []);
   return (
     <nav className="bg-[#0a140f] w-full fixed text-white border-b border-white/10 py-5  top-0 z-50">
       {/* Navbar */}
@@ -68,7 +71,9 @@ const Navbar = ({ user }) => {
               className=" text-sm font-medium relative hover:bg-white/10 rounded-xl transition-all flex flex-col items-center justify-end gap-1"
             >
               {unreadCount > 0 && (
-                <span className="bg-red-500 w-4 h-4 absolute -top-2 right-1/2 items-center flex justify-center rounded-full">{unreadCount}</span>
+                <span className="bg-red-500 w-4 h-4 absolute -top-2 right-1/2 items-center flex justify-center rounded-full">
+                  {unreadCount}
+                </span>
               )}
               <Bell className="w-6 h-6 " />
               <p className="text-xs text-gray-300">notifications</p>

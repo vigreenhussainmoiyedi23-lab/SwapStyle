@@ -13,7 +13,6 @@ export default function ChatInput({ chatId, socket }) {
   const fileRef = useRef();
   const { createMessage, emitTyping, emitStopTyping } = socket;
   const { uploadImages, loading } = useChatHttp();
-  console.log(socket);
   const MAX_IMAGES = 5;
   useEffect(() => {
     return () => {

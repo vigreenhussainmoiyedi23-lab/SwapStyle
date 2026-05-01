@@ -154,7 +154,7 @@ async function createDisputeHandler(req, res) {
         const swap = await getSwapByIdService(swapId)
         const { type, reason, description } = req.body
         ValidateSwap(swap, user)
-        if (swap.status !== "shipping" && swap.status !== "disputed") {
+        if (swap.status !== "shipping" && swap.status !== "disputed" && swap.status !== "prepared_to_ship") {
             return res.status(400).json({ message: "Swap is not in shipping or disputed state", success: false })
         }
         let role = swap.owner.toString() === user ? "owner" : "requester"
@@ -182,7 +182,6 @@ async function createDisputeHandler(req, res) {
         })
 
     } catch (error) {
-        console.log(error)
         res.status(error.status || 500).json({
             message: error.message || "Error creating dispute",
             success: false

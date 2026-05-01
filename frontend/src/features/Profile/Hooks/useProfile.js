@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { getUserAllListings, getUserData } from "../services/profile.api"
+import { getRecentSwaps, getUserAllListings, getUserData } from "../services/profile.api"
 import { ProfileContext } from "../profile.context";
 import { useEffect } from "react";
 
@@ -12,6 +12,8 @@ export const useProfile = () => {
         setProfileUser,
         loading,
         setLoading,
+        recentSwaps,
+        setRecentSwaps
     } = useContext(ProfileContext)
     const fetchUserAllListings = async (userId) => {
         setLoading(true)
@@ -38,9 +40,20 @@ export const useProfile = () => {
             setLoading(false)
         }
     };
+    const GetRecentSwapsHandler = async (userId) => {
+        try {
+            setLoading(true)
+            const response = await getRecentSwaps(userId)
+            setRecentSwaps(response?.recentswaps)
+        } catch (error) {
+            console.error('Error fetching user listings:', error);
 
+        } finally {
+            setLoading(false)
+        }
+    }
 
-    return { fetchUserAllListings, fetchUserData, userAllListings, profileUser, loading };
+    return { fetchUserAllListings, fetchUserData, GetRecentSwapsHandler, recentSwaps, userAllListings, profileUser, loading };
 }
 
 
