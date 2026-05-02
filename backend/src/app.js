@@ -2,7 +2,7 @@ const express = require("express")
 const app = express()
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
-
+const path = require("path")
 const authRouter = require("./routes/auth.routes")
 const listingRouter = require("./routes/listing.routes")
 const swapRouter = require("./routes/swap.routes")
@@ -10,7 +10,6 @@ const userRouter = require("./routes/user.routes")
 const chatRouter = require("./routes/chat.routes")
 const AdminRouter = require("./routes/admin.routes")
 app.use(express.json())
-app.use(express.static("./public"))
 app.use(cookieParser())
 app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -23,5 +22,9 @@ app.use("/api/swaps", swapRouter)
 app.use("/api/user", userRouter)
 app.use("/api/chat", chatRouter)
 app.use("/api/admin", AdminRouter)
+app.use(express.static(path.join(__dirname, "public/dist")));
 
+app.get("*name", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/dist/index.html"));
+});
 module.exports = app
