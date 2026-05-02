@@ -7,6 +7,7 @@ import { analyticsData } from "../data/dummyData";
 import useAdmin from "../hooks/useAdmin";
 import { useEffect } from "react";
 import StatCard from "../components/Card";
+import ActivityDonutChart from "../components/ActivityDonutChart";
 
 export default function Dashboard() {
   const [range, setRange] = useState(7);
@@ -41,9 +42,15 @@ export default function Dashboard() {
         <StatCard value={analyticsTotal.swaps} title={"Total Swaps"} />
         <StatCard value={analyticsTotal.users} title={"Total Users"} />
       </div>
-      <div className="bg-brand-800  text-xl w-fit px-3 py-2 rounded-lg mb-10">
-        <h1 className="text-accent-500 text-5xl playfair">AI Based Platform Insight</h1>
-        <p className="text-gray-400 mt-4 montserrat">{insights || ""}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+        <div className="bg-brand-800 text-xl w-full px-6 py-6 rounded-xl border border-white/10 shadow-lg shadow-black/30">
+          <h1 className="text-accent-500 text-4xl playfair">AI Based Platform Insight</h1>
+          <p className="text-brand-200 mt-4 montserrat text-sm leading-relaxed whitespace-pre-line">
+            {insights || ""}
+          </p>
+        </div>
+
+        <ActivityDonutChart totals={analyticsTotal} />
       </div>
       <h1 className="playfair text-3xl mb-4">Chart Analytics</h1>
       <TimeFilter selected={range} setSelected={setRange} />

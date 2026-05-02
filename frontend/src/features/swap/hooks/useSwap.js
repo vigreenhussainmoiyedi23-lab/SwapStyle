@@ -274,7 +274,7 @@ const useSwap = () => {
             const update = updateToast(id, response.message, "success")
             showToast("Add Tracking Number And Courier Id After Shipping", "info");
         } catch (error) {
-            const update = updateToast(id, error.message, "success")
+            const update = updateToast(id, error.message, "error")
 
             throw error;
         } finally {

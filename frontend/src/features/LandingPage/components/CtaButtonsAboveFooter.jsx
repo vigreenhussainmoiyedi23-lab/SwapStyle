@@ -5,11 +5,11 @@ const FooterCTA = () => {
     <div className="w-full bg-brand-900 px-4 py-16">
 
       {/* Card */}
-      <div className="max-w-5xl mx-auto relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-10 md:p-14">
+      <div className="max-w-5xl mx-auto relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-10 md:p-14 shadow-lg shadow-black/30">
 
         {/* subtle glow background */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-brand-500/20 blur-3xl rounded-full" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-emerald-500/10 blur-3xl rounded-full" />
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-accent-500/10 blur-3xl rounded-full" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-brand-500/20 blur-3xl rounded-full" />
 
         {/* Content */}
         <div className="relative text-center">
@@ -27,24 +27,24 @@ const FooterCTA = () => {
           </h2>
 
           {/* Subtext */}
-          <p className="text-gray-400 mt-4 text-sm md:text-base max-w-2xl mx-auto">
+          <p className="text-brand-200 mt-4 text-sm md:text-base max-w-2xl mx-auto">
             Every listing on SwapStyle helps reduce waste and gives your wardrobe a second life.
             Join users already swapping instead of buying new.
           </p>
 
           {/* Stats row */}
-          <div className="flex justify-center gap-8 mt-8 text-sm text-gray-400">
+          <div className="flex justify-center gap-8 mt-8 text-sm text-brand-200">
             <div>
-              <p className="text-white text-lg font-semibold">100+</p>
-              <p>Swaps Completed</p>
+              <p className="text-white text-lg font-semibold">Secure swaps</p>
+              <p className="text-brand-300">End-to-end workflow</p>
             </div>
             <div>
-              <p className="text-white text-lg font-semibold">Real Users</p>
-              <p>Verified Community</p>
+              <p className="text-white text-lg font-semibold">Real-time chat</p>
+              <p className="text-brand-300">Negotiate instantly</p>
             </div>
             <div>
-              <p className="text-white text-lg font-semibold">Eco Impact</p>
-              <p>Less Waste</p>
+              <p className="text-white text-lg font-semibold">Smarter listings</p>
+              <p className="text-brand-300">AI valuation support</p>
             </div>
           </div>
 
@@ -53,7 +53,7 @@ const FooterCTA = () => {
 
             <Link
               to="/listings"
-              className="px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium transition shadow-lg shadow-brand-500/20"
+              className="px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 active:bg-accent-300 text-brand-900 font-semibold transition-colors shadow-lg shadow-black/30"
             >
               Start Swapping
             </Link>

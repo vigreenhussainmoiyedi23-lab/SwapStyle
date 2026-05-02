@@ -36,14 +36,14 @@ const SystemFeatures = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-brand-900 to-[#0a1a1a]">
+    <section className="py-20 bg-brand-900">
       <div className="max-w-6xl mx-auto px-6">
         {/* Heading */}
         <div className="text-center mb-20">
           <h2 className="text-4xl playfair md:text-5xl font-semibold mb-4">
             System Features
           </h2>
-          <p className="text-gray-400 montserrat text-sm">
+          <p className="text-brand-200 montserrat text-sm">
             Production-ready MERN stack with comprehensive functionality
           </p>
         </div>
@@ -55,11 +55,12 @@ const SystemFeatures = () => {
               key={i}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-brand-800 border border-white/10 hover:border-accent-500/40 rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-900/20 w-full "
+              className="bg-brand-800 border border-white/10 hover:border-accent-500/40 rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30 w-full"
             >
               {/* Icon */}
-              <div className="w-12 h-12 mx-auto mb-4 bg-accent-500/20 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 mx-auto mb-4 bg-accent-500/15 rounded-xl flex items-center justify-center">
                 <div className="text-accent-500">
                   {feature.icon}
                 </div>
@@ -70,7 +71,7 @@ const SystemFeatures = () => {
                 {feature.title}
               </h3>
 
-              <p className="text-accent-300 montserrat text-sm leading-relaxed text-center">
+              <p className="text-brand-200 montserrat text-sm leading-relaxed text-center">
                 {feature.desc}
               </p>
             </motion.div>

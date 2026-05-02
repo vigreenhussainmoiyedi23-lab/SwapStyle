@@ -105,14 +105,14 @@ export const useListing = () => {
 
             if (swap) {
                 emitNotification({
-                    recipient: swap.requester,
+                    recipient: swap.owner,
                     type: "SWAP_REQUEST",
                     title: "Swap Request 🎉",
                     message: "You have a new swap request",
                     link: `/swaps`,
                     meta: { swapId: swap._id }
                 });
-                console.log("emitted a notification to", swap.requester);
+                console.log("emitted a notification to", swap.owner);
             }
             const update = updateToast(id, data.message, "success")
         } catch (error) {

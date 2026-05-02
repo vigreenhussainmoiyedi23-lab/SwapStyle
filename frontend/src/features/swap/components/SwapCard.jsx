@@ -36,7 +36,7 @@ const SwapCard = ({ swap }) => {
   return (
     <div className="bg-brand-700 rounded-2xl p-1 md:p-4 w-full max-w-6xl min-h-100 overflow-hidden text-white shadow-lg">
       {/* Profit / Loss */}
-      <div className="mb-2">
+      <div className="mb-2 flex items-center justify-between">
         {diffrence < 100 ? (
           <span className="text-sm px-3 py-1 rounded-full bg-green-600">
             Fair Swap
@@ -50,6 +50,10 @@ const SwapCard = ({ swap }) => {
             Profit: {diffrence}
           </span>
         )}
+        <span className="text-brand-100">
+          swap Id:
+          <span className="text-accent-500 ml-2">{swap._id.slice(-6)}</span>
+        </span>
       </div>
       {/* Listings */}
       <div className=" items-center flex justify-between w-full">
