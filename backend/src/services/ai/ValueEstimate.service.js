@@ -3,9 +3,7 @@ const { generateTextContent } = require("../../utils/geminiAi.util");
 
 const EstimateValue = async ({ brandName, size, clothingType, condition }) => {
     try {
-        if (process.env.NODE_ENV === "development") {
-            return { success: true, value: 1000 };
-        }
+       
 
         // prompt from chatgpt to estimate the value of a clothing item based on brand, size, type and condition
         const prompt = `

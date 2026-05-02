@@ -83,7 +83,7 @@ async function CreateListingHandler(req, res) {
             return res.status(500).json({ message: "Error estimating value", success: false })
         }
 
-        const value = estimatedValue.value
+        const value = estimatedValue
         if (!value) return res.status(500).json({ message: "Error estimating value", success: false })
         const owner = req.userId
         const promises = req.files.map(file =>
