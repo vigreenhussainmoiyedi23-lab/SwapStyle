@@ -5,7 +5,7 @@ const cookie = require("cookie");
 const { chatSockets } = require("./chat.socket");
 const { notificationSockets } = require("./notification.socket");
 const initSocket = (server) => {
-    const frontendUrl = process.env.FRONTEND_URL
+    const frontendUrl = process.env.CLIENT_URL
     const io = new Server(server, {
         cors: {
             origin: frontendUrl || "http://localhost:5173", // later restrict to your frontend URL
