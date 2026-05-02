@@ -8,6 +8,7 @@ import { useEffect } from "react";
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
   const {
     fetchUserAllListings,
     fetchUserData,
@@ -15,11 +16,11 @@ const Profile = () => {
     profileUser,
     loading,
   } = useProfile();
-  const { id } = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {
-       await Promise.all([fetchUserAllListings(id), fetchUserData(id)]);
+        await fetchUserAllListings(id);
+        await fetchUserData(id);
       } catch (error) {
         console.error("Error fetching user profile data:", error);
       }
@@ -27,14 +28,6 @@ const Profile = () => {
     fetchData();
   }, [id]);
 
-  const isOwner = user?._id.toString() == id;
-
-  if (loading)
-    return (
-      <section className="w-full relative flex items-center justify-center  min-h-screen bg-brand-900 text-white">
-        <div className=" pt-[12vh] px-10 ">LODING...</div>
-      </section>
-    );
   if (!profileUser)
     return (
       <div className="text-center w-full text-white bg-brand-900 h-screen flex items-center flex-col justify-center gap-4 border-accent-300 border p-2 rounded-xl">
@@ -50,6 +43,7 @@ const Profile = () => {
         </button>
       </div>
     );
+  const isOwner = user?._id.toString() == id;
   return (
     <section className="w-full relative min-h-screen bg-brand-900 text-white">
       <div className=" pt-[12vh] lg:px-10 px-2">
