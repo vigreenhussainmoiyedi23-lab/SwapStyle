@@ -1,7 +1,7 @@
 // useChatSocket.js
 
 import { io } from "socket.io-client";
-
+const SOCKETURL=import.meta.env.VITE_SOCKET_URL
 class SocketManager {
     constructor() {
         // ✅ state
@@ -19,7 +19,7 @@ class SocketManager {
 
     init() {
         if (!this.socket) {
-            this.socket = io("http://localhost:3000", {
+            this.socket = io(SOCKETURL, {
                 withCredentials: true,
                 autoConnect: false,
                 reconnection: false,
