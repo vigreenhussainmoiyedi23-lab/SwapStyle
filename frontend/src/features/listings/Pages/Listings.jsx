@@ -7,6 +7,7 @@ import ListingGrid from "../components/ui/ListingGrid.jsx";
 import { useListing } from "../hooks/useListing.js";
 import { Loader2, X } from "lucide-react";
 import Pagination from "../../commonComponents/Pagination.jsx";
+import Loader from "../../commonComponents/Loading.jsx";
 
 const Listings = () => {
   const { fetchListings, allListings, loading, totalPages } = useListing();
@@ -130,11 +131,7 @@ const Listings = () => {
         />
 
         {!loading && <ListingGrid listings={allListings} />}
-        {loading && (
-          <div className="flex items-center justify-center text-6xl h-screen w-full">
-            Loading Lisitings...
-          </div>
-        )}
+        {loading && <Loader />}
         <Pagination
           page={page}
           setPage={setPage}

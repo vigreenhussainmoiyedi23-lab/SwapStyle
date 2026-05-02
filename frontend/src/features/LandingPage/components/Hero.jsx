@@ -8,7 +8,7 @@ function CTA() {
   return (
     <div className="flex flex-col items-center source-code-pro justify-center xl:justify-start sm:flex-row gap-3 sm:gap-4 mt-6 ">
       <Link
-        to={"/listings"}
+        to={"/register"}
         className="w-full text-brand-900 source-code-pro font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-500 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
         Start Swapping <ArrowRight size={18} />

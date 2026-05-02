@@ -3,6 +3,7 @@ import ChatLayout from "../components/ChatLayout";
 import { useChatHttp } from "../hooks/useChatHttp";
 import { useEffect } from "react";
 import { useChatSocket } from "../hooks/useChatSocket";
+import Loader from "../../commonComponents/Loading";
 
 export default function Chats() {
   const {
@@ -10,6 +11,7 @@ export default function Chats() {
     getChatAllMessagesHandler,
     userAllChats,
     chatsAllMessages,
+    loading,
   } = useChatHttp();
   const { joinRoom, leaveRoom } = useChatSocket();
   const { id } = useParams();
@@ -28,7 +30,7 @@ export default function Chats() {
     fetchData();
     joinRoom(id);
   }, [id]);
-
+  if (loading) return <Loader />;
   return (
     <ChatLayout
       chatId={id}

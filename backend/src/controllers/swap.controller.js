@@ -397,7 +397,10 @@ async function cancelSwapHandler(req, res) {
 
         swap.status = "cancelled"
         await swap.save()
-
+        const Requester = await userModel.findById(user)
+        Requester.totalCanceled += 1;
+        await Requester.save();
+        
         res.status(200).json({
             swap,
             message: "Swap cancelled",

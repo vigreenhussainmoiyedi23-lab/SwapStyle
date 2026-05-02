@@ -6,6 +6,7 @@ import useAuth from "../../auth/hooks/useAuth";
 import { FilterIcon, MenuSquare, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import Pagination from "../../commonComponents/Pagination";
+import Loader from "../../commonComponents/Loading";
 
 const Swaps = () => {
   let typeConditions = {
@@ -53,7 +54,7 @@ const Swaps = () => {
       await getSwapRequests({ filters });
     };
     second();
-  }, [activeFilter, shipment_type ,page]);
+  }, [activeFilter, shipment_type, page]);
 
   return (
     <div className="w-full min-h-screen bg-brand-900 relative pt-[12vh]">
@@ -118,11 +119,7 @@ const Swaps = () => {
           </div>
         )}
       </div>
-      {(loading || !userAllSwaps) && (
-        <div className="bg-brand-900 min-h-screen w-full text-5xl flex items-center justify-center text-white">
-          loading
-        </div>
-      )}
+      {(loading || !userAllSwaps) && <Loader />}
     </div>
   );
 };

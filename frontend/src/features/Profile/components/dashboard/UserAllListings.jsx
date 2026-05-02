@@ -6,7 +6,7 @@ const UserAllListings = ({ listings, isOwner, user }) => {
   return (
     <div className="w-full ">
       {(!listings || listings.length === 0) && (
-        <div className="text-center w-fulltext-brand-400 h-fit flex items-center flex-col justify-center gap-4 border-accent-300 border p-2 rounded-xl">
+        <div className="text-center w-full text-brand-400  flex items-center flex-col justify-center gap-4 border-accent-300 border-t pt-4 rounded-xl">
           <h1 className="text-accent-500 text-3xl text-center md:text-5xl playfair">
             You Dont Have Any Listing's
           </h1>

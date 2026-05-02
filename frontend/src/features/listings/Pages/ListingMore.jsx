@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { useProfile } from "../../Profile/Hooks/useProfile";
 import { Edit2, Trash } from "lucide-react";
 import showToast from "../../../utils/Toastify.util";
+import Loader from "../../commonComponents/Loading";
 
 const ListingMore = () => {
   const { id } = useParams();
@@ -21,8 +22,8 @@ const ListingMore = () => {
     }
     fetchListing();
   }, [id]);
+  if (!listing) return <Loader />;
 
-  if (!listing) return <div>Loading...</div>;
   const [isActive, setIsActive] = useState(false);
   const [myListings, setMyListings] = useState(null);
   const { fetchUserAllListings } = useProfile();
@@ -35,7 +36,6 @@ const ListingMore = () => {
     };
     fetch();
   }, [user]);
-  if (!listing) return <div>Loading...</div>;
   async function createSwapHandler(offerefListingId) {
     try {
       await createSwap({
@@ -95,7 +95,7 @@ const ListingMore = () => {
             ].map((item, i) => (
               <span
                 key={i}
-                className="px-3 py-1 bg-[var(--color-brand-500)] rounded-full text-sm"
+                className="px-3 py-1 bg-brand-500 rounded-full text-sm"
               >
                 {item}
               </span>
@@ -136,16 +136,25 @@ const ListingMore = () => {
             <div className="  z-10 flex-col gap-3  flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
               <Link
                 to={`/profile/${listing?.owner?._id}`}
-                className=" w-full text-center bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
+                className=" w-full text-center text-accent-300 bg-brand-500 font-semibold source-code-pro hover:bg-brand-600 active:scale-98 transition py-2 rounded-xl text-lg"
               >
                 VIEW USER PROFILE
               </Link>
-              <button
-                onClick={() => setIsActive(true)}
-                className="w-full text-center bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
-              >
-                Request Swap
-              </button>
+              {myListings && myListings.length > 0 ? (
+                <button
+                  onClick={() => setIsActive(true)}
+                  className="w-full text-center text-accent-500 bg-brand-900 font-semibold source-code-pro hover:bg-brand-800 active:scale-98 transition py-2 rounded-xl text-lg"
+                >
+                  Request Swap
+                </button>
+              ) : (
+                <Link
+                  to={"/createListing"}
+                  className="w-full text-center text-accent-500 bg-brand-900 font-semibold source-code-pro hover:bg-brand-800 active:scale-98 transition py-2 rounded-xl text-lg"
+                >
+                  Create A Listing To Swap
+                </Link>
+              )}
             </div>
           )}
           {user && user?._id.toString() === listing?.owner?._id.toString() && (
@@ -176,7 +185,7 @@ const ListingMore = () => {
           {!user && (
             <button
               onClick={() => navigate("/login")}
-              className="mt-6 w-full bg-[var(--color-brand-500)] hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
+              className="mt-6 w-full bg-brand-500 hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
             >
               Login to Swap
             </button>

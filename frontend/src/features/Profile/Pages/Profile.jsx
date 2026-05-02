@@ -47,7 +47,7 @@ const Profile = () => {
     );
   const isOwner = user?._id.toString() == id;
   return (
-    <section className="w-full relative min-h-screen bg-brand-900 text-white">
+    <section className="w-full relative h-fit  bg-brand-900 text-white">
       <div className=" pt-[12vh] lg:px-10 px-2">
         <MainDashboard
           user={profileUser}

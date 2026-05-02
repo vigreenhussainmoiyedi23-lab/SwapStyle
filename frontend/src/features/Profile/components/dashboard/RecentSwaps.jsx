@@ -6,8 +6,10 @@ const RecentSwaps = ({ user, isOwner }) => {
   useEffect(() => {
     GetRecentSwapsHandler(user._id);
   }, []);
+  if (recentSwaps.length == 0)
+    return null
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 bg-brand-800 rounded-lg px-3 py-2">
       <h1 className="text-center text-4xl text-accent-300 underline underline-offset-6 decoration-1 playfair">
         {isOwner ? "Your" : "User"} Recent Swaps
       </h1>
