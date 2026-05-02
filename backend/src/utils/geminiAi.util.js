@@ -7,11 +7,10 @@ async function generateTextContent(query) {
             model: "gemini-3-flash-preview",
             contents: query,
         });
-        if (response && response.text) {
-            return response.text;
-        } else {
-            console.error("Error generating text content:", response);
+        if (!response || !response.text) {
+            throw new Error("Invalid AI response");
         }
+        return response.text;
     } catch (error) {
         console.error("Error generating text content:", error);
     }

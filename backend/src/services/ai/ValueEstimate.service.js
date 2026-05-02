@@ -64,7 +64,14 @@ No explanation.
 No text.
 `;
         const response = await generateTextContent(prompt);
-        const value = Number(response) || Number(response?.text); return { success: true, value };
+        const raw = response?.toString().trim();
+        const match = raw.match(/\d+/);
+        const value = match ? Number(match[0]) : null;
+
+        if (!value) {
+            throw new Error("AI did not return a valid number");
+        }
+        return value
     } catch (err) {
         console.error("Error in EstimateValue:", err);
         throw err
