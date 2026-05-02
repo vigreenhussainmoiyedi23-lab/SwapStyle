@@ -22,9 +22,12 @@ app.use("/api/swaps", swapRouter)
 app.use("/api/user", userRouter)
 app.use("/api/chat", chatRouter)
 app.use("/api/admin", AdminRouter)
-app.use(express.static(path.join(__dirname, "public/dist")));
 
+// ✅ serve frontend
+const distPath = path.join(__dirname, "../public")
+app.use(express.static(distPath))
 app.get("*name", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/dist/index.html"));
+    
+    res.sendFile(path.join(distPath, "index.html"))
 });
 module.exports = app
