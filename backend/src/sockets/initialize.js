@@ -5,7 +5,7 @@ const cookie = require("cookie");
 const { chatSockets } = require("./chat.socket");
 const { notificationSockets } = require("./notification.socket");
 const initSocket = (server) => {
-    const frontendUrl = process.env.CLIENT_URL 
+    const frontendUrl = process.env.CLIENT_URL
     const io = new Server(server, {
         cors: {
             origin: frontendUrl || "http://localhost:5173", // later restrict to your frontend URL
@@ -17,15 +17,27 @@ const initSocket = (server) => {
     // userId -> socketId
     io.use(async (socket, next) => {
         try {
-            const parsedCookie = cookie.parse(socket.handshake.headers.cookie)
+            const rawCookie = socket.handshake.headers.cookie;
+
+            if (!rawCookie) {
+                return next(new Error("No cookies found"));
+            }
+
+            const parsedCookie = cookie.parse(rawCookie);
             const token = (parsedCookie.token)
             if (!token) {
-                return next(new Error("Unauthorized"));
+                return next(new Error("Unauthorized: No token"));
             }
-            const { id } = getDataFromToken(token)
+
+            const data = getDataFromToken(token);
+
+            if (!data || !data.id) {
+                return next(new Error("Unauthorized: Invalid token"));
+            }
+            const { id } = data
             const istokenBlackListed = await redis.get(token)
             if (istokenBlackListed) {
-                socket.emit("error", "Forbidden: Token is blacklisted")
+                return next(new Error("Forbidden: Token is blacklisted"));
             }
             socket.userId = id
             next();
@@ -37,6 +49,10 @@ const initSocket = (server) => {
     io.on("connection", (socket) => {
 
         const userId = socket.userId
+        if (!userId) {
+            socket.disconnect();
+            return;
+        }
         if (!socketUserMap.has(userId)) {
             socketUserMap.set(userId, new Set());
         }
