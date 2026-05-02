@@ -5,6 +5,7 @@ const GEO_API_KEY = process.env.OPENCAGE_API_KEY;
 
 const validateLocation = async ({ country, state, city, lat, lng }) => {
   try {
+    console.log("Validating location", country, state, city, lat, lng);
     // 1️⃣ Validate Country
     const countriesRes = await axios.get(
       "https://api.countrystatecity.in/v1/countries",
@@ -16,7 +17,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
     const validCountry = countriesRes.data.find(
       (c) => c.iso2 === country
     );
-    if (!validCountry) throw new Error("Invalid country",400);
+    if (!validCountry) throw new Error("Invalid country");
 
     // 2️⃣ Validate State
     const statesRes = await axios.get(
@@ -29,7 +30,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
     const validState = statesRes.data.find(
       (s) => s.iso2 === state
     );
-    if (!validState) throw new Error("Invalid state",400);
+    if (!validState) throw new Error("Invalid state");
 
     // 3️⃣ Validate City
     const citiesRes = await axios.get(
@@ -42,7 +43,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
     const validCity = citiesRes.data.find(
       (c) => c.name.toLowerCase() === city.toLowerCase()
     );
-    if (!validCity) throw new Error("Invalid city",400);
+    if (!validCity) throw new Error("Invalid city");
 
     // 4️⃣ Get accurate lat/lng from OpenCage
     const geoRes = await axios.get(
@@ -66,6 +67,7 @@ const validateLocation = async ({ country, state, city, lat, lng }) => {
         throw new Error("Invalid coordinates mismatch");
       }
     }
+    console.log("Validated location");
 
     // ✅ Final clean response
     return {

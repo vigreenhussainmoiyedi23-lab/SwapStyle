@@ -28,6 +28,7 @@ const getListings = async (filters) => {
 };
 const createListing = async (listingData) => {
     try {
+        console.log("posting /api/listings")
         const response = await apiClient.post('/', listingData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -36,7 +37,7 @@ const createListing = async (listingData) => {
         return response.data;
     } catch (error) {
         console.error('Error creating listing:', error);
-        throw error;
+        throw error.response;
     }
 };
 

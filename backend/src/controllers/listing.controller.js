@@ -25,8 +25,8 @@ const { uploadImage } = require("../services/listing/UploadImage.service");
 async function GetAllListingsHandler(req, res) {
     try {
         const filters = req.body;
-        const {listings,totalPages} = await getAllListingsService(filters);
-        res.status(200).json({ listings,totalPages, message: "Listings fetched successfully", success: true });
+        const { listings, totalPages } = await getAllListingsService(filters);
+        res.status(200).json({ listings, totalPages, message: "Listings fetched successfully", success: true });
     } catch (error) {
         res.status(500).json({ message: "Error fetching listings", success: false })
     }
@@ -68,7 +68,6 @@ async function CreateListingHandler(req, res) {
         const { category, clothingType, brandName, size, condition, title, description } = req.body;
         const estimatedValue = await EstimateValue({ brandName, size, clothingType, condition });
         let { city, state, country, lat, lng } = await validateLocation(JSON.parse(req.body.location))
-
         const location = {
             geo: {
                 coordinates: [lng, lat]
@@ -77,21 +76,18 @@ async function CreateListingHandler(req, res) {
             state,
             country
         }
-        if (!location) return res.status(500).json({ message: "Incorrect  location", success: false })
-
-        if (!estimatedValue.success) {
-            return res.status(500).json({ message: "Error estimating value", success: false })
-        }
-
+ 
         const value = estimatedValue
         if (!value) return res.status(500).json({ message: "Error estimating value", success: false })
         const owner = req.userId
         const promises = req.files.map(file =>
             uploadImage(file.buffer, Date.now() + "_" + Math.floor(Math.random() * 1000), "/SwapStyle/listingImages")
         );
+        console.log("checkpoint middle")
         const responses = await Promise.all(promises)
         const images = responses.map(response => { return { url: response.url, fileId: response.fileId, thumbnail: response.thumbnailUrl } })
         const listing = await createListingService({ location: location, clothingType, brandName, size, condition, estimatedValue: value, images, owner, title, description, category })
+        console.log("checkpoint middle")
         res.status(201).json({ listing, message: "Listing created successfully", success: true })
 
     } catch (error) {

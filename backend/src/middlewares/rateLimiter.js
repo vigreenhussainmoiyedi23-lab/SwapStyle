@@ -32,7 +32,7 @@ const ResendOtpLimiter = rateLimit({
 });
 const CreateListingLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 2, // limit each IP to 2 requests per window
+    max: 10, // limit each IP to 2 requests per window
     message: {
         success: false,
         message: "Too many requests, please try again after few seconds."
