@@ -29,7 +29,7 @@ const Profile = () => {
 
   const isOwner = user?._id.toString() == id;
 
-  if (loading || !userAllListings || !profileUser)
+  if (loading)
     return (
       <section className="w-full relative flex items-center justify-center  min-h-screen bg-brand-900 text-white">
         <div className=" pt-[12vh] px-10 ">LODING...</div>
