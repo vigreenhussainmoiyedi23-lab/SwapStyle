@@ -117,7 +117,8 @@ async function getAllListingsService(filters, isAdmin = false) {
         if (!isAdmin) {
             query = {
                 isAvailable: true,
-                isLocked: false
+                isLocked: false,
+                isRemoved: false
             }
         }
         let skip = 0;
@@ -126,19 +127,14 @@ async function getAllListingsService(filters, isAdmin = false) {
             query.category = category;
         }
         if (lat && lng) {
-            query = {
-                ...query,
-                "location.geo": {
-
-                    $near: {
-                        $geometry: {
-                            type: "Point",
-                            coordinates: [parseFloat(lng), parseFloat(lat)], // ⚠️ [lng, lat]
-                        },
-                        $maxDistance: 10 * 1000, // meters (10km = 10000)
-                    },
-                }
-            }
+            query["location.geo"] = {
+                $geoWithin: {
+                    $centerSphere: [
+                        [parseFloat(lng), parseFloat(lat)],
+                        10 / 6378.1,
+                    ],
+                },
+            };
         }
         // Types filter (match any)
         if (types && types.length > 0) {
@@ -155,7 +151,8 @@ async function getAllListingsService(filters, isAdmin = false) {
             query.condition = { $in: conditions };
         }
         if (page && page > 1) {
-            skip = 10;
+            const limit = 10;
+            const skip = (parseInt(page || 1) - 1) * limit;
         }
         // Sorting
         let sortOption = {};

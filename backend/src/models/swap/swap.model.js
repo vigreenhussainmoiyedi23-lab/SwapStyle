@@ -22,7 +22,9 @@ const swapSchema = new mongoose.Schema({
       "disputed",
       "completed",
       "rejected",
-      "cancelled"
+      "cancelled",
+      "cancelled_by_admin",
+      "refund_listing"
     ]
   },
   shipments: [{
@@ -31,7 +33,7 @@ const swapSchema = new mongoose.Schema({
     },
     courier: { type: String },
     trackingId: String,
-    trackingUrl:String
+    trackingUrl: String
   }],
   ownerAddress: {
     street: String,

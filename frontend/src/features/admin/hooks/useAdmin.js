@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { AdminContext } from "../admin.context";
 import { GetAllListings, GetAllSwaps, GetAllUsers, GetPlatformAnalytics, BanOrUnbanUser, RemoveOrRestoreListing, ResolveDispute, GetAllDisputes } from "../service/admin.api";
 import { emitNotification } from "../../../utils/emitNotifications";
+import { showLoadingToast, updateToast } from "../../../utils/Toastify.util";
 
 export default function useAdmin() {
     const {
@@ -86,6 +87,7 @@ export default function useAdmin() {
         }
     };
     const BanOrUnbanUserHandler = async (userId) => {
+        const id = showLoadingToast("Banning/Unbanning User...")
         setLoading(true);
         try {
             const response = await BanOrUnbanUser(userId);
@@ -97,14 +99,17 @@ export default function useAdmin() {
                 message: response?.message || "Your account status was updated by admin",
                 link: "/profile",
             });
+            const update = updateToast(id, response.message, "success")
             return response;
         } catch (error) {
-            throw new Error(error.response.data.message);
+            updateToast(id, error.data.message, "error")
+
         } finally {
             setLoading(false);
         }
     };
     const RemoveOrRestoreListingHandler = async (listingId) => {
+        const id = showLoadingToast("removing/restoring listing...")
         setLoading(true);
         try {
             const response = await RemoveOrRestoreListing(listingId);
@@ -121,24 +126,27 @@ export default function useAdmin() {
                     link: `/listing/${listingId}`,
                 });
             }
+            updateToast(id, response.message, "success")
             return response;
         } catch (error) {
-            throw new Error(error.response.data.message);
+            console.error(error)
+            updateToast(id, error.data.message || "failed", "error")
+
         } finally {
             setLoading(false);
         }
     };
     const ResolveDisputeHandler = async (disputeId, resolveData) => {
+        const id = showLoadingToast("resolving/rejecting dispute...")
         setLoading(true);
         try {
             const response = await ResolveDispute(disputeId, resolveData);
             await GetAllDisputesHandler()
             // 🔔 Notifications to both parties
             const dispute = response?.dispute;
-            console.log("dispute", dispute);
             if (dispute) {
                 const users = [dispute.raisedBy, dispute.against];
-                
+
                 users.forEach((userId) => {
                     console.log("emitting notification", userId);
                     if (userId) {
@@ -153,9 +161,13 @@ export default function useAdmin() {
                     }
                 });
             }
+            updateToast(id, response.message, "success")
+
             return response;
         } catch (error) {
-            throw new Error(error.response.data.message);
+    
+            updateToast(id, error.data.message || "failed", "error")
+
         } finally {
             setLoading(false);
         }

@@ -37,6 +37,7 @@ const useAuth = () => {
         }
     };
     const loginHandler = async ({ email, password }) => {
+
         setLoading(true);
         try {
             const { data } = await login({ email, password });
@@ -52,8 +53,8 @@ const useAuth = () => {
     const logoutHandler = async () => {
         setLoading(true);
         try {
+            console.log("logging out")
             const { data } = await logout();
-     
             setUser(null);
             showToast("Logged out successfully!", "success");
             return data;

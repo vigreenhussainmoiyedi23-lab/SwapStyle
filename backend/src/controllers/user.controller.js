@@ -1,4 +1,6 @@
 const swapModel = require("../models/swap/swap.model");
+const userModel = require("../models/user/user.model");
+const { uploadImage } = require("../services/listing/UploadImage.service");
 const { getUserAllListingsService, getUserAllDataService, getNotificationService } = require("../services/user/user.service");
 
 
@@ -49,5 +51,37 @@ const GetRecentSwapsHandler = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Error fetching notifications", success: false });
     }
 }
+const updateProfile = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const profilePicture = req.file || null;
+        const { username, bio, phoneNumber } = req.body;
+        let data
+        if (profilePicture) {
+            data = await uploadImage(profilePicture.buffer, Date.now() + "-" + profilePicture.originalname, "SwapStyle/user/profilePicture");
 
-module.exports = { GetRecentSwapsHandler, GetUserListingsHandler, GetUserDataHandler, GetNotificationsHandler }
+        }
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    ...(username && { username }),
+                    ...(bio !== undefined && { bio }),
+                    ...(phoneNumber && { phoneNumber }),
+                    ...(data && { profilePicture: data.url }),
+                },
+            },
+            { new: true, runValidators: true }
+        ).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            user: updatedUser,
+            message: "Profile updated successfully",
+        });
+    } catch (error) {
+        console.log("Update profile error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+module.exports = { updateProfile, GetRecentSwapsHandler, GetUserListingsHandler, GetUserDataHandler, GetNotificationsHandler }

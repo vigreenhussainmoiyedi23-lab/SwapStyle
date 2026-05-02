@@ -14,7 +14,7 @@ const GetAllUsers = async () => {
         const response = await apiClient.get(`/users`);
         return response.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error;
     }
 }
 const GetAllListings = async () => {
@@ -22,7 +22,7 @@ const GetAllListings = async () => {
         const response = await apiClient.get(`/listings`);
         return response.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error;
     }
 }
 const GetAllSwaps = async () => {
@@ -30,17 +30,17 @@ const GetAllSwaps = async () => {
         const response = await apiClient.get(`/swaps`);
         return response.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error;
     }
 }
 const GetAllDisputes = async () => {
     try {
-        
+
         const response = await apiClient.get(`/disputes`);
-      
+
         return response?.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error.response;
     }
 }
 const GetPlatformAnalytics = async () => {
@@ -48,7 +48,7 @@ const GetPlatformAnalytics = async () => {
         const response = await apiClient.get(`/analytics`);
         return response.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error.response;
     }
 }
 const BanOrUnbanUser = async (userId) => {
@@ -56,7 +56,8 @@ const BanOrUnbanUser = async (userId) => {
         const response = await apiClient.patch(`/user/${userId}`);
         return response.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error.response;
+
     }
 }
 const RemoveOrRestoreListing = async (listingId) => {
@@ -64,7 +65,7 @@ const RemoveOrRestoreListing = async (listingId) => {
         const response = await apiClient.patch(`/listing/${listingId}`);
         return response.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw error.response;
     }
 }
 const ResolveDispute = async (diputeId, resolveData) => {
@@ -72,7 +73,8 @@ const ResolveDispute = async (diputeId, resolveData) => {
         const response = await apiClient.patch(`/dispute/${diputeId}`, resolveData);
         return response?.data
     } catch (error) {
-        throw new Error(error.response.data.message);
+       
+        throw error.response;
     }
 }
 export { GetAllListings, GetAllDisputes, GetAllSwaps, GetAllUsers, GetPlatformAnalytics, BanOrUnbanUser, RemoveOrRestoreListing, ResolveDispute };

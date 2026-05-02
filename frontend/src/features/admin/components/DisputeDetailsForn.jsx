@@ -11,6 +11,13 @@ export default function DisputeDetail({
     resolution: "FAVOR_REQUESTER",
     adminNote: "",
   });
+  let values = [
+    "FAVOR_REQUESTER",
+    "FAVOR_OWNER",
+    "NO_FAULT",
+    "REFUND",
+    "CANCEL_SWAP",
+  ];
   return (
     <div className="bg-brand-800 p-6 rounded text-accnet-500 border absolute min-w-100 w-1/2 top-1/2 left-1/2 -translate-1/2">
       <h2 className="playfair text-xl mb-4">
@@ -35,10 +42,11 @@ export default function DisputeDetail({
           onChange={(e) => setForm({ ...form, resolution: e.target.value })}
           className="w-full p-2 border mb-3"
         >
-          <option>FAVOR_REQUESTER</option>
-          <option>FAVOR_OWNER</option>
-          <option>REFUND</option>
-          <option>CANCEL_SWAP</option>
+          <option className="bg-brand-900 text-white">FAVOR_REQUESTER</option>
+          <option className="bg-brand-900 text-white">FAVOR_OWNER</option>
+          <option className="bg-brand-900 text-white">NO_FAULT</option>
+          <option className="bg-brand-900 text-white">REFUND</option>
+          <option className="bg-brand-900 text-white">CANCEL_SWAP</option>
         </select>
 
         <textarea

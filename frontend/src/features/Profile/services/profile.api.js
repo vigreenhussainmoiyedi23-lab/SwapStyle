@@ -37,5 +37,18 @@ const getRecentSwaps = async (userId) => {
         throw error;
     }
 };
+const updateProfile = async (data) => {
+    try {
+        const response = await apiClient.put(`/profile`, data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        throw error;
+    }
+};
 
-export { getUserAllListings, getUserData ,getRecentSwaps };
+export { getUserAllListings, getUserData, getRecentSwaps, updateProfile };

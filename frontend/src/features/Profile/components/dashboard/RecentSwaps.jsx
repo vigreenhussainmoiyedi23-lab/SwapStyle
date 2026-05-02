@@ -6,8 +6,6 @@ const RecentSwaps = ({ user, isOwner }) => {
   useEffect(() => {
     GetRecentSwapsHandler(user._id);
   }, []);
-  if (loading)
-    return <div className="bg-brand-900 text-accent-500">Loading..</div>;
   return (
     <div className="space-y-5">
       <h1 className="text-center text-4xl text-accent-300 underline underline-offset-6 decoration-1 playfair">

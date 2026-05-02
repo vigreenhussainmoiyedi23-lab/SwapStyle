@@ -12,7 +12,9 @@ const Notification = () => {
     loadMore,
   } = useNotification();
 
-
+  useEffect(() => {
+    fetchNotifications({ page: 1, limit: 20, append: false });
+  }, []);
 
   if (loading) {
     return (

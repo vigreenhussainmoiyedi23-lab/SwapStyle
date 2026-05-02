@@ -54,6 +54,7 @@ const googleLoginHandler = async (req, res) => {
             username: payload.name,
             profilePicture: payload.picture,
             isEmailVerified: true,
+            isGoogleAuthenticated: true
         };
 
         // TODO: Find or create user in your database using googleId or email

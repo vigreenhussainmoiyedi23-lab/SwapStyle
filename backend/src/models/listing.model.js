@@ -114,6 +114,8 @@ const listingSchema = new mongoose.Schema({
 }, { timestamps: true });
 listingSchema.index({ "location.geo": "2dsphere" });
 listingSchema.index({ owner: 1, createdAt: -1 }); // Compound index for efficient user listing retrieval
+listingSchema.index({ title: "text" });
+
 const listingModel = mongoose.model("listing", listingSchema)
 
 module.exports = listingModel;

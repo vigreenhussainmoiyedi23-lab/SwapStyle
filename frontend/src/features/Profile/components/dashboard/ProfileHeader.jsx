@@ -1,8 +1,14 @@
-import { Edit, Edit2, Shield } from "lucide-react";
+import { Edit, Edit2, LucideSquareArrowRightExit, Shield } from "lucide-react";
 import React from "react";
+import useAuth from "../../../auth/hooks/useAuth";
+import { Link } from "react-router-dom";
+import { useProfile } from "../../Hooks/useProfile";
+import { ProfileHeaderSkeleton } from "./ProfileHeaderSkeleton";
 
-const ProfileHeader = ({ user }) => {
-  if (!user) return null;
+const ProfileHeader = ({ user, isOwner }) => {
+  const { logoutHandler } = useAuth();
+  const { loading } = useProfile();
+  if(loading)return <ProfileHeaderSkeleton />
   return (
     <div className="bg-white/5 border md:flex-row flex-col border-white/10 rounded-2xl p-6 flex justify-between items-center">
       <div className="flex gap-4">
@@ -18,23 +24,39 @@ const ProfileHeader = ({ user }) => {
           <p className="text-sm mt-2 text-gray-300">{user?.bio || "No bio"}</p>
 
           <div className="flex gap-2 mt-3">
-            {user.badge.map(badge=>
+            {user.badge.map((badge) => (
               <span className="px-3 py-1 text-xs bg-emerald-500/20 text-emerald-400 rounded-full">
                 {badge}
-              </span>,
-            )}
+              </span>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="flex md:flex-col mt-5 mb:mt-0 px-4 md:px-0 md:w-fit w-full gap-3">
-        <button className="bg-emerald-500 flex items-center justify-center gap-3 px-4 py-2 rounded-lg text-sm">
-          Edit Profile <Edit2 className="text-yellow-300"/>
-        </button>
-        <button className="border flex items-center justify-center gap-3 border-white/20 px-4 py-2 rounded-lg text-sm">
-          Security <Shield  className="text-yellow-300"/>
-        </button>
-      </div>
+      {isOwner && (
+        <div className="flex md:flex-col mt-5 mb:mt-0 px-4 md:px-0 md:w-fit w-full gap-3">
+          <Link
+            to={`/Editprofile`}
+            className="bg-emerald-500 cursor-pointer flex items-center justify-center gap-3 px-4 py-2 rounded-lg text-sm"
+          >
+            Edit Profile <Edit2 className="text-yellow-300" />
+          </Link>
+          {!user.isGoogleAuthenticated && (
+            <Link
+              to={`/SecurityProfile`}
+              className="border cursor-pointer flex items-center justify-center gap-3 border-white/20 px-4 py-2 rounded-lg text-sm"
+            >
+              Security <Shield className="text-yellow-300" />
+            </Link>
+          )}
+          <button
+            onClick={logoutHandler}
+            className="border active:scale-95 cursor-pointer bg-red-500 flex items-center justify-center gap-3 border-white/20 px-4 py-2 rounded-lg text-sm"
+          >
+            Logout <LucideSquareArrowRightExit className=" " />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

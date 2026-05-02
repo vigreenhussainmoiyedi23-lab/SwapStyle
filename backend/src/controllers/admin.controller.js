@@ -264,28 +264,88 @@ async function RemoveOrRestoreListingHandler(req, res) {
  */
 async function ResolveDisputeHandler(req, res) {
     try {
-        const { disputeId } = req.params
-        const { status, resolution, adminNote } = req.body
+        const { disputeId } = req.params;
+        const { status, resolution, adminNote } = req.body;
 
-        const dispute = await disputeModel.findById(disputeId)
-        if (!dispute) return res.status(404).json({ message: "Dispute not found" })
+        const dispute = await disputeModel.findById(disputeId);
+        if (!dispute)
+            return res.status(404).json({ message: "Dispute not found" });
 
-        dispute.status = status
-        dispute.resolution = resolution
-        dispute.adminNote = adminNote
-        await dispute.save()
-        const swap = await swapModel.findById(dispute.swapId)
-        swap.disputedBy[dispute.role] = false
-        const { owner, requester } = swap.disputedBy
-        if (!owner && !requester) {
-            swap.status = "shipping"
-            console.log("shipping set")
+        const swap = await swapModel.findById(dispute.swapId);
+        if (!swap)
+            return res.status(404).json({ message: "Swap not found" });
+
+        // ========================
+        // 1. APPLY RESOLUTION LOGIC
+        // ========================
+
+        const requesterId = swap.requester;
+        const ownerId = swap.owner;
+
+        if (resolution === "FAVOR_REQUESTER") {
+            await userModel.findByIdAndUpdate(ownerId, {
+                $inc: { fraudScore: 5 },
+            });
         }
-        console.log("reached endpoint", swap.disputedBy)
-        await swap.save()
-        res.json({ success: true, dispute })
+
+        if (resolution === "FAVOR_OWNER") {
+            await userModel.findByIdAndUpdate(requesterId, {
+                $inc: { fraudScore: 5 },
+            });
+        }
+
+        if (resolution === "CANCEL_SWAP") {
+            swap.status = "cancelled_by_admin";
+        }
+
+        if (resolution === "REFUND") {
+            swap.status = "refund_listing";
+        }
+
+        if (resolution === "NO_FAULT") {
+            // optional: revert to safe state
+            swap.status = swap.status === "disputed" ? "accepted" : swap.status;
+        }
+
+        // ========================
+        // 2. UPDATE DISPUTE
+        // ========================
+
+        dispute.status = status || "resolved";
+        dispute.resolution = resolution;
+        dispute.adminNote = adminNote;
+
+        await dispute.save();
+
+        // ========================
+        // 3. CLEAR DISPUTE FLAG
+        // ========================
+
+        swap.disputedBy[dispute.role] = false;
+
+        const { owner, requester } = swap.disputedBy;
+
+        // If both parties cleared → restore flow
+        if (!owner && !requester) {
+            if (swap.status === "disputed") {
+                swap.status = "accepted";
+            }
+        }
+
+        await swap.save();
+
+        return res.json({
+            success: true,
+            message: "Dispute resolved successfully",
+            dispute,
+            swap,
+        });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message })
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
     }
 }
 module.exports = {

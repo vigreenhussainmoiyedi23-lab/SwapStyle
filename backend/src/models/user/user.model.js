@@ -1,11 +1,16 @@
 const mongoose = require("mongoose")
 
 const userSchema = new mongoose.Schema({
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
+    },
     username: {
         type: String,
         required: true
     },
- 
+
     email: {
         type: String,
         unique: [true, "User already exists in db"],
@@ -24,6 +29,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isGoogleAuthenticated: {
+        type: Boolean,
+        default: false
+    },
     isRegistered: { type: Boolean, default: false },
     otp: { type: String },           // hashed OTP
     otpExpires: { type: Date },
@@ -31,9 +40,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "Sustainable fashion enthusiast. Trading vintage finds and timeless pieces."
     },
-    ContactDetails: {
-        phoneNumber: Number,
-    },
+    phoneNumber: Number,
+
 
     rating: {
         type: Number,
@@ -63,7 +71,7 @@ const userSchema = new mongoose.Schema({
         type: [String],
         default: ["Newbie"]
     }
-},{timestamps: true})
+}, { timestamps: true })
 
 
 const userModel = mongoose.model("users", userSchema)

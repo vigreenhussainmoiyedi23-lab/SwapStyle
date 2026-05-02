@@ -292,6 +292,16 @@ function StatusShowcase({ status, swap, otherUserRole, user }) {
       {(status === "rejected" || status === "cancelled") && (
         <span className="text-red-400 text-sm">Declined</span>
       )}
+      {status === "cancelled_by_admin" && (
+        <span className="text-red-400 text-sm">
+          The Swap Has Been Cancelled By Admin
+        </span>
+      )}
+      {status === "refund_listing" && (
+        <span className="text-red-400 text-sm">
+          Admin orders To Refund Each Other Your Listing's
+        </span>
+      )}
     </>
   );
 }

@@ -19,6 +19,7 @@ import Users from "./features/admin/pages/Users";
 import Disputes from "./features/admin/pages/Disputes";
 import ListingsAdmin from "./features/admin/pages/Listings";
 import Notification from "./features/notifications/Pages/Notification";
+import EditProfile from "./features/Profile/Pages/EditpROFILE.JSX";
 
 const Approutes = () => {
   return (
@@ -81,6 +82,22 @@ const Approutes = () => {
           }
         />
         <Route
+          path="/Editprofile"
+          element={
+            <NormalLayout>
+              <EditProfile />
+            </NormalLayout>
+          }
+        />
+        <Route
+          path="/SecurityProfile"
+          element={
+            <NormalLayout>
+              <Profile />
+            </NormalLayout>
+          }
+        />
+        <Route
           path="/swaps"
           element={
             <ProtectedLayout>
@@ -136,7 +153,6 @@ const Approutes = () => {
             </AdminLayout>
           }
         />
-     
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />

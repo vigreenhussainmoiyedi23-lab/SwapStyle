@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { getRecentSwaps, getUserAllListings, getUserData } from "../services/profile.api"
+import { getRecentSwaps, getUserAllListings, getUserData, updateProfile } from "../services/profile.api"
 import { ProfileContext } from "../profile.context";
 import { useEffect } from "react";
+import { showLoadingToast, updateToast } from "../../../utils/Toastify.util";
 
 
 export const useProfile = () => {
@@ -52,8 +53,22 @@ export const useProfile = () => {
             setLoading(false)
         }
     }
+    const updateProfileHandler = async (data) => {
+        const id = showLoadingToast("Updating Profile...")
+        try {
+            setLoading(true)
+            const response = await updateProfile(data)
+            updateToast(id, response.message, "success")
+        } catch (error) {
+            console.error('Error fetching user listings:', error);
+            updateToast(id, error.data.message, "error")
 
-    return { fetchUserAllListings, fetchUserData, GetRecentSwapsHandler, recentSwaps, userAllListings, profileUser, loading };
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { fetchUserAllListings,updateProfileHandler, fetchUserData, GetRecentSwapsHandler, recentSwaps, userAllListings, profileUser, loading };
 }
 
 

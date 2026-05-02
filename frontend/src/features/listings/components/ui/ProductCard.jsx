@@ -19,12 +19,19 @@ const ProductCard = ({ item }) => {
       to={`/listings/more/${item._id}`}
       className="group bg-white/5 h-fit  w-full backdrop-blur-3xl text-accent-300 rounded-3xl overflow-hidden border border-transparent hover:border-accent-400/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
     >
-      <div className="flex items-center gap-2 px-1 mb-2">
-        <img
-          src={item.owner.profilePicture}
-          alt="profilePicture"
-          className="w-12 h-12 rounded-full"
-        />
+      {item.isRemoved && (
+        <p className="text-sm absolute top-1/2 left-1/2 -translate-1/2 z-10 bg-black rounded-lg px-3 py-2 text-red-500">
+          Removed By Admin
+        </p>
+      )}
+      <div className="flex items-center  gap-2 px-1 mb-2">
+    <img
+  src={item.owner.profilePicture}
+  alt="profilePicture"
+  className={`w-12 h-12 rounded-full ${
+    item.isRemoved ? "grayscale" : ""
+  }`}
+/>
         <div className="flex flex-col items-start justify-center">
           <h1 className="text-gray-300">{item.owner.username}</h1>
           <p className="flex items-center gap-1">
