@@ -10,6 +10,7 @@ const Profile = () => {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
   const {
+    fetchUserAllRatings,
     fetchUserAllListings,
     fetchUserData,
     userAllListings,
@@ -20,6 +21,7 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         await fetchUserAllListings(id);
+        await fetchUserAllRatings(id);
         await fetchUserData(id);
       } catch (error) {
         console.error("Error fetching user profile data:", error);

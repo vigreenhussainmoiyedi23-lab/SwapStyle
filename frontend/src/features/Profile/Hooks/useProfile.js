@@ -14,7 +14,8 @@ export const useProfile = () => {
         loading,
         setLoading,
         recentSwaps,
-        setRecentSwaps
+        setRecentSwaps, userAllRatings,
+        setUserAllRatings,
     } = useContext(ProfileContext)
     const fetchUserAllListings = async (userId) => {
         setLoading(true)
@@ -24,6 +25,19 @@ export const useProfile = () => {
             return response
         } catch (error) {
             console.error('Error fetching user listings:', error);
+            throw error;
+        } finally {
+            setLoading(false)
+        }
+    };
+    const fetchUserAllRatings = async (userId) => {
+        setLoading(true)
+        try {
+            const response = await getUserAllListings(userId);
+            setUserAllRatings(response?.ratings)
+            return response
+        } catch (error) {
+            console.error('Error fetching user ratings:', error);
             throw error;
         } finally {
             setLoading(false)
@@ -68,7 +82,18 @@ export const useProfile = () => {
         }
     }
 
-    return { fetchUserAllListings,updateProfileHandler, fetchUserData, GetRecentSwapsHandler, recentSwaps, userAllListings, profileUser, loading };
+    return {
+        fetchUserAllListings,
+        updateProfileHandler,
+        fetchUserData,
+        GetRecentSwapsHandler,
+        fetchUserAllRatings,
+        recentSwaps,
+        userAllListings,
+        profileUser,
+        loading,
+        userAllRatings
+    };
 }
 
 

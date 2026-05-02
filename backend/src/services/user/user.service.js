@@ -1,6 +1,7 @@
 const listingModel = require("../../models/listing.model");
 const notificationModel = require("../../models/user/notification.model");
 const userModel = require("../../models/user/user.model");
+const ratingModel = require("../../models/user/rating.model");
 
 async function findUserByEmail(email) {
     const user = await userModel.findOne({ email });
@@ -26,6 +27,18 @@ async function getUserAllListingsService(userId) {
         return listings;
     } catch (error) {
         console.log("Error fetching user listings:", error);
+        throw error;
+    }
+}
+async function getUserAllRatingsService(userId) {
+    try {
+        const ratings = await ratingModel.find({ ratee: userId }).populate([{
+            path: "rater",
+            select: "username profilePicture email"
+        },]);
+        return ratings;
+    } catch (error) {
+        console.log("Error fetching user ratings:", error);
         throw error;
     }
 }
@@ -72,4 +85,4 @@ async function getNotificationService(userId, page = 1, limit = 20) {
     }
 }
 
-module.exports = { findUserByEmail, getNotificationService, findUserById, findUserByIdAndUpdate, createUser, getUserAllListingsService, getUserAllDataService };
+module.exports = { findUserByEmail, getUserAllRatingsService, getNotificationService, findUserById, findUserByIdAndUpdate, createUser, getUserAllListingsService, getUserAllDataService };

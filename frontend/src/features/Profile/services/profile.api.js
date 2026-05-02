@@ -19,6 +19,15 @@ const getUserAllListings = async (userId) => {
         throw error;
     }
 };
+const getUserAllRatings = async (userId) => {
+    try {
+        const response = await apiClient.get(`/ratings/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user ratings:', error);
+        throw error;
+    }
+};
 const getUserData = async (userId) => {
     try {
         const response = await apiClient.get(`/data/${userId}`);
@@ -51,4 +60,4 @@ const updateProfile = async (data) => {
     }
 };
 
-export { getUserAllListings, getUserData, getRecentSwaps, updateProfile };
+export { getUserAllListings,getUserAllRatings, getUserData, getRecentSwaps, updateProfile };

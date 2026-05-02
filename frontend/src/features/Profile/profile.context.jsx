@@ -6,6 +6,7 @@ export const ProfileContextProvider = ({ children }) => {
   const [userAllListings, setUserAllListings] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
   const [recentSwaps, setRecentSwaps] = useState([]);
+  const [userAllRatings, setUserAllRatings] = useState([]);
   const [loading, setLoading] = useState(true);
   return (
     <ProfileContext.Provider
@@ -18,6 +19,8 @@ export const ProfileContextProvider = ({ children }) => {
         setLoading,
         recentSwaps,
         setRecentSwaps,
+        userAllRatings,
+        setUserAllRatings,
       }}
     >
       {children}

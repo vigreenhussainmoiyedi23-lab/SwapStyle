@@ -1,7 +1,7 @@
 const swapModel = require("../models/swap/swap.model");
 const userModel = require("../models/user/user.model");
 const { uploadImage } = require("../services/listing/UploadImage.service");
-const { getUserAllListingsService, getUserAllDataService, getNotificationService } = require("../services/user/user.service");
+const { getUserAllListingsService, getUserAllDataService, getNotificationService, getUserAllRatingsService } = require("../services/user/user.service");
 
 
 async function GetUserListingsHandler(req, res) {
@@ -9,6 +9,15 @@ async function GetUserListingsHandler(req, res) {
     try {
         const listings = await getUserAllListingsService(userId);
         res.status(200).json({ listings, message: "Listings fetched successfully", success: true });
+    } catch (error) {
+        res.status(error.status || 500).json({ message: error.message || "Error fetching listings", success: false });
+    }
+}
+async function GetUserRatingHandler(req, res) {
+    const { userId } = req.params;
+    try {
+        const ratings = await getUserAllRatingsService(userId);
+        res.status(200).json({ ratings, message: "Ratings fetched successfully", success: true });
     } catch (error) {
         res.status(error.status || 500).json({ message: error.message || "Error fetching listings", success: false });
     }
@@ -84,4 +93,4 @@ const updateProfile = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
-module.exports = { updateProfile, GetRecentSwapsHandler, GetUserListingsHandler, GetUserDataHandler, GetNotificationsHandler }
+module.exports = { updateProfile, GetUserRatingHandler, GetRecentSwapsHandler, GetUserListingsHandler, GetUserDataHandler, GetNotificationsHandler }
