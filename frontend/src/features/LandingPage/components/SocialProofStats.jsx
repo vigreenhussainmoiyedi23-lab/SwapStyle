@@ -43,17 +43,17 @@ const SocialProofStats = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <Stat
               label="Swaps completed"
-              value={analyticsTotal?.swaps || "Loading"}
+              value={analyticsTotal?.swaps || 0}
               hint="Measured from your swap lifecycle"
             />
             <Stat
               label="Active users"
-              value={analyticsTotal?.users || "Loading"}
+              value={analyticsTotal?.users || 0}
               hint="Based on real logins & sessions"
             />
             <Stat
               label="Listings added"
-              value={analyticsTotal?.listings || "Loading"}
+              value={analyticsTotal?.listings || 0}
               hint="Pulled from listing creation events"
             />
           </div>

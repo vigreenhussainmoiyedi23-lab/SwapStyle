@@ -124,6 +124,7 @@ const EditProfile = () => {
               type="text"
               name="username"
               value={form.username}
+              required
               onChange={handleChange}
               className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-white outline-none"
             />
@@ -135,6 +136,7 @@ const EditProfile = () => {
             <textarea
               name="bio"
               value={form.bio}
+              required
               onChange={handleChange}
               rows={3}
               className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-white outline-none resize-none"
@@ -145,7 +147,10 @@ const EditProfile = () => {
           <div>
             <label className="text-sm text-brand-300">Phone Number</label>
             <input
-              type="text"
+              type="number"
+              min={1000000000}
+              max={9999999999}
+              required
               name="phoneNumber"
               value={form.phoneNumber}
               onChange={handleChange}

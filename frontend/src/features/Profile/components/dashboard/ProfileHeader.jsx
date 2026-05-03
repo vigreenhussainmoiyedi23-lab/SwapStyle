@@ -8,7 +8,7 @@ import { ProfileHeaderSkeleton } from "./ProfileHeaderSkeleton";
 const ProfileHeader = ({ user, isOwner }) => {
   const { logoutHandler } = useAuth();
   const { loading } = useProfile();
-  if(loading)return <ProfileHeaderSkeleton />
+  if (loading) return <ProfileHeaderSkeleton />;
   return (
     <div className="bg-white/5 border md:flex-row flex-col border-white/10 rounded-2xl p-6 flex justify-between items-center">
       <div className="flex gap-4">
@@ -21,9 +21,19 @@ const ProfileHeader = ({ user, isOwner }) => {
           <p className="text-gray-400 text-sm">
             {user?.email || "user@gmail.com"}
           </p>
+
+          {user?.isBanned && (
+            <p className="text-red-500 text-xl bg-yellow-300 font-bold capitalize rounded-lg px-3 py-1 w-fit mt-2">
+              {"Banned"}
+            </p>
+          )}
+
           <p className="text-sm mt-2 text-gray-300">{user?.bio || "No bio"}</p>
 
           <div className="flex gap-2 mt-3">
+            <span className="px-3 py-1 text-xs bg-emerald-500/20 text-emerald-400 rounded-full">
+              Fraud Score :- {user?.fraudScore}
+            </span>
             {user.badge.map((badge) => (
               <span className="px-3 py-1 text-xs bg-emerald-500/20 text-emerald-400 rounded-full">
                 {badge}

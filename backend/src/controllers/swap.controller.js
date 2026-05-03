@@ -400,7 +400,7 @@ async function cancelSwapHandler(req, res) {
         const Requester = await userModel.findById(user)
         Requester.totalCanceled += 1;
         await Requester.save();
-        
+
         res.status(200).json({
             swap,
             message: "Swap cancelled",
@@ -437,6 +437,13 @@ async function completeSwapHandler(req, res) {
             await swap.save()
             await updateBothListingFromSwapId(swapId, { isAvailable: false })
         }
+        const { owner, requester } = swap
+        const ownerUser = await userModel.findById(owner)
+        const requesterUser = await userModel.findById(requester)
+        ownerUser.totalSwaps += 1;
+        requesterUser.totalSwaps += 1;
+        await ownerUser.save();
+        await requesterUser.save();
         res.status(200).json({
             swap,
             message: "Swap completed",
