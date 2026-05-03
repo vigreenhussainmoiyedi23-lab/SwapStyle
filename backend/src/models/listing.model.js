@@ -48,7 +48,6 @@ const listingSchema = new mongoose.Schema({
     estimatedValue: {
         type: Number,
         min: 1,
-        max: 1000
     },
 
     images: [{

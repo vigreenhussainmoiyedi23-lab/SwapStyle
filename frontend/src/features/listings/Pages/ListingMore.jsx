@@ -140,7 +140,10 @@ const ListingMore = () => {
               >
                 VIEW USER PROFILE
               </Link>
-              {myListings && myListings.length > 0 ? (
+              {myListings &&
+              myListings.filter(
+                (l) => l.isAvailable && !l.isLocked && !l.isRemoved,
+              ).length > 0 ? (
                 <button
                   onClick={() => setIsActive(true)}
                   className="w-full text-center text-accent-500 bg-brand-900 font-semibold source-code-pro hover:bg-brand-800 active:scale-98 transition py-2 rounded-xl text-lg"

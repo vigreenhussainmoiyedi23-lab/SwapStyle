@@ -1,6 +1,8 @@
 import React from "react";
 
-const ListingHorizontalCard = ({ listing,createSwapHandler }) => {
+const ListingHorizontalCard = ({ listing, createSwapHandler }) => {
+  if (listing.isLocked || !listing.isAvailable || listing.isRemoved)
+    return null;
   return (
     <div className="bg-brand-700 backdrop-blur-2xl h-75 rounded-xl overflow-hidden  w-full max-h-75 xl:max-h-100 flex items-center gap-3">
       <div className="h-full w-1/3 relative">
@@ -31,11 +33,12 @@ const ListingHorizontalCard = ({ listing,createSwapHandler }) => {
         <p className="text-xs lg:text-sm xl:text-base montserrat text-gray-200 line-clamp-2">
           {listing.description}
         </p>
-        <button 
-        onClick={()=>{
-            createSwapHandler(listing._id)
-        }}
-        className="bg-accent-500 border-2 border-brand-900 text-brand-900 font-extrabold w-fit px-5 py-2 rounded-full mt-4 source-code-pro text-lg  tracking-wide hover:bg-accent-300 hover:scale-99 transition-all ease-in-out duration-125 active:scale-95  md:text-xl">
+        <button
+          onClick={() => {
+            createSwapHandler(listing._id);
+          }}
+          className="bg-accent-500 border-2 border-brand-900 text-brand-900 font-extrabold w-fit px-5 py-2 rounded-full mt-4 source-code-pro text-lg  tracking-wide hover:bg-accent-300 hover:scale-99 transition-all ease-in-out duration-125 active:scale-95  md:text-xl"
+        >
           Offer This Listing
         </button>
       </div>
