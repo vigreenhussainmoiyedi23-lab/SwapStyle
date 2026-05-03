@@ -597,7 +597,7 @@ SOFTWARE.
 For questions, issues, or contributions:
 
 - **GitHub Issues:** Report bugs or request features
-- **Email:** [Your contact email]
+- **Email:** vigreenhussainmoiyedi23@gmail.com
 
 ---
 
